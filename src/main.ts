@@ -13,7 +13,6 @@ async function bootstrap() {
   
   // Habilita CORS
   app.enableCors({
-    origin: ['http://localhost:4200', 'https://analise-dinamica.vercel.app'], // domínios permitidos
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true, // se precisar enviar cookies
