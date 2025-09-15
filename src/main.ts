@@ -12,7 +12,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, adapter);
   
   // Habilita CORS
-  app.enableCors();
+  // Permitir CORS
+  if (process.env.NODE_ENV === 'production') {
+    app.enableCors({
+      origin: 'https://analise-dinamica.vercel.app', // Frontend autorizado
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      credentials: true
+    });
+  }
+  else app.enableCors(); // Em desenvolvimento, permitir todas as origens
+  
   
   // Configuração do Swagger
   configSwagger(app);
