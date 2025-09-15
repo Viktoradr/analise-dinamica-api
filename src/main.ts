@@ -3,9 +3,14 @@ import { AppModule } from './app.module';
 import { configSwagger } from './config/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
+import cors from 'cors';
 import serverless from 'serverless-http';
 
 const expressApp = express();
+expressApp.use(cors({
+  origin: 'https://analise-dinamica.vercel.app',
+  credentials: true
+}));
 const adapter = new ExpressAdapter(expressApp);
 
 async function bootstrap() {
