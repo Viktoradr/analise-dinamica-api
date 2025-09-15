@@ -18,15 +18,9 @@ async function bootstrap() {
   
   // Habilita CORS
   // Permitir CORS
-  if (process.env.NODE_ENV === 'production') {
-    app.enableCors({
-      origin: 'https://analise-dinamica.vercel.app', // Frontend autorizado
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-      credentials: true
-    });
+  if (process.env.NODE_ENV !== 'production') {
+    app.enableCors(); // Em desenvolvimento, permitir todas as origens
   }
-  else app.enableCors(); // Em desenvolvimento, permitir todas as origens
-  
   
   // Configuração do Swagger
   configSwagger(app);
