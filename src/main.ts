@@ -1,9 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { configSwagger } from './config/swagger';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import express from 'express';
+import serverless from 'serverless-http';
+
+const expressApp = express();
+const adapter = new ExpressAdapter(expressApp);
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, adapter);
   
   // Habilita CORS
   app.enableCors({
@@ -15,7 +21,14 @@ async function bootstrap() {
   
   // Configuração do Swagger
   configSwagger(app);
+  
+  const PORT = process.env.PORT || 3000;
+  if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  }
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.init();
 }
 bootstrap();
+
+export const handler = serverless(expressApp);
