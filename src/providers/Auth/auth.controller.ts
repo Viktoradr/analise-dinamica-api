@@ -1,8 +1,7 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, Get, UseGuards, NotFoundException, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, NotFoundException, Param, Patch } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginCodigoDto, LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
 import { EmailService } from '../Email/email.service';
 import { AUTH_EMAIL_HTML_TEMPLATE } from '../Email/modelos/auth.template';
 import { UsuarioResponseDto } from 'src/database/usuario/dto/usuario-response.dto';
