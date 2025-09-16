@@ -8,7 +8,7 @@ import { AUTH_EMAIL_HTML_TEMPLATE } from '../Email/modelos/auth.template';
 import { UsuarioResponseDto } from 'src/database/usuario/dto/usuario-response.dto';
 
 @ApiTags('auth') // agrupa no Swagger
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
