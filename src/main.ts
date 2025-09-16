@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { configSwagger } from './config/swagger';
+import dotenv from "dotenv";
+dotenv.config();
 // import { ExpressAdapter } from '@nestjs/platform-express';
 // import express from 'express';
 // import cors from 'cors';
