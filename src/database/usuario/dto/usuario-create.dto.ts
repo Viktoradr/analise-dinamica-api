@@ -1,6 +1,6 @@
 import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PerfilEnum } from 'src/shared/enum/perfil.enum';
+import { PerfilEnum } from '../../../shared/enum/perfil.enum';
 
 export class CreateUsuarioDto {
   @ApiProperty({ example: 'Victor Alves' })

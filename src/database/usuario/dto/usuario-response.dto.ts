@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PerfilEnum } from 'src/shared/enum/perfil.enum';
+import { PerfilEnum } from '../../../shared/enum/perfil.enum';
 
 export class UsuarioResponseDto {
   @ApiProperty({ example: '66e7e6bf9f9c1f3d4a6a3f11', description: 'ID do usuário (Mongo ObjectId)' })
