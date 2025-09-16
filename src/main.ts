@@ -7,11 +7,7 @@ import cors from 'cors';
 import serverless from 'serverless-http';
 
 const expressApp = express();
-expressApp.use(cors({
-  origin: 'https://analise-dinamica.vercel.app',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  credentials: true
-}));
+expressApp.use(cors());
 const adapter = new ExpressAdapter(expressApp);
 
 async function bootstrap() {
