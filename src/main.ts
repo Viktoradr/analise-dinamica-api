@@ -35,7 +35,7 @@ async function bootstrap() {
   //   // Configuração do Swagger
   //   configSwagger(app);
   // }
-  
+
   app.setGlobalPrefix('api');
   configSwagger(app);
   
@@ -46,7 +46,7 @@ async function bootstrap() {
   // }
 
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  await app.init();
+  //await app.init();
 }
 bootstrap();
 
