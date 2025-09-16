@@ -21,6 +21,8 @@ async function bootstrap() {
     configSwagger(app);
   }
   
+  // Todas as rotas terão prefixo /api
+  app.setGlobalPrefix('api');
   
   const PORT = process.env.PORT || 3000;
   if (process.env.NODE_ENV !== 'production') {

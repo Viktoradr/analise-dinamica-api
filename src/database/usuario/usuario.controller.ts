@@ -5,7 +5,7 @@ import { UsuarioResponseDto } from './dto/usuario-response.dto';
 import { CreateUsuarioDto } from './dto/usuario-create.dto';
 
 @ApiTags('usuario')
-@Controller('usuario')
+@Controller('api/usuario')
 export class UsuarioController {
   constructor(private usersService: UsuarioService) {}
 
