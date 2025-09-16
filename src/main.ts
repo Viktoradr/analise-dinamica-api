@@ -11,23 +11,24 @@ async function bootstrap() {
     'http://localhost:4200',
     'https://analise-dinamica.vercel.app'
   ];
+  app.enableCors();
 
-  app.enableCors({
-    origin: function (origin: any, callback: any) {
-      // Permite requisições sem origem (ex: ferramentas de desenvolvimento)
-      if (!origin) return callback(null, true);
+  // app.enableCors({
+  //   origin: function (origin: any, callback: any) {
+  //     // Permite requisições sem origem (ex: ferramentas de desenvolvimento)
+  //     if (!origin) return callback(null, true);
       
-      // Verifica se a origem está na lista de permitidas
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error('Origem não permitida pelo CORS'));
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  });
+  //     // Verifica se a origem está na lista de permitidas
+  //     if (allowedOrigins.includes(origin)) {
+  //       return callback(null, true);
+  //     } else {
+  //       return callback(new Error('Origem não permitida pelo CORS'));
+  //     }
+  //   },
+  //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  //   allowedHeaders: ['Content-Type', 'Authorization'],
+  //   credentials: true
+  // });
 
   app.setGlobalPrefix('api');
   
