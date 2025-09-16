@@ -1,5 +1,6 @@
 import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { PerfilEnum } from 'src/shared/enum/perfil.enum';
 
 export class CreateUsuarioDto {
   @ApiProperty({ example: 'Victor Alves' })
@@ -11,8 +12,8 @@ export class CreateUsuarioDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'user', enum: ['admin', 'user', 'backoffice'], required: false })
-  @IsEnum(['admin', 'user', 'backoffice'])
+  @ApiProperty({ example: 'user', enum: [PerfilEnum.ADMIN, PerfilEnum.USER, PerfilEnum.BACKOFFICE], required: false })
+  @IsEnum([PerfilEnum.ADMIN, PerfilEnum.USER, PerfilEnum.BACKOFFICE])
   @IsOptional()
   perfil?: string;
 }

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { PerfilEnum } from 'src/shared/enum/perfil.enum';
 
 export type UsuarioDocument = Usuario & Document & { _id: Types.ObjectId };
 
@@ -18,24 +19,31 @@ export class Usuario {
   email: string;
 
   @Prop({
-    enum: ['admin', 'user', 'backoffice'], // restringe perfis permitidos
-    default: 'user',
+    enum: [PerfilEnum.ADMIN, PerfilEnum.USER, PerfilEnum.BACKOFFICE], // restringe perfis permitidos
+    default: PerfilEnum.USER,
   })
   perfil: string;
 
   @Prop({ 
-    unique: true, 
-    sparse: true, 
+    type: Number,
+    default: null,
     minLength: 6, 
     maxlength: 6 
   }) // código pode ser único, mas não obrigatório
-  codigo: number;
+  codigo?: number;
 
   @Prop({ default: null })
   dtCodigo: Date;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);
+
+UsuarioSchema.index(
+  { codigo: 1 },
+  {
+    partialFilterExpression: { codigo: { $exists: true } },
+  },
+);
 
 UsuarioSchema.virtual('id').get(function (this: UsuarioDocument) {
   return this._id.toHexString();
@@ -55,3 +63,9 @@ UsuarioSchema.pre<UsuarioDocument>('save', function (next) {
   }
   next();
 });
+
+// Validação customizada de 6 dígitos (opcional, mas recomendado)
+UsuarioSchema.path('codigo').validate((value: number) => {
+  if (value === null || value === undefined) return true; // permite nulo
+  return value >= 100000 && value <= 999999; // apenas números de 6 dígitos
+}, 'O código deve ter exatamente 6 dígitos');
