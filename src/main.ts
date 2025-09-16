@@ -4,37 +4,30 @@ import { configSwagger } from './config/swagger';
 import dotenv from "dotenv";
 dotenv.config();
 
-import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
-import cors from 'cors';
-
-const expressApp = express();
-
-// ✅ Configure o CORS aqui
-expressApp.use(cors({
-  origin: [
-    'http://localhost:4200',
-    'https://analise-dinamica.vercel.app',
-  ],
-  methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
-
 async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
   
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
+  const allowedOrigins = [
+    'http://localhost:4200',
+    'https://analise-dinamica.vercel.app'
+  ];
 
-  //const app = await NestFactory.create(AppModule);
-  
-  // app.enableCors({
-  //   origin: [
-  //     'http://localhost:4200', // Desenvolvimento local
-  //     'https://analise-dinamica.vercel.app'], // Frontend autorizado
-  //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  //   allowedHeaders: ['Content-Type', 'Authorization'],
-  //   credentials: true
-  // });
+  app.enableCors({
+    origin: function (origin: any, callback: any) {
+      // Permite requisições sem origem (ex: ferramentas de desenvolvimento)
+      if (!origin) return callback(null, true);
+      
+      // Verifica se a origem está na lista de permitidas
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error('Origem não permitida pelo CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  });
 
   app.setGlobalPrefix('api');
   
@@ -45,8 +38,7 @@ async function bootstrap() {
     res.redirect('/api');
   });
   
-  // const PORT = process.env.PORT || 3000;
-  // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  await app.init();
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 bootstrap();
