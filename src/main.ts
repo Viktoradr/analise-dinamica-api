@@ -11,7 +11,8 @@ async function bootstrap() {
     origin: [
       'http://localhost:4200', // Desenvolvimento local
       'https://analise-dinamica.vercel.app'], // Frontend autorizado
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
   });
 
