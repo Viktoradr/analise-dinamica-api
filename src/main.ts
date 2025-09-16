@@ -9,6 +9,7 @@ import serverless from 'serverless-http';
 const expressApp = express();
 expressApp.use(cors({
   origin: 'https://analise-dinamica.vercel.app',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   credentials: true
 }));
 const adapter = new ExpressAdapter(expressApp);
@@ -20,10 +21,10 @@ async function bootstrap() {
   // Permitir CORS
   if (process.env.NODE_ENV !== 'production') {
     app.enableCors(); // Em desenvolvimento, permitir todas as origens
+    // Configuração do Swagger
+    configSwagger(app);
   }
   
-  // Configuração do Swagger
-  configSwagger(app);
   
   const PORT = process.env.PORT || 3000;
   if (process.env.NODE_ENV !== 'production') {
