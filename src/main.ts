@@ -16,12 +16,6 @@ async function bootstrap() {
     origin: allowedOrigins
   });
 
-  // app.enableCors({
-  //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  //   allowedHeaders: ['Content-Type', 'Authorization'],
-  //   credentials: true
-  // });
-
   app.setGlobalPrefix('api');
   
   configSwagger(app);
