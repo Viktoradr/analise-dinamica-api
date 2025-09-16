@@ -21,10 +21,11 @@ export class UsuarioService {
   }
 
   async findByEmailECodigo(email: string, codigo: number): Promise<UsuarioDocument> {
-    const user = await this.userModel.findOne({ email, codigo });
+    const user = await this.userModel.findOne({ email });
     if (!user) {
       throw new NotFoundException('Usuário não encontrado!');
     }
+    
     if (!user.codigo || user.codigo != codigo) {
       throw new BadRequestException('Código inválido!');
     }
