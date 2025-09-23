@@ -2,13 +2,20 @@ export const AUTH_EMAIL_HTML_TEMPLATE = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Código de Autenticação</title>
-</head>
-<body style="font-family: Arial, sans-serif; background-color:#f4f4f4; margin:0; padding:0;">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Código de Autenticação</title>  
+<style>
+@media only screen and (max-width: 620px) {
+  table[width="600"] { width: 100% !important; }
+  td { padding: 10px !important; }
+  span.code { padding: 10px 20px !important; font-size: 28px !important; }
+}
+</style>
+</head><body style="font-family: Arial, sans-serif; background-color:#ffffff; margin:0; padding:0; -webkit-text-fill-color: #000000;">
   <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; margin-top:30px; border-radius:8px; padding:20px;">
+        <table width="600" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="background-color:#ffffff; margin-top:30px; border-radius:8px; padding:20px;">
           <tr>
             <td align="center" style="padding-bottom:20px;">
               <img src="https://analise-dinamica.vercel.app/images/logo.png" alt="Logo" width="120"/>

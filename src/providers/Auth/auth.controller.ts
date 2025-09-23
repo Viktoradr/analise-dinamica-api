@@ -5,6 +5,7 @@ import { LoginDto } from 'src/providers/auth/dto/login.dto';
 import { LoginCodigoDto } from 'src/providers/auth/dto/login-codigo.dto';
 import { AuthService } from './auth.service';
 import { UserId } from 'src/shared/decorators/userid.decorator';
+import { Jti } from 'src/shared/decorators/jti.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -24,6 +25,10 @@ export class AuthController {
   })
   async validateEmail(@Body() body: LoginDto) {
     await this.authService.validateUserByEmail(body.email);
+
+    if (body.celular != '' && body.celular.length > 10) {
+      await this.authService.savePhone(body.email, body.celular);
+    } 
  
     return { 
       message: `Validado`
@@ -31,8 +36,8 @@ export class AuthController {
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'Login via e-mail e código' })
-  @ApiResponse({ status: 200, description: 'E-mail e Código validado com sucesso.' })
+  @ApiOperation({ summary: 'Login via código' })
+  @ApiResponse({ status: 200, description: 'Código validado com sucesso.' })
   @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
   @HttpCode(HttpStatus.OK)
   @ApiBody({
@@ -40,7 +45,7 @@ export class AuthController {
     description: "Login via código"
   })
   async signIn(@Body() body: LoginCodigoDto) {
-    return await this.authService.validateEmailAndCode(body.email, body.codigo);
+    return await this.authService.validateEmailAndCode(body.codigo);
   }
 
   @Post('reenviarCodigo')
@@ -56,5 +61,13 @@ export class AuthController {
     return { 
       message: `Código reenviado para o e-mail ${userCode.email}`
     };
+  }
+
+  @Post('logout')
+  @ApiResponse({ status: 200, description: 'Código atualizado com sucesso', type: UsuarioResponseDto })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  async logout(@UserId() userId: string, @Jti() jti: string) {
+    await this.authService.logout(userId, jti);
+    return {};
   }
 }

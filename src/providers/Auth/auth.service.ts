@@ -20,6 +20,10 @@ export class AuthService {
     return await this.userService.updateCode(id);
   }
 
+  async savePhone(email: string, celular: string) {
+    await this.userService.updatePhone(email, celular);
+  }
+
   async validateUserByEmail(email: string): Promise<UsuarioDocument> {
     const user = await this.userService.findByEmail(email);
 
@@ -35,8 +39,8 @@ export class AuthService {
     return user;
   }
 
-  async validateEmailAndCode(email: string, codigo: number): Promise<any> {
-    const user = await this.userService.findByEmailAndCode(email, codigo);
+  async validateEmailAndCode(codigo: number): Promise<any> {
+    const user = await this.userService.findByCode(codigo);
 
     const jwtId = uuidv4(); // ID único do token 
 
@@ -44,21 +48,20 @@ export class AuthService {
       sub: user.id,
       //tenantId: user.tenantId,
       roles: user.roles,
-      name: user.nome, 
+      nome: user.nome, 
+      aceite: user.aceiteTermo,
       jti: jwtId
     };
 
-    //     const tempToken = this.jwtService.sign(
-//       { sub: user.id, roles: user.roles, tenantId: user.tenantId, step: 'mfa' },
-//       { expiresIn: '5m' },
-//     );
-
     const token = this.jwtService.sign(payload, { expiresIn: '1h' });
 
-    // Cria sessão no banco
     await this.sessionService.createSession(user.id, jwtId);
 
     //return { tempToken, mfaRequired: true };
     return { access_token: token };
+  }
+
+  async logout(id: string, jti: string) {
+    await this.sessionService.logout(id, jti);
   }
 }

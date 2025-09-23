@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuario, UsuarioDocument } from './schemas/usuario.schema';
 import { MENSAGENS } from 'src/shared/constants/mensagens';
+import { cleanNumber } from 'src/shared/functions/util';
 
 @Injectable()
 export class UsuarioService {
@@ -27,28 +28,37 @@ export class UsuarioService {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
     }
 
-    this.validateBlockUser(user);
+    await this.validateBlockUser(user);
 
     return user;
   }
 
-  async findByEmailAndCode(email: string, codigo: number): Promise<UsuarioDocument> {
-    const user = await this.userModel.findOne({ email });
-
+  async findByCode(codigo: number): Promise<UsuarioDocument> {
+    const user = await this.userModel.findOne({ codigo });
+    
     if (!user) {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
     }
 
-    this.validateBlockUser(user);
-    this.validateCode(codigo, user);
-    this.validateDtCode(user);
+    await this.validateBlockUser(user);
+    await this.validateCode(codigo, user);
+    await this.validateDtCode(user);
 
-    await this.userModel.findOneAndUpdate({ email }, {
+    await this.userModel.findOneAndUpdate({ email: user.email }, {
       codigo: null,
-      dtCodigo: null
+      dtCodigo: null,
+      tentativasErro: 0
     })
 
     return user;
+  }
+  
+  async updatePhone(email: string, celular: string) {
+    celular = cleanNumber(celular)
+    await this.userModel.findOneAndUpdate(
+      { email },
+      { celular: celular }
+    );
   }
 
   async updateCode(id: string): Promise<UsuarioDocument> {
@@ -66,12 +76,13 @@ export class UsuarioService {
   }
 
   async acceptTerms(userId: string, accepted: boolean) {
+    console.log(userId, accepted)
     if (!accepted) {
       throw new ForbiddenException(MENSAGENS.TERM_REQUIRED);
     }
 
     const user = await this.userModel.findByIdAndUpdate(
-      userId,
+      { _id: userId },
       { acceptedTerms: true, acceptedTermsAt: new Date() },
       { new: true },
     );
@@ -81,13 +92,6 @@ export class UsuarioService {
     }
 
     return { message: MENSAGENS.TERM_SUCCESS };
-  }
-
-
-  private async validateMaxAttemptGenerateCode(user: UsuarioDocument) {
-    if (user?.bloqueadoAte && user.bloqueadoAte > new Date()) {
-      throw new ForbiddenException('Conta temporariamente bloqueada');
-    }
   }
 
   private async validateBlockUser(user: UsuarioDocument) {

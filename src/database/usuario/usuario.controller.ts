@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseInterceptors, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsuarioResponseDto } from './dto/usuario-response.dto';
@@ -9,7 +9,7 @@ import { AcceptTermsDto } from './dto/usuario-accept-term.dto';
 
 @ApiTags('usuario')
 // @Roles(RoleEnum.ADMIN)
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('usuario')
 export class UsuarioController {
   constructor(private usersService: UsuarioService) {}
@@ -38,12 +38,12 @@ export class UsuarioController {
     }));
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('aceiteTermo')
   @ApiBody({ type: AcceptTermsDto })
   @ApiResponse({ status: 200, description: 'Aceite realizado com sucesso' })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
-  async aceiteTermo(@UserId() id: string, @Body() dto: AcceptTermsDto) {
-    return this.usersService.acceptTerms(id, dto.aceito);
+  @HttpCode(HttpStatus.OK)
+  async aceiteTermo(@UserId() userId: string, @Body() dto: AcceptTermsDto) {
+    return this.usersService.acceptTerms(userId, dto.aceite);
   }
 }

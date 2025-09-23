@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: false })
 export class Session extends Document {
   @Prop({ required: true })
-  userId: string;
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   jwtId: string; // JTI do token

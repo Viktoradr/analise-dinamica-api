@@ -26,11 +26,11 @@ export class Usuario {
 
   @Prop({
     unique: true,
-    required: true,
     maxLength: 11,
-    minLength: 10
+    minLength: 10, 
+    default: null
   })
-  celular: number;
+  celular: string;
 
   @Prop({
     type: [String],

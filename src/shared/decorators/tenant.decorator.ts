@@ -6,10 +6,3 @@ export const Tenant = createParamDecorator(
     return req.user.tenantId;
   },
 );
-
-//Exemplo no controller:
-
-// @Get()
-// findAll(@Tenant() tenantId: string) {
-//   return this.ordersService.findAllByTenant(tenantId);
-// }

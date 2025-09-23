@@ -14,7 +14,7 @@ export class CreateUsuarioDto {
 
   @ApiProperty({ example: '21981759457' })
   @IsPhoneNumber()
-  celular: number;
+  celular: string;
 
 @ApiProperty({
     example: [RoleEnum.ADM],
