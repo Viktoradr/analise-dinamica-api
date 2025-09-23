@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EmailModule } from 'src/providers/Email/email.module';
-import { AuthController } from 'src/providers/auth/auth.controller';
-import { JwtStrategy } from 'src/providers/auth/strategies/jwt.strategy';
-import { AuthService } from 'src/providers/auth/auth.service';
+import { LogsModule } from 'src/database/logs/logs.module';
 import { SessionModule } from 'src/database/sessions/session.module';
 import { UsuarioModule } from 'src/database/usuario/usuario.module';
-import { LogsModule } from 'src/database/logs/logs.module';
+import { EmailModule } from '../Email/email.module';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
