@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { RoleEnum } from './../../../shared/enum/perfil.enum';
+import { RoleEnum } from '../../../shared/enum/perfil.enum';
 
 export type UsuarioDocument = Usuario & Document & { _id: Types.ObjectId };
 

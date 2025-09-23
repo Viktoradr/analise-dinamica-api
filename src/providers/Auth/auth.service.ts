@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SessionService } from './../../database/sessions/session.service';
-import { Usuario, UsuarioDocument } from './../../database/usuario/schemas/usuario.schema';
-import { UsuarioService } from './../../database/usuario/usuario.service';
-import { EmailService } from './../../providers/Email/email.service';
+import { SessionService } from '../../database/sessions/session.service';
+import { Usuario, UsuarioDocument } from '../../database/usuario/schemas/usuario.schema';
+import { UsuarioService } from '../../database/usuario/usuario.service';
+import { EmailService } from '../../providers/Email/email.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()

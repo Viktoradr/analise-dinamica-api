@@ -2,8 +2,8 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuario, UsuarioDocument } from './schemas/usuario.schema';
-import { MENSAGENS } from './../../shared/constants/mensagens';
-import { cleanNumber } from './../../shared/functions/util';
+import { MENSAGENS } from '../../shared/constants/mensagens';
+import { cleanNumber } from '../../shared/functions/util';
 
 @Injectable()
 export class UsuarioService {

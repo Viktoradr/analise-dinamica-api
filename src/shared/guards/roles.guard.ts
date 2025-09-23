@@ -1,8 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from './../decorators/roles.decorator';
-import { RoleEnum } from './../enum/perfil.enum';
-import { MENSAGENS } from './../constants/mensagens';
+import { ROLES_KEY } from '../decorators/roles.decorator';
+import { RoleEnum } from '../enum/perfil.enum';
+import { MENSAGENS } from '../constants/mensagens';
 
 //Guard RBAC
 @Injectable()
