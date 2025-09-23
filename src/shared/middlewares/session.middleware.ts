@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction } from "express";
 import { Request, Response } from "express"
-import { SessionService } from "../../database/sessions/session.service";
+import { SessionService } from "@database/sessions/session.service";
 import { MENSAGENS } from "../constants/mensagens";
 
 @Injectable()

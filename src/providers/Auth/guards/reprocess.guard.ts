@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
-import { RoleEnum } from '../../../shared/enum/perfil.enum';
+import { RoleEnum } from '@shared/enum/perfil.enum';
 
 @Injectable()
 export class ReprocessGuard implements CanActivate {
