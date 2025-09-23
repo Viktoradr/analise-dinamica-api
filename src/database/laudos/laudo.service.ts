@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Laudo } from './schemas/laudo.schema'
+import { Laudo } from 'src/database/laudos/schemas/laudo.schema'
 import { AuditLog } from 'src/database/logs/schemas/audit-log.schema';
 import { RoleEnum } from 'src/shared/enum/perfil.enum';
 

@@ -1,7 +1,7 @@
 import { Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/providers/auth/guards/jwt-auth.guard';
 import { ReprocessGuard } from 'src/providers/auth/guards/reprocess.guard';
-import { LaudoService } from './laudo.service';
+import { LaudoService } from 'src/database/laudos/laudo.service';
 
 @Controller('laudos')
 @UseGuards(JwtAuthGuard)

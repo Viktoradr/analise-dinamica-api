@@ -1,10 +1,10 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { NextFunction } from "express";
+import { Request, Response } from "express"
 import { Model } from "mongoose";
 import { Session } from "src/database/sessions/schemas/session.schema";
-import { Request, Response } from "express"
-import { MENSAGENS } from "../constants/mensagens";
+import { MENSAGENS } from "src/shared/constants/mensagens";
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {

@@ -3,8 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { catchError, Observable, tap } from 'rxjs';
 import { AuditLog, AuditLogDocument } from 'src/database/logs/schemas/audit-log.schema';
-import { RoleEnum } from 'src/shared/enum/perfil.enum';
-import { EventEnum } from '../enum/event.enum';
+import { EventEnum } from 'src/shared/enum/event.enum';
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {

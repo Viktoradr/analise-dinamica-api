@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { SessionService } from 'src/database/sessions/session.service';
 import { Usuario, UsuarioDocument } from 'src/database/usuario/schemas/usuario.schema';
 import { UsuarioService } from 'src/database/usuario/usuario.service';
+import { EmailService } from 'src/providers/Email/email.service';
 import { v4 as uuidv4 } from 'uuid';
-import { EmailService } from '../Email/email.service';
 
 @Injectable()
 export class AuthService {

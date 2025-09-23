@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Usuario, UsuarioDocument } from './schemas/usuario.schema';
+import { Usuario, UsuarioDocument } from 'src/database/usuario/schemas/usuario.schema';
 import { MENSAGENS } from 'src/shared/constants/mensagens';
 import { cleanNumber } from 'src/shared/functions/util';
 
