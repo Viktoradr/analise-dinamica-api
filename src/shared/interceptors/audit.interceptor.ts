@@ -1,6 +1,6 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
 import { catchError, Observable, tap } from 'rxjs';
-import { LogsService } from '@database/logs/logs.service';
+import { LogsService } from '@database/auditoria/logs.service';
 import { EventEnum } from '../enum/event.enum';
 
 @Injectable()

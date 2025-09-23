@@ -2,7 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LogsModule } from '@database/logs/logs.module';
+import { LogsModule } from '@database/auditoria/logs.module';
 import { SessionModule } from '@database/sessions/session.module';
 import { UsuarioModule } from '@database/usuario/usuario.module';
 import { AuthModule } from '@providers/auth/auth.module';
