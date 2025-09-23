@@ -1,9 +1,9 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Laudo } from 'src/database/laudos/schemas/laudo.schema'
-import { AuditLog } from 'src/database/logs/schemas/audit-log.schema';
-import { RoleEnum } from 'src/shared/enum/perfil.enum';
+import { Laudo } from './../../database/laudos/schemas/laudo.schema'
+import { AuditLog } from './../../database/logs/schemas/audit-log.schema';
+import { RoleEnum } from './../../shared/enum/perfil.enum';
 
 interface UserJwt {
   sub: string; // userId

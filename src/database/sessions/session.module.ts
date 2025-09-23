@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SessionService } from 'src/database/sessions/session.service';
-import { Session, SessionSchema } from 'src/database/sessions/schemas/session.schema';
+import { SessionService } from './../../database/sessions/session.service';
+import { Session, SessionSchema } from './../../database/sessions/schemas/session.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Session.name, schema: SessionSchema }])],

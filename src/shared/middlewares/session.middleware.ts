@@ -1,8 +1,8 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction } from "express";
 import { Request, Response } from "express"
-import { SessionService } from "src/database/sessions/session.service";
-import { MENSAGENS } from "src/shared/constants/mensagens";
+import { SessionService } from "../../database/sessions/session.service";
+import { MENSAGENS } from "../../shared/constants/mensagens";
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {

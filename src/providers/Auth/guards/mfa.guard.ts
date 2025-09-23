@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
-import { RoleEnum } from 'src/shared/enum/perfil.enum';
+import { RoleEnum } from '../../../shared/enum/perfil.enum';
 
 @Injectable()
 export class MfaGuard implements CanActivate {

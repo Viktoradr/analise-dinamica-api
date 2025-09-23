@@ -2,14 +2,14 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LogsModule } from 'src/database/logs/logs.module';
-import { SessionModule } from 'src/database/sessions/session.module';
-import { UsuarioModule } from 'src/database/usuario/usuario.module';
-import { AuthModule } from 'src/providers/auth/auth.module';
-import { SessionMiddleware } from 'src/shared/middlewares/session.middleware';
-import { AuditInterceptor } from 'src/shared/interceptors/audit.interceptor';
-import { AppController } from 'src/app.controller';
-import { AppService } from 'src/app.service';
+import { LogsModule } from './database/logs/logs.module';
+import { SessionModule } from './database/sessions/session.module';
+import { UsuarioModule } from './database/usuario/usuario.module';
+import { AuthModule } from './providers/auth/auth.module';
+import { SessionMiddleware } from './shared/middlewares/session.middleware';
+import { AuditInterceptor } from './shared/interceptors/audit.interceptor';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
