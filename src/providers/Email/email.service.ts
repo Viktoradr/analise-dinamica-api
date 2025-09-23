@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AUTH_EMAIL_HTML_TEMPLATE } from '../../providers/Email/modelos/auth.template';
+import { AUTH_EMAIL_HTML_TEMPLATE } from './modelos/auth.template';
 import sgMail from '@sendgrid/mail';
 import dotenv from "dotenv";
 dotenv.config();

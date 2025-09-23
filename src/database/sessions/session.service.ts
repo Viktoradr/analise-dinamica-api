@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Session } from './../../database/sessions/schemas/session.schema';
+import { Session } from './schemas/session.schema';
 import { MENSAGENS } from './../../shared/constants/mensagens';
 
 @Injectable()

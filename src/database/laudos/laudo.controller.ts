@@ -11,12 +11,12 @@ export class LaudoController {
   @Post(':id/reprocess')
   @UseGuards(ReprocessGuard)
   requestReprocess(@Param('id') id: string, @Req() req) {
-    return this.service.requestReprocess(id, req.user);
+    return {}; //this.service.requestReprocess(id, req.user);
   }
 
   @Post(':id/reprocess/approve')
   @UseGuards(ReprocessGuard)
   approveReprocess(@Param('id') id: string, @Req() req) {
-    return this.service.approveReprocess(id, req.user);
+    return {}; //this.service.approveReprocess(id, req.user);
   }
 }
