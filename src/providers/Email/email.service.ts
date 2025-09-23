@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import sgMail from '@sendgrid/mail';
 import dotenv from "dotenv";
+import { AUTH_EMAIL_HTML_TEMPLATE } from './modelos/auth.template';
 dotenv.config();
+
 
 @Injectable()
 export class EmailService {
@@ -11,8 +13,22 @@ export class EmailService {
     sgMail.setApiKey(apiKey);
   }
 
-  async enviarEmail(to: string, subject: string, text: string, html?: string) {
+  async enviarEmailLogin(email: string, nomeUsuario: string, codigo: string) {
+    this.enviarEmail(
+        email, 
+        'Código de Autenticação',
+        `Código de Autenticação`,
+        AUTH_EMAIL_HTML_TEMPLATE
+          .replace('[NOME]', nomeUsuario)
+          .replace('[CODIGO]', codigo)
+          .replace('[TIME]', '10')
+      );
+  }
+
+  private async enviarEmail(to: string, subject: string, text: string, html?: string) {
     try {
+
+      //- O código de login deve ser entregue em até 5 minutos após a solicitação.
 
       const fromEmail = process.env.SENDGRID_FROM_EMAIL;
       if (!fromEmail) {

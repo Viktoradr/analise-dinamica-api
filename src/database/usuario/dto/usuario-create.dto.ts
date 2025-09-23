@@ -1,19 +1,28 @@
-import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsPhoneNumber, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PerfilEnum } from '../../../shared/enum/perfil.enum';
+import { RoleEnum } from '../../../shared/enum/perfil.enum';
 
 export class CreateUsuarioDto {
   @ApiProperty({ example: 'Victor Alves' })
   @IsString()
   @MinLength(2)
-  name: string;
+  nome: string;
 
   @ApiProperty({ example: 'victor.adrodrigues@outlook.com.br' })
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'user', enum: [PerfilEnum.ADMIN, PerfilEnum.USER, PerfilEnum.BACKOFFICE], required: false })
-  @IsEnum([PerfilEnum.ADMIN, PerfilEnum.USER, PerfilEnum.BACKOFFICE])
-  @IsOptional()
-  perfil?: string;
+  @ApiProperty({ example: '21981759457' })
+  @IsPhoneNumber()
+  celular: number;
+
+@ApiProperty({
+    example: [RoleEnum.ADM],
+    enum: RoleEnum,
+    isArray: true,
+    required: false,
+    description: 'Papéis atribuídos ao usuário',
+  })
+  @IsEnum(RoleEnum, { each: true })
+  roles: RoleEnum[];
 }

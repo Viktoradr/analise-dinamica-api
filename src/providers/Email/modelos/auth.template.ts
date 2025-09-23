@@ -32,7 +32,7 @@ export const AUTH_EMAIL_HTML_TEMPLATE = `<!DOCTYPE html>
 
           <tr>
             <td style="text-align:center; font-size:14px; color:#555; padding-top:10px; padding-bottom:20px;">
-              Este código expira em 10 minutos.<br>
+              Este código expira em [TIME] minutos.<br>
               Se você não solicitou este código, ignore este e-mail.
             </td>
           </tr>

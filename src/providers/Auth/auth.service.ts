@@ -1,69 +1,64 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsuarioDocument } from 'src/database/usuario/schemas/usuario.schema';
+import { SessionService } from 'src/database/sessions/session.service';
+import { Usuario, UsuarioDocument } from 'src/database/usuario/schemas/usuario.schema';
 import { UsuarioService } from 'src/database/usuario/usuario.service';
+import { v4 as uuidv4 } from 'uuid';
+import { EmailService } from '../Email/email.service';
 
 @Injectable()
 export class AuthService {
 
   constructor(
     private jwtService: JwtService,
-    private userService: UsuarioService
+    private userService: UsuarioService,
+    private sessionService: SessionService,
+    private emailService: EmailService
   ) {}
 
-  async validateUser(email: string): Promise<any> {
-    return await this.userService.findByEmail(email);
+  async generateCode(id: string): Promise<Usuario> {
+    return await this.userService.updateCode(id);
   }
 
-  async gerarCodigo(id: string): Promise<any> {
-    return await this.userService.atualizarCodigo(id);
+  async validateUserByEmail(email: string): Promise<UsuarioDocument> {
+    const user = await this.userService.findByEmail(email);
+
+    this.sessionService.validateMaxAccessSessionInDeterminateTime(user._id.toString())
+
+    const userCode = await this.generateCode(user._id.toString());
+
+    this.emailService.enviarEmailLogin(
+      email,
+      user.nome,
+      userCode.codigo.toString());
+
+    return user;
   }
 
-  async validarEmailECodigo(email: string, codigo: number): Promise<any> {
-    const user = await this.userService.findByEmailECodigo(email, codigo);
+  async validateEmailAndCode(email: string, codigo: number): Promise<any> {
+    const user = await this.userService.findByEmailAndCode(email, codigo);
+
+    const jwtId = uuidv4(); // ID único do token 
 
     const payload = { 
-      email: user.email, 
       sub: user.id,
-      name: user.name, 
-      perfil: user.perfil 
+      //tenantId: user.tenantId,
+      roles: user.roles,
+      name: user.nome, 
+      jti: jwtId
     };
 
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    //     const tempToken = this.jwtService.sign(
+//       { sub: user.id, roles: user.roles, tenantId: user.tenantId, step: 'mfa' },
+//       { expiresIn: '5m' },
+//     );
+
+    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+
+    // Cria sessão no banco
+    await this.sessionService.createSession(user.id, jwtId);
+
+    //return { tempToken, mfaRequired: true };
+    return { access_token: token };
   }
-  
-
-  // private async getToken(user: any, empresas?: any[]) {
-  //   let payload = { 
-  //     sub: user._id.toString(), 
-  //     username: user.nome
-  //   };
-
-  //   if (empresas) payload['empresas'] = empresas
-
-  //   return {
-  //     access_token: await this.jwtService.signAsync(payload),
-  //   };
-  // }
-
-  // private async validUser(user: Usuario, senha: string) {
-  //   if (user) {
-  //     await this.comparePasswords(senha, user?.senha_ds).then((equals) => {
-  //       if (!equals) throw new UnauthorizedException();
-  //     })
-  //   }
-  //   else throw new NotFoundException();
-  // }
-
-  // private async encryptPassword(password: string): Promise<string> {
-  //   const salt = await bcrypt.genSalt(this.saltRounds); // Gera o salt
-  //   const hashedPassword = await bcrypt.hash(password, salt); // Criptografa a senha
-  //   return hashedPassword;
-  // }
-
-  // private async comparePasswords(plainPassword: string, hashedPassword: string): Promise<boolean> {
-  //   return bcrypt.compare(plainPassword, hashedPassword); // Compara senha em texto puro com a senha criptografada
-  // }
 }

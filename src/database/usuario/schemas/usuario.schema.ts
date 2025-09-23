@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { PerfilEnum } from '../../../shared/enum/perfil.enum';
+import { RoleEnum } from '../../../shared/enum/perfil.enum';
 
 export type UsuarioDocument = Usuario & Document & { _id: Types.ObjectId };
 
@@ -13,7 +13,7 @@ export class Usuario {
     minlength: 2, 
     maxlength: 100 
   })
-  name: string;
+  nome: string;
 
   @Prop({
     unique: true,
@@ -25,10 +25,19 @@ export class Usuario {
   email: string;
 
   @Prop({
-    enum: [PerfilEnum.ADMIN, PerfilEnum.USER, PerfilEnum.BACKOFFICE],
-    default: PerfilEnum.USER,
+    unique: true,
+    required: true,
+    maxLength: 11,
+    minLength: 10
   })
-  perfil: string;
+  celular: number;
+
+  @Prop({
+    type: [String],
+    enum: RoleEnum,
+    default: [RoleEnum.ADM], 
+  })
+  roles: RoleEnum[];
 
   @Prop({ 
     default: null,
@@ -37,8 +46,29 @@ export class Usuario {
   })
   codigo: number;
 
-  @Prop({ default: null })
+  @Prop({ 
+    type: Date,
+    default: null 
+  })
   dtCodigo: Date;
+
+  @Prop({ default: 0 })
+  tentativasErro: number;
+
+  @Prop({ type: Date })
+  ultimaTentativaErro: Date;
+
+  @Prop({ type: Date })
+  bloqueadoAte: Date;
+  
+  @Prop({ default: false })
+  aceiteTermo: boolean;
+
+  @Prop({ type: Date, default: null })
+  aceiteTermoAt: Date;
+
+  @Prop({ type: String, default: 'v1.0' })
+  termoVersao: string;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);
@@ -58,9 +88,6 @@ UsuarioSchema.virtual('id').get(function (this: UsuarioDocument) {
 UsuarioSchema.set('toJSON', { virtuals: true });
 UsuarioSchema.set('toObject', { virtuals: true });
 
-UsuarioSchema.virtual('isAdmin').get(function () {
-  return this.perfil === 'admin';
-});
 
 UsuarioSchema.pre<UsuarioDocument>('save', function (next) {
   if (this.isModified('codigo')) {

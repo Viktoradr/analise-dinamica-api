@@ -1,20 +1,19 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, NotFoundException, Param, Patch } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { Body, Controller, Post, HttpCode, HttpStatus, Param, Patch, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { LoginCodigoDto, LoginDto } from './dto/login.dto';
-import { EmailService } from '../Email/email.service';
-import { AUTH_EMAIL_HTML_TEMPLATE } from '../Email/modelos/auth.template';
 import { UsuarioResponseDto } from 'src/database/usuario/dto/usuario-response.dto';
+import { LoginDto } from 'src/providers/auth/dto/login.dto';
+import { LoginCodigoDto } from 'src/providers/auth/dto/login-codigo.dto';
+import { AuthService } from './auth.service';
+import { UserId } from 'src/shared/decorators/userid.decorator';
 
-@ApiTags('auth') // agrupa no Swagger
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
-    private emailService: EmailService
+    private authService: AuthService
   ) { }
   
-  @Post('ValidarEmail')
+  @Post('validarEmail')
   @ApiOperation({ summary: 'Validação do login via e-mail' })
   @ApiResponse({ status: 200, description: 'E-mail validado com sucesso.' })
   @ApiResponse({ status: 401, description: 'E-mail não cadastrado' })
@@ -23,28 +22,11 @@ export class AuthController {
     type: LoginDto,
     description: "Validação do login via e-mail"
   })
-  async validarEmail(@Body() body: LoginDto) {
-    const user = await this.authService.validateUser(body.email);
-
-    if (!user) { 
-      throw new NotFoundException('E-mail não cadastrado');
-    }
-
-    const userCode = await this.authService
-      .gerarCodigo(user.id?.toString() ?? user._id.toString());
-
-    this.emailService.enviarEmail(
-      body.email, 
-      'Código de Autenticação',
-      `Código de Autenticação`,
-      AUTH_EMAIL_HTML_TEMPLATE
-        .replace('[NOME]', user.name)
-        .replace('[CODIGO]', userCode.codigo)
-    );
+  async validateEmail(@Body() body: LoginDto) {
+    await this.authService.validateUserByEmail(body.email);
  
     return { 
-      id: user.id ?? user._id,
-      message: 'E-mail validado com sucesso.' 
+      message: `Validado`
     };
   }
 
@@ -58,26 +40,16 @@ export class AuthController {
     description: "Login via código"
   })
   async signIn(@Body() body: LoginCodigoDto) {
-    return await this.authService.validarEmailECodigo(body.email, body.codigo);
+    return await this.authService.validateEmailAndCode(body.email, body.codigo);
   }
 
-  @Patch(':id/codigo')
-  @ApiParam({ name: 'id', description: 'ID do usuário' })
+  @Post('reenviarCodigo')
   @ApiBody({ required: false, schema: { type: 'object', additionalProperties: false } })
   @ApiResponse({ status: 200, description: 'Código atualizado com sucesso', type: UsuarioResponseDto })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
-  async atualizarCodigo(@Param('id') id: string) {
-    const userCode = await this.authService.gerarCodigo(id);
+  async atualizarCodigo(@UserId() userId: string) {
+    const userCode = await this.authService.generateCode(userId);
 
-    this.emailService.enviarEmail(
-      userCode.email, 
-      'Código de Autenticação',
-      `Código de Autenticação`,
-      AUTH_EMAIL_HTML_TEMPLATE
-        .replace('[NOME]', userCode.name)
-        .replace('[CODIGO]', userCode.codigo)
-    );
- 
     return { 
       message: `Código reenviado para o e-mail ${userCode.email}`
     };

@@ -1,5 +1,7 @@
-export enum PerfilEnum {
-    ADMIN = 'admin',
-    USER = 'user',
-    BACKOFFICE = 'backoffice'
+export enum RoleEnum {
+    ADM = 'adm',
+    ADM_TOTAL = 'adm_total',
+    CLIENTE = 'cliente',
+    AUDITORIA = 'auditoria',
+    OPERACAO = 'operacao'
 }

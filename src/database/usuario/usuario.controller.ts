@@ -1,14 +1,20 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors, UseGuards } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsuarioResponseDto } from './dto/usuario-response.dto';
 import { CreateUsuarioDto } from './dto/usuario-create.dto';
+import { UserId } from 'src/shared/decorators/userid.decorator';
+import { JwtAuthGuard } from 'src/providers/auth/guards/jwt-auth.guard';
+import { AcceptTermsDto } from './dto/usuario-accept-term.dto';
 
 @ApiTags('usuario')
+// @Roles(RoleEnum.ADMIN)
+// @UseGuards(JwtAuthGuard)
 @Controller('usuario')
 export class UsuarioController {
   constructor(private usersService: UsuarioService) {}
 
+  //exemplo da utilizacao de role @Roles('admin', 'auditor')
   @Post()
   @ApiBody({ type: CreateUsuarioDto })
   @ApiResponse({ status: 201, description: 'Usuário criado com sucesso', type: UsuarioResponseDto })
@@ -19,7 +25,7 @@ export class UsuarioController {
 
   @Get()
   @ApiResponse({ status: 200, description: 'Lista de usuários', type: [UsuarioResponseDto] })
-  async findAll() {
+  async findAllUsers() {
     const usuarios = await this.usersService.findAll();
 
     return usuarios.map((u: any) => ({
@@ -30,5 +36,14 @@ export class UsuarioController {
       codigo: u.codigo,
       dtCodigo: u.dtCodigo
     }));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('aceiteTermo')
+  @ApiBody({ type: AcceptTermsDto })
+  @ApiResponse({ status: 200, description: 'Aceite realizado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
+  async aceiteTermo(@UserId() id: string, @Body() dto: AcceptTermsDto) {
+    return this.usersService.acceptTerms(id, dto.aceito);
   }
 }

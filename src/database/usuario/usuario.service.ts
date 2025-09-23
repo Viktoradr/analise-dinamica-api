@@ -1,46 +1,121 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuario, UsuarioDocument } from './schemas/usuario.schema';
+import { MENSAGENS } from 'src/shared/constants/mensagens';
 
 @Injectable()
 export class UsuarioService {
+
+  validTimeCode: number = 10; //em minutos
+
   constructor(@InjectModel(Usuario.name) private userModel: Model<UsuarioDocument>) {}
 
   async create(data: Partial<Usuario>): Promise<Usuario> {
     const created = await this.userModel.create(data);
-    return created.toJSON(); // já traz `id` por causa do toJSON
+    return created.toJSON();
   }
 
   async findAll(): Promise<Usuario[]> {
     return this.userModel.find().lean({ virtuals: true });
   }
 
-  async findByEmail(email: string): Promise<UsuarioDocument | null> {
-    return await this.userModel.findOne({ email }).lean({ virtuals: true });
-  }
+  async findByEmail(email: string): Promise<UsuarioDocument> {
+    const user = await this.userModel.findOne({ email }).lean({ virtuals: true });
 
-  async findByEmailECodigo(email: string, codigo: number): Promise<UsuarioDocument> {
-    const user = await this.userModel.findOne({ email });
     if (!user) {
-      throw new NotFoundException('Usuário não encontrado!');
-    }
-    
-    if (!user.codigo || user.codigo != codigo) {
-      throw new BadRequestException('Código inválido!');
+      throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
     }
 
-    const agora = new Date().getTime();
-    const expiracao = user.dtCodigo ? user.dtCodigo.getTime() + 1 * 60 * 10000 : 0; // 1 minuto
+    this.validateBlockUser(user);
 
-    if (user.dtCodigo == null || agora > expiracao) {
-      throw new BadRequestException('Código expirado!');
-    }
     return user;
   }
 
-  // Método para gerar código aleatório
-  private async generateCodigoUnico(): Promise<number> {
+  async findByEmailAndCode(email: string, codigo: number): Promise<UsuarioDocument> {
+    const user = await this.userModel.findOne({ email });
+
+    if (!user) {
+      throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
+    }
+
+    this.validateBlockUser(user);
+    this.validateCode(codigo, user);
+    this.validateDtCode(user);
+
+    await this.userModel.findOneAndUpdate({ email }, {
+      codigo: null,
+      dtCodigo: null
+    })
+
+    return user;
+  }
+
+  async updateCode(id: string): Promise<UsuarioDocument> {
+    const user = await this.userModel.findById(id);
+
+    if (!user) {
+      throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
+    }
+
+    user.codigo = await this.generateCodeUnique();
+    user.dtCodigo = new Date();
+
+    await user.save();
+    return user.toJSON();
+  }
+
+  async acceptTerms(userId: string, accepted: boolean) {
+    if (!accepted) {
+      throw new ForbiddenException(MENSAGENS.TERM_REQUIRED);
+    }
+
+    const user = await this.userModel.findByIdAndUpdate(
+      userId,
+      { acceptedTerms: true, acceptedTermsAt: new Date() },
+      { new: true },
+    );
+
+    if (!user) {
+      throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
+    }
+
+    return { message: MENSAGENS.TERM_SUCCESS };
+  }
+
+
+  private async validateMaxAttemptGenerateCode(user: UsuarioDocument) {
+    if (user?.bloqueadoAte && user.bloqueadoAte > new Date()) {
+      throw new ForbiddenException('Conta temporariamente bloqueada');
+    }
+  }
+
+  private async validateBlockUser(user: UsuarioDocument) {
+    if (user?.bloqueadoAte && user.bloqueadoAte > new Date()) {
+      throw new ForbiddenException('Conta temporariamente bloqueada');
+    }
+  }
+
+  private async validateCode(codigo: number, user: UsuarioDocument) {
+    if (!user.codigo || user.codigo != codigo) {
+      await this.registerFailedLogin(user.email, user);
+
+      throw new BadRequestException(MENSAGENS.USER_COD_INVALID_ATTEMPT.replace('{qtdTentativa}', user.tentativasErro.toString()));
+    }
+  }
+
+  private async validateDtCode(user: UsuarioDocument) {
+    const agora = new Date().getTime();
+    const expiracao = user.dtCodigo ? user.dtCodigo.getTime() + this.validTimeCode * 60 * 10000 : 0;
+
+    if (user.dtCodigo == null || agora > expiracao) {
+      await this.registerFailedLogin(user.email, user);
+
+      throw new BadRequestException(MENSAGENS.USER_COD_INVALID_ATTEMPT.replace('{qtdTentativa}', user.tentativasErro.toString()));
+    }
+  }
+
+  private async generateCodeUnique(): Promise<number> {
     let codigo: number;
     let exists: UsuarioDocument | null;
 
@@ -52,17 +127,14 @@ export class UsuarioService {
     return codigo;
   }
 
-  // Atualiza código e dtCodigo de um usuário
-  async atualizarCodigo(id: string): Promise<Usuario> {
-    const usuario = await this.userModel.findById(id);
-    if (!usuario) {
-      throw new NotFoundException('Usuário não encontrado');
-    }
-
-    usuario.codigo = await this.generateCodigoUnico();
-    usuario.dtCodigo = new Date();
-
-    await usuario.save();
-    return usuario.toJSON();
+  private async registerFailedLogin(email: string, user: Usuario) {
+    await this.userModel.findOneAndUpdate(
+      { email },
+      {
+        $inc: { tentativasErro: 1 },
+        ultimaTentativaErro: new Date(),
+        bloqueadoAte: user && user.tentativasErro + 1 >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null
+      }
+    );
   }
 }
