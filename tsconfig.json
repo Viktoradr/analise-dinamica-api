@@ -13,11 +13,11 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@database/*": ["database/*"],
-      "@shared/*": ["shared/*"],
-      "@providers/*": ["providers/*"]
+      "@database/*": ["src/database/*"],
+      "@shared/*": ["src/shared/*"],
+      "@providers/*": ["src/providers/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
