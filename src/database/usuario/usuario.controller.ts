@@ -5,7 +5,7 @@ import { UsuarioResponseDto } from './dto/usuario-response.dto';
 import { CreateUsuarioDto } from './dto/usuario-create.dto';
 import { AcceptTermsDto } from './dto/usuario-accept-term.dto';
 import { UserId } from './../../shared/decorators/userid.decorator';
-import { JwtAuthGuard } from '../../providers/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from './../../providers/auth/guards/jwt-auth.guard';
 
 @ApiTags('usuario')
 // @Roles(RoleEnum.ADMIN)
