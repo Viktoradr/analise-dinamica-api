@@ -46,6 +46,15 @@ export class SessionService {
         }
     }
 
+
+    async findByUserIdAndJti(userId: string, jti: string) {
+        return await this.sessionModel.findOne({
+            userId: userId,
+            //tenantId: user.tenantId,
+            jwtId: jti,
+        });
+    }
+
     async find(jti: string) {
         return await this.sessionModel.findOne({ jwtId: jti });
     }

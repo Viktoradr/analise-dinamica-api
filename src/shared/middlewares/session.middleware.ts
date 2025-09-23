@@ -1,24 +1,18 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
 import { NextFunction } from "express";
 import { Request, Response } from "express"
-import { Model } from "mongoose";
-import { Session } from "src/database/sessions/schemas/session.schema";
+import { SessionService } from "src/database/sessions/session.service";
 import { MENSAGENS } from "src/shared/constants/mensagens";
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {
-  constructor(@InjectModel(Session.name) private sessionModel: Model<Session>) {}
+  constructor(private service: SessionService) { }
 
   async use(req: Request & { user?: any }, res: Response, next: NextFunction) {
     const user = req.user;
     if (!user?.sub || !user?.jti || !user?.tenantId) return next();
 
-    const session = await this.sessionModel.findOne({
-      userId: user.sub,
-      //tenantId: user.tenantId,
-      jwtId: user.jti,
-    });
+    const session = await this.service.findByUserIdAndJti(user.sub, user.jti);
 
     if (!session) return res.status(401).json({ message: MENSAGENS.SESSION_INVALID });
 
