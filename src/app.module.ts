@@ -8,8 +8,8 @@ import { UsuarioModule } from 'src/database/usuario/usuario.module';
 import { AuthModule } from 'src/providers/auth/auth.module';
 import { SessionMiddleware } from 'src/shared/middlewares/session.middleware';
 import { AuditInterceptor } from 'src/shared/interceptors/audit.interceptor';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from 'src/app.controller';
+import { AppService } from 'src/app.service';
 
 @Module({
   imports: [
