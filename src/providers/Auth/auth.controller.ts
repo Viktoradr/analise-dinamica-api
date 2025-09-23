@@ -44,11 +44,14 @@ export class AuthController {
   }
 
   @Post('reenviarCodigo')
-  @ApiBody({ required: false, schema: { type: 'object', additionalProperties: false } })
   @ApiResponse({ status: 200, description: 'Código atualizado com sucesso', type: UsuarioResponseDto })
   @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
-  async atualizarCodigo(@UserId() userId: string) {
-    const userCode = await this.authService.generateCode(userId);
+   @ApiBody({
+    type: LoginDto,
+    description: "Validação do login via e-mail"
+  })
+  async atualizarCodigo(@Body() body: LoginDto) {
+    const userCode = await this.authService.validateUserByEmail(body.email);
 
     return { 
       message: `Código reenviado para o e-mail ${userCode.email}`
