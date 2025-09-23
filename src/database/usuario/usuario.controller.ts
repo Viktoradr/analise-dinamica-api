@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { UsuarioService } from './usuario.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UsuarioResponseDto } from './../../database/usuario/dto/usuario-response.dto';
-import { CreateUsuarioDto } from './../../database/usuario/dto/usuario-create.dto';
+import { UsuarioService } from './usuario.service';
+import { UsuarioResponseDto } from './dto/usuario-response.dto';
+import { CreateUsuarioDto } from './dto/usuario-create.dto';
+import { AcceptTermsDto } from './dto/usuario-accept-term.dto';
 import { UserId } from './../../shared/decorators/userid.decorator';
 import { JwtAuthGuard } from './../../providers/auth/guards/jwt-auth.guard';
-import { AcceptTermsDto } from './../../database/usuario/dto/usuario-accept-term.dto';
 
 @ApiTags('usuario')
 // @Roles(RoleEnum.ADMIN)
