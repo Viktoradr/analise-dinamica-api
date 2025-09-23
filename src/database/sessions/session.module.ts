@@ -6,6 +6,6 @@ import { Session, SessionSchema } from 'src/database/sessions/schemas/session.sc
 @Module({
   imports: [MongooseModule.forFeature([{ name: Session.name, schema: SessionSchema }])],
   providers: [SessionService],
-  exports: [SessionService, MongooseModule],
+  exports: [SessionService],
 })
 export class SessionModule {}
