@@ -91,7 +91,7 @@ export class AppService {
       width:14px;
       height:14px;
       border-radius:50%;
-      background: #f97316; /* default = pending (orange) */
+      background: #f97316;
       box-shadow:0 6px 18px rgba(249,115,22,0.18);
     }
     .status-ok{ background: #10b981; box-shadow:0 6px 18px rgba(16,185,129,0.16); }

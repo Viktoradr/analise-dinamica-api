@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { EventEnum } from '@shared/enum/event.enum';
+import { EventEnum } from '../../../enum/event.enum';
 
 export type AuditLogDocument = AuditLog & Document & { _id: Types.ObjectId };
 

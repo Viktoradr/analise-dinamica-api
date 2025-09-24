@@ -1,11 +1,11 @@
 import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UsuarioResponseDto } from '@database/usuario/dto/usuario-response.dto';
-import { LoginDto } from '@providers/auth/dto/login.dto';
-import { LoginCodigoDto } from '@providers/auth/dto/login-codigo.dto';
-import { UserId } from '@shared/decorators/userid.decorator';
-import { Jti } from '@shared/decorators/jti.decorator';
 import { AuthService } from './auth.service';
+import { UsuarioResponseDto } from '../../database/usuario/dto/usuario-response.dto';
+import { Jti } from '../../decorators/jti.decorator';
+import { UserId } from '../../decorators/userid.decorator';
+import { LoginCodigoDto } from './dto/login-codigo.dto';
+import { LoginDto } from './dto/login.dto';
 
 @ApiTags('auth')
 @Controller('auth')

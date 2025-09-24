@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { EventEnum } from '../../enum/event.enum';
 import { AuditLog, AuditLogDocument } from './schemas/audit-log.schema';
-import { EventEnum } from '@shared/enum/event.enum';
 
 @Injectable()
 export class LogsService {
@@ -10,15 +10,12 @@ export class LogsService {
     @InjectModel(AuditLog.name) private auditModel: Model<AuditLogDocument>
   ) {}
 
-  /**
-   * Cria um log imutável (WORM).
-   * Nenhuma operação de update/delete deve existir aqui.
-   */
+
   async createLog(entry: {
     userId: string;
     // tenantId: string;
     action: string;
-    eventType?: EventEnum;
+    eventType: EventEnum;
     resource: string;
     details?: Record<string, any>;
   }): Promise<void> {
@@ -28,9 +25,6 @@ export class LogsService {
     });
   }
 
-  /**
-   * Busca logs (uso restrito: Auditoria, Adm Total).
-   */
   async findLogs(filter: any = {}, limit = 100): Promise<AuditLog[]> {
     return this.auditModel
       .find(filter)
@@ -38,11 +32,7 @@ export class LogsService {
       .limit(limit)
       .lean();
   }
-
-  /**
-   * Exportação de logs (read-only).
-   * Exemplo: CSV, JSON, etc.
-   */
+  
   async exportLogs(filter: any = {}): Promise<any[]> {
     return this.auditModel.find(filter).lean();
   }
