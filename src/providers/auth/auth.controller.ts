@@ -15,14 +15,6 @@ export class AuthController {
   ) { }
   
   @Post('validarEmail')
-  @ApiOperation({ summary: 'Validação do login via e-mail' })
-  @ApiResponse({ status: 200, description: 'E-mail validado com sucesso.' })
-  @ApiResponse({ status: 401, description: 'E-mail não cadastrado' })
-  @HttpCode(HttpStatus.OK)
-  @ApiBody({
-    type: LoginDto,
-    description: "Validação do login via e-mail"
-  })
   async validateEmail(@Body() body: LoginDto) {
     await this.authService.validateUserByEmail(body.email);
 
@@ -36,25 +28,11 @@ export class AuthController {
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'Login via código' })
-  @ApiResponse({ status: 200, description: 'Código validado com sucesso.' })
-  @ApiResponse({ status: 401, description: 'Credenciais inválidas' })
-  @HttpCode(HttpStatus.OK)
-  @ApiBody({
-    type: LoginCodigoDto,
-    description: "Login via código"
-  })
   async signIn(@Body() body: LoginCodigoDto) {
     return await this.authService.validateEmailAndCode(body.codigo);
   }
 
   @Post('reenviarCodigo')
-  @ApiResponse({ status: 200, description: 'Código atualizado com sucesso', type: UsuarioResponseDto })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
-   @ApiBody({
-    type: LoginDto,
-    description: "Validação do login via e-mail"
-  })
   async atualizarCodigo(@Body() body: LoginDto) {
     const userCode = await this.authService.validateUserByEmail(body.email);
 

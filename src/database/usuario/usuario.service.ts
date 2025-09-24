@@ -76,7 +76,6 @@ export class UsuarioService {
   }
 
   async acceptTerms(userId: string, accepted: boolean) {
-    console.log(userId, accepted)
     if (!accepted) {
       throw new ForbiddenException(MENSAGENS.TERM_REQUIRED);
     }

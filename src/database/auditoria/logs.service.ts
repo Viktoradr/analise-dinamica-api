@@ -15,7 +15,7 @@ export class LogsService {
     userId: string;
     // tenantId: string;
     action: string;
-    eventType: EventEnum;
+    event: EventEnum;
     resource: string;
     details?: Record<string, any>;
   }): Promise<void> {

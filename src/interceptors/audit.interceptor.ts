@@ -19,7 +19,7 @@ export class AuditInterceptor implements NestInterceptor {
           userId: user?.id,
           // tenantId: user?.tenantId,
           action: `${method} ${originalUrl}`,
-          eventType: EventEnum.AUDIT,
+          event: EventEnum.AUDIT,
           resource: params?.id ? `Resource:${params.id}` : originalUrl,
           details: {
             body,
@@ -57,7 +57,7 @@ export class AuditInterceptor implements NestInterceptor {
           userId: user?.userId,
           // tenantId: user?.tenantId,
           action: `${method} ${originalUrl}`,
-          eventType: EventEnum.ERROR,
+          event: EventEnum.ERROR,
           resource: func,
           details: { success: false, error: err.message, stack: err.stack },
         });
