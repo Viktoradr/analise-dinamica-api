@@ -10,6 +10,8 @@ import { UsuarioModule } from './database/usuario/usuario.module';
 import { AuthModule } from './providers/auth/auth.module';
 import { AuditInterceptor } from './interceptors/audit.interceptor';
 import { SessionMiddleware } from './middlewares/session.middleware';
+import { PerfilModule } from './database/perfil/perfil.module';
+import { TipoClienteModule } from './database/tipo-cliente/tipo-cliente.module';
 
 @Module({
   imports: [
@@ -25,7 +27,9 @@ import { SessionMiddleware } from './middlewares/session.middleware';
     UsuarioModule,
     //LaudoModule,
     LogsModule,
-    SessionModule
+    SessionModule,
+    PerfilModule,
+    TipoClienteModule
   ],
   controllers: [AppController],
   providers: [

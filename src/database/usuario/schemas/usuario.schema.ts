@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { RoleEnum } from '../../../enum/perfil.enum';
+import { TipoCliente, TipoClienteSchema } from '../../tipo-cliente/schemas/tipo-cliente.schema';
 
 export type UsuarioDocument = Usuario & Document & { _id: Types.ObjectId };
 
@@ -25,9 +26,6 @@ export class Usuario {
   email: string;
 
   @Prop({
-    unique: true,
-    maxLength: 11,
-    minLength: 10, 
     default: null
   })
   celular: string;
@@ -69,6 +67,9 @@ export class Usuario {
 
   @Prop({ type: String, default: 'v1.0' })
   termoVersao: string;
+
+  @Prop({ type: TipoClienteSchema, default: null })
+  tipoCliente: TipoCliente;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);

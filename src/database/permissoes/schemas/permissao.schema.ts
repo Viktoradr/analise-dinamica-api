@@ -1,18 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type UsuarioDocument = Permissao & Document & { _id: Types.ObjectId };
+export type PermissaoDocument = Permissao & Document & { _id: Types.ObjectId };
 
-@Schema({ timestamps: true })
+@Schema({ collection: 'permissoes',  timestamps: true })
 export class Permissao extends Document {
   @Prop({ required: true })
-  perfil: string;
+  nome: string;
 
   @Prop({ required: true })
   descricao: string;
-
-  @Prop({ type: Object })
-  acoes: Record<string, any>;
 }
 
 export const PermissaoSchema = SchemaFactory.createForClass(Permissao);

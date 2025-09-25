@@ -1,25 +1,29 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, HydratedDocument, Types } from 'mongoose';
 import { EventEnum } from '../../../enum/event.enum';
 
-export type AuditLogDocument = AuditLog & Document & { _id: Types.ObjectId };
+export type AuditLogDocument = HydratedDocument<AuditLog> & { _id: Types.ObjectId };
 
 @Schema({ timestamps: true })
 export class AuditLog extends Document {
-  @Prop()
+
+  @Prop({ required: true })
+  event: EventEnum;
+
+  @Prop({ default: null })
   userId: string;
 
-  // @Prop({ required: true })
-  // tenantId: string;
+  @Prop({ default: null })
+  tenantId: string;
 
   @Prop({ required: true })
   action: string;
 
   @Prop({ required: true })
-  event: EventEnum;
+  method: string;
 
   @Prop({ required: true })
-  resource: string;
+  message: string;
 
   @Prop({ type: Object })
   details: Record<string, any>;

@@ -16,11 +16,12 @@ export class AuditInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(async (result) => {
          await this.service.createLog({
+           event: EventEnum.AUDIT,
           userId: user?.id,
-          // tenantId: user?.tenantId,
+          tenantId: user?.tenantId,
           action: `${method} ${originalUrl}`,
-          event: EventEnum.AUDIT,
-          resource: params?.id ? `Resource:${params.id}` : originalUrl,
+          method: params?.id ? `Resource:${params.id}` : originalUrl,
+          message: 'sem informação',
           details: {
             body,
             query,
@@ -47,19 +48,19 @@ export class AuditInterceptor implements NestInterceptor {
         // }
       }),
       catchError(async (err) => {
-        // Log de erro
         const stackLines = err.stack?.split('\n') || [];
-        const origin = stackLines[1]?.trim(); // a primeira linha útil geralmente indica a função que lançou
+        const origin = stackLines[1]?.trim();
         const match = origin.match(/at\s([^\s]+)/);
         const func = match ? match[1] : originalUrl;
         
         await this.service.createLog({
-          userId: user?.userId,
-          // tenantId: user?.tenantId,
-          action: `${method} ${originalUrl}`,
           event: EventEnum.ERROR,
-          resource: func,
-          details: { success: false, error: err.message, stack: err.stack },
+          userId: user?.userId,
+          tenantId: user?.tenantId,
+          action: `${method} ${originalUrl}`,
+          method: func,
+          message: err.message,
+          details: { stack: err.stack },
         });
 
         throw err; // Re-lança a exceção para o Nest tratar normalmente

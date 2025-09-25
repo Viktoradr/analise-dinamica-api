@@ -80,15 +80,16 @@ export class UsuarioService {
       throw new ForbiddenException(MENSAGENS.TERM_REQUIRED);
     }
 
-    const user = await this.userModel.findByIdAndUpdate(
-      { _id: userId },
-      { acceptedTerms: true, acceptedTermsAt: new Date() },
-      { new: true },
-    );
+    const user = await this.userModel.findById(userId);
 
     if (!user) {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
     }
+
+    user.aceiteTermo = accepted;
+    user.aceiteTermoAt = new Date();
+
+    await user.save();
 
     return { message: MENSAGENS.TERM_SUCCESS };
   }

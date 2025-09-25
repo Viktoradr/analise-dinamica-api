@@ -12,11 +12,12 @@ export class LogsService {
 
 
   async createLog(entry: {
-    userId: string;
-    // tenantId: string;
-    action: string;
     event: EventEnum;
-    resource: string;
+    userId?: string;
+    tenantId?: string;
+    action: string;
+    method: string;
+    message: string;
     details?: Record<string, any>;
   }): Promise<void> {
     await this.auditModel.create({
