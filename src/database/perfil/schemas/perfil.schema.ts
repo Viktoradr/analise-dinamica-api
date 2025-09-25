@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Types } from 'mongoose';
-import { Permissao, PermissaoSchema } from 'src/database/permissoes/schemas/permissao.schema';
-import { Restricoes, RestricoesSchema } from 'src/database/restricoes/schemas/restricoes.schema';
+import { Permissao, PermissaoSchema } from '../../permissoes/schemas/permissao.schema';
+import { Restricoes, RestricoesSchema } from '../../restricoes/schemas/restricoes.schema';
 
 export type PerfilDocument = HydratedDocument<Perfil> & { _id: Types.ObjectId };
 
