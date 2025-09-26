@@ -6,7 +6,7 @@ dotenv.config();
 
 
 @Injectable()
-export class EmailService {
+export class EmailSendGridService {
   constructor() {
     const apiKey = process.env.SENDGRID_API_KEY;
     if (!apiKey) throw new Error('SENDGRID_API_KEY não definido');

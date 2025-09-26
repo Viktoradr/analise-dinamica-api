@@ -33,7 +33,7 @@ export class EmailGunService {
             username: "api",
             key: apiKey,
             // When you have an EU-domain, you must specify the endpoint:
-            url: "https://api.eu.mailgun.net"
+            url: "analise-dinamica-api.vercel.app"
         });
         try {
             const result = await mg.messages.create(

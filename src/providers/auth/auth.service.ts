@@ -6,6 +6,7 @@ import { UsuarioService } from '../../database/usuario/usuario.service';
 import { v4 as uuidv4 } from 'uuid';
 // import { EmailService } from '../email/email.service';
 import { EmailGunService } from '../email/email-mailgun.service';
+import { EmailSendGridService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,8 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UsuarioService,
     private sessionService: SessionService,
-    private emailService: EmailGunService
+    private emailMGService: EmailGunService,
+    private emailSGService: EmailSendGridService
   ) {}
 
   async generateCode(id: string): Promise<Usuario> {
@@ -32,7 +34,11 @@ export class AuthService {
 
     const userCode = await this.generateCode(user._id.toString());
 
-    this.emailService.enviarEmailLogin(
+    this.emailMGService.enviarEmailLogin(
+      email,
+      user.nome,
+      userCode.codigo.toString());
+    this.emailSGService.enviarEmailLogin(
       email,
       user.nome,
       userCode.codigo.toString());
