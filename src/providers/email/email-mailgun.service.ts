@@ -33,12 +33,12 @@ export class EmailGunService {
             username: "api",
             key: apiKey,
             // When you have an EU-domain, you must specify the endpoint:
-            url: "analise-dinamica-api.vercel.app"
+            url: "https://analise-dinamica-api.vercel.app"
         });
         try {
-            const result = await mg.messages.create(
+            await mg.messages.create(
                 domain, {
-                from: `Suporte <no-reply@${process.env.MAILGUN_DOMAIN}>`,
+                from: `Suporte <no-reply@${domain}>`,
                 to,
                 subject,
                 html,
@@ -47,7 +47,6 @@ export class EmailGunService {
 
             return { success: true };
         } catch (error) {
-            console.error('Erro ao enviar e-mail:', error);
             return { success: false, error };
         }
     }

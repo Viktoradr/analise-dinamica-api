@@ -34,14 +34,19 @@ export class AuthService {
 
     const userCode = await this.generateCode(user._id.toString());
 
+   try {
     this.emailMGService.enviarEmailLogin(
       email,
       user.nome,
       userCode.codigo.toString());
-    this.emailSGService.enviarEmailLogin(
+   }catch(Exception) {}
+
+   try {
+     this.emailSGService.enviarEmailLogin(
       email,
       user.nome,
       userCode.codigo.toString());
+   }catch(Exception) {}
 
     return user;
   }

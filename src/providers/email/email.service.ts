@@ -27,26 +27,23 @@ export class EmailSendGridService {
 
   private async enviarEmail(to: string, subject: string, text: string, html?: string) {
     try {
-
-      //- O código de login deve ser entregue em até 5 minutos após a solicitação.
-
       const fromEmail = process.env.SENDGRID_FROM_EMAIL;
+      
       if (!fromEmail) {
         throw new Error('SENDGRID_FROM_EMAIL não está definido');
       }
 
-      const msg = {
+      await sgMail.send({
         to,
         from: fromEmail,
         subject,
         text,
         html
-      };
+      });
 
-      await sgMail.send(msg);
       return { success: true };
+
     } catch (error) {
-      console.error('Erro ao enviar e-mail:', error);
       return { success: false, error };
     }
   }
