@@ -4,9 +4,7 @@ import { SessionService } from '../../database/sessions/session.service';
 import { Usuario, UsuarioDocument } from '../../database/usuario/schemas/usuario.schema';
 import { UsuarioService } from '../../database/usuario/usuario.service';
 import { v4 as uuidv4 } from 'uuid';
-// import { EmailService } from '../email/email.service';
-import { EmailGunService } from '../email/email-mailgun.service';
-import { EmailSendGridService } from '../email/email.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +13,7 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UsuarioService,
     private sessionService: SessionService,
-    private emailMGService: EmailGunService,
-    private emailSGService: EmailSendGridService
+    private emailService: EmailService
   ) {}
 
   async generateCode(id: string): Promise<Usuario> {
@@ -34,19 +31,10 @@ export class AuthService {
 
     const userCode = await this.generateCode(user._id.toString());
 
-   try {
-    this.emailMGService.enviarEmailLogin(
+   this.emailService.enviarEmailLogin(
       email,
       user.nome,
       userCode.codigo.toString());
-   }catch(Exception) {}
-
-   try {
-     this.emailSGService.enviarEmailLogin(
-      email,
-      user.nome,
-      userCode.codigo.toString());
-   }catch(Exception) {}
 
     return user;
   }
