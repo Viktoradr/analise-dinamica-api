@@ -12,6 +12,7 @@ async function bootstrap() {
     'https://analise-dinamica.vercel.app'
   ];
 
+  //app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     origin: allowedOrigins
   });
