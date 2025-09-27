@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, Req } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { UsuarioResponseDto } from '../../database/usuario/dto/usuario-response.dto';
@@ -6,12 +6,17 @@ import { Jti } from '../../decorators/jti.decorator';
 import { UserId } from '../../decorators/userid.decorator';
 import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { LoginDto } from './dto/login.dto';
+import { LogsService } from '../../database/auditoria/logs.service';
+import { ClassMethodName } from '../../decorators/method-logger.decorator';
+import { EventEnum } from 'src/enum/event.enum';
+import { MENSAGENS } from 'src/constants/mensagens';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private logService: LogsService
   ) { }
   
   @Post('validarEmail')
@@ -28,8 +33,20 @@ export class AuthController {
   }
 
   @Post('login')
-  async signIn(@Body() body: LoginCodigoDto) {
-    return await this.authService.validateEmailAndCode(body.codigo);
+  async signIn(@Req() req: Request, @ClassMethodName() fullName: string, @Body() body: LoginCodigoDto) {
+    const user = await this.authService.validateEmailAndCode(body.codigo);
+
+    await this.logService.createLog({
+      event: EventEnum.INFO,
+      userId: user?.id,
+      tenantId: user?.tenantId,
+      action: `${req.method} ${req.url}`,
+      method: fullName,
+      message: MENSAGENS.ACCESS_SUCCESS,
+      details: { }
+    })
+    
+    return user;
   }
 
   @Post('reenviarCodigo')

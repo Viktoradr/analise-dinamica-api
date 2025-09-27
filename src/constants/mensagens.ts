@@ -6,6 +6,7 @@ export const MENSAGENS = {
     SESSION_INVALID: 'Sessão inválida',
     SESSION_ALERT_EXPIRED: 'Sua sessão expira em 5 minutos',
     SESSION_EXPIRED: 'Sessão expirada por inatividade',
+    ACCESS_SUCCESS: 'Acesso realizado com sucesso',
     ACCESS_ROLE: 'Acesso negado.',
     USER_NO_ROLE: 'Usuário sem role definido.',
     TERM_REQUIRED: 'O aceite dos Termos de uso é obrigatório',

@@ -33,6 +33,14 @@ export class SessionService {
         });
     }
 
+    async controleSession() {
+        /*
+        Controle de sessão
+- Trial / PF → login único. Novo login encerra sessão anterior.
+- PJ / Enterprise → múltiplos logins conforme plano. Excedente encerra sessões mais antigas.
+        */
+    }
+
     async validateMaxAccessSessionInDeterminateTime(userId: string) {
         const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 

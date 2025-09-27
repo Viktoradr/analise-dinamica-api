@@ -31,6 +31,11 @@ export class Usuario {
   celular: string;
 
   @Prop({
+    default: null
+  })
+  tenantId: string;
+
+  @Prop({
     type: [String],
     enum: RoleEnum,
     default: [RoleEnum.ADM], 

@@ -5,6 +5,8 @@ import { Usuario, UsuarioDocument } from '../../database/usuario/schemas/usuario
 import { UsuarioService } from '../../database/usuario/usuario.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EmailService } from '../email/email.service';
+import { LogsService } from '../../database/auditoria/logs.service';
+import { EventEnum } from '../../enum/event.enum';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +15,8 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UsuarioService,
     private sessionService: SessionService,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private logService: LogsService
   ) {}
 
   async generateCode(id: string): Promise<Usuario> {
@@ -46,7 +49,7 @@ export class AuthService {
 
     const payload = { 
       sub: user.id,
-      //tenantId: user.tenantId,
+      tenantId: user.tenantId,
       roles: user.roles,
       nome: user.nome, 
       aceite: user.aceiteTermo,

@@ -6,6 +6,16 @@ interface UserJwt {
   roles: string[];
 }
 
+/*
+Controle de limites
+Cada plano deve ter contador de laudos (qtde_laudos) e prazo de validade (dt_validade).
+Ações:
+- qtde_laudos >= limite → bloquear geração, redirecionar para /upgrade.
+- dt_validade < hoje → bloquear acesso a geração, permitir apenas /upgrade ou /renovacao.
+- Se cancelar upgrade mas validade ativa → redirecionar para /meus-laudos.
+
+*/
+
 @Injectable()
 export class LaudoService {
   // constructor(

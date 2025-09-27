@@ -75,7 +75,7 @@ export class UsuarioService {
     return user.toJSON();
   }
 
-  async acceptTerms(userId: string, accepted: boolean) {
+  async acceptTerms(userId: string, accepted: boolean): Promise<UsuarioDocument> {
     if (!accepted) {
       throw new ForbiddenException(MENSAGENS.TERM_REQUIRED);
     }
@@ -91,7 +91,7 @@ export class UsuarioService {
 
     await user.save();
 
-    return { message: MENSAGENS.TERM_SUCCESS };
+    return user;
   }
 
   private async validateBlockUser(user: UsuarioDocument) {
