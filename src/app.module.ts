@@ -5,13 +5,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LogsModule } from './database/auditoria/logs.module';
+import { AuthModule } from './database/auth/auth.module';
 import { SessionModule } from './database/sessions/session.module';
 import { UsuarioModule } from './database/usuario/usuario.module';
-import { AuthModule } from './providers/auth/auth.module';
-import { AuditInterceptor } from './interceptors/audit.interceptor';
-import { SessionMiddleware } from './middlewares/session.middleware';
 import { PerfilModule } from './database/perfil/perfil.module';
 import { TipoClienteModule } from './database/tipo-cliente/tipo-cliente.module';
+import { AuditInterceptor } from './interceptors/audit.interceptor';
+import { SessionMiddleware } from './middlewares/session.middleware';
 
 @Module({
   imports: [

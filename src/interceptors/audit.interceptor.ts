@@ -20,6 +20,12 @@ export class AuditInterceptor implements NestInterceptor {
     const url = request.url;
     const method = request.method;
 
+    const allParams = {
+      route: request.params,
+      query: request.query,
+      body: request.body
+    };
+
     const startTime = Date.now();
 
     this.logger.log(`→ ${method} ${url} | ${fullMethodName} - Iniciando`);
@@ -42,7 +48,10 @@ export class AuditInterceptor implements NestInterceptor {
           action: `${method} ${url}`,
           method: fullMethodName,
           message: err.message,
-          details: { stack: err.stack },
+          details: { 
+            stack: err.stack,
+            params: allParams
+          },
         });
 
         throw err; // Re-lança a exceção para o Nest tratar normalmente

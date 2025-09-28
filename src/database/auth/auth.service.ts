@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SessionService } from '../../database/sessions/session.service';
-import { Usuario, UsuarioDocument } from '../../database/usuario/schemas/usuario.schema';
-import { UsuarioService } from '../../database/usuario/usuario.service';
+import { EmailService } from '../../providers/email/email.service';
+import { SessionService } from '../sessions/session.service';
+import { Usuario, UsuarioDocument } from '../usuario/schemas/usuario.schema';
+import { UsuarioService } from '../usuario/usuario.service';
 import { v4 as uuidv4 } from 'uuid';
-import { EmailService } from '../email/email.service';
-import { LogsService } from '../../database/auditoria/logs.service';
-import { EventEnum } from '../../enum/event.enum';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +13,7 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UsuarioService,
     private sessionService: SessionService,
-    private emailService: EmailService,
-    private logService: LogsService
+    private emailService: EmailService
   ) {}
 
   async generateCode(id: string): Promise<Usuario> {
@@ -61,7 +58,7 @@ export class AuthService {
     await this.sessionService.createSession(user.id, jwtId);
 
     //return { tempToken, mfaRequired: true };
-    return { access_token: token };
+    return { access_token: token, user: user };
   }
 
   async logout(id: string, jti: string) {

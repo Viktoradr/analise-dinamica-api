@@ -3,11 +3,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { UsuarioService } from './usuario.service';
 import { AcceptTermsDto } from './dto/usuario-accept-term.dto';
 import { UserId } from '../../decorators/userid.decorator';
-import { JwtAuthGuard } from '../../providers/auth/guards/jwt-auth.guard';
 import { LogsService } from '../auditoria/logs.service';
-import { EventEnum } from 'src/enum/event.enum';
-import { MENSAGENS } from 'src/constants/mensagens';
-import { ClassMethodName } from 'src/decorators/method-logger.decorator';
+import { EventEnum } from '../../enum/event.enum';
+import { MENSAGENS } from '../../constants/mensagens';
+import { ClassMethodName } from '../../decorators/method-logger.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('usuario')
 // @Roles(RoleEnum.ADMIN)

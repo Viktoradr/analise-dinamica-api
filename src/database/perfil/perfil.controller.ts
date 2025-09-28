@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../providers/auth/guards/jwt-auth.guard';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { PerfilService } from './perfil.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('perfil')
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('perfil')
 export class PerfilController {
   constructor(private perfilService: PerfilService) {}

@@ -8,12 +8,18 @@ export class Session extends Document {
 
   @Prop({ required: true })
   jwtId: string; // JTI do token
+
+  @Prop({ required: true })
+  createdAt: Date;
   
   @Prop({ required: true })
   expiresAt: Date;
-
+  
   @Prop({ required: true })
-  lastActivity: Date; // Para inatividade
+  lastActivity: Date;
+  
+  @Prop({ required: true })
+  active: Boolean;
 }
 
 export const SessionSchema = SchemaFactory.createForClass(Session);

@@ -1,15 +1,15 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, Req } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { UsuarioResponseDto } from '../../database/usuario/dto/usuario-response.dto';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { MENSAGENS } from '../../constants/mensagens';
 import { Jti } from '../../decorators/jti.decorator';
+import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { UserId } from '../../decorators/userid.decorator';
+import { EventEnum } from '../../enum/event.enum';
+import { LogsService } from '../auditoria/logs.service';
+import { AuthService } from './auth.service';
 import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { LoginDto } from './dto/login.dto';
-import { LogsService } from '../../database/auditoria/logs.service';
-import { ClassMethodName } from '../../decorators/method-logger.decorator';
-import { EventEnum } from 'src/enum/event.enum';
-import { MENSAGENS } from 'src/constants/mensagens';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -34,19 +34,19 @@ export class AuthController {
 
   @Post('login')
   async signIn(@Req() req: Request, @ClassMethodName() fullName: string, @Body() body: LoginCodigoDto) {
-    const user = await this.authService.validateEmailAndCode(body.codigo);
+    const access = await this.authService.validateEmailAndCode(body.codigo);
 
     await this.logService.createLog({
       event: EventEnum.INFO,
-      userId: user?.id,
-      tenantId: user?.tenantId,
+      userId: access.user.id,
+      tenantId: access.user?.tenantId,
       action: `${req.method} ${req.url}`,
       method: fullName,
       message: MENSAGENS.ACCESS_SUCCESS,
       details: { }
     })
     
-    return user;
+    return { access_token: access.access_token };
   }
 
   @Post('reenviarCodigo')
@@ -58,9 +58,8 @@ export class AuthController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
-  @ApiResponse({ status: 200, description: 'Código atualizado com sucesso', type: UsuarioResponseDto })
-  @ApiResponse({ status: 404, description: 'Usuário não encontrado' })
   async logout(@UserId() userId: string, @Jti() jti: string) {
     await this.authService.logout(userId, jti);
     return {};

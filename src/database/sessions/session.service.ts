@@ -17,6 +17,7 @@ export class SessionService {
     // devido o acesso ser por codigo 
 
     async logout(userId: string, jti: string) {
+        console.log(userId, jti)
         await this.sessionModel.deleteOne({ userId, jwtId: jti });
     }
 
@@ -28,12 +29,20 @@ export class SessionService {
         await this.sessionModel.create({
             userId,
             jwtId,
+            createdAt: new Date(),
+            lastActivity: new Date(),
             expiresAt: new Date(Date.now() + this.activeTime * 60 * 1000),
-            lastActivity: new Date()
+            active: true
         });
     }
 
-    async controleSession() {
+    async controleSession(userId: string, tipoCliente: string) {
+        if (['trial', 'pf'].includes(tipoCliente.toLowerCase())) {
+            this.logoutAllSessions(userId);
+        }
+        else if (['pj', 'enterprise'].includes(tipoCliente.toLowerCase())) {
+
+        }
         /*
         Controle de sessão
 - Trial / PF → login único. Novo login encerra sessão anterior.
@@ -54,7 +63,6 @@ export class SessionService {
         }
     }
 
-
     async findByUserIdAndJti(userId: string, jti: string) {
         return await this.sessionModel.findOne({
             userId: userId,
@@ -66,4 +74,32 @@ export class SessionService {
     async find(jti: string) {
         return await this.sessionModel.findOne({ jwtId: jti });
     }
+
+    // Encerrar Sessão Anterior (alternativa)
+    // async encerrarSessaoAnterior(userId: string) {
+    //     const sessao = await this.sessionModel.findOne({
+    //         userId: userId
+    //     }).sort({ lastActivity: -1 });
+
+    //     if (sessao) {
+    //         sessao.active = false;
+    //         sessao.logoutAt = new Date();
+    //         return await sessao.save();
+    //     }
+    //     return null;
+    // }
+
+    // Encerrar Sessão Mais Antiga (alternativa)
+    // async encerrarSessaoMaisAntiga(userId: string) {
+    //     const sessao = await this.sessionModel.findOne({
+    //         userId: userId
+    //     }).sort({ lastActivity: 1 });
+
+    //     if (sessao) {
+    //         sessao.active = false;
+    //         sessao.logoutAt = new Date();
+    //         return await sessao.save();
+    //     }
+    //     return null;
+    // }
 }
