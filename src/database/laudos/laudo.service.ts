@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
-interface UserJwt {
-  sub: string; // userId
-  tenantId: string;
-  roles: string[];
-}
+import { Laudo } from './schemas/laudo.schema';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 /*
 Controle de limites
@@ -18,10 +15,30 @@ Ações:
 
 @Injectable()
 export class LaudoService {
-  // constructor(
-  //   @InjectModel(Laudo.name) private readonly laudoModel: Model<Laudo>,
-  //   @InjectModel(AuditLog.name) private readonly auditModel: Model<AuditLog>,
-  // ) {}
+  constructor(
+    @InjectModel(Laudo.name) private readonly model: Model<Laudo>
+  ) {}
+
+  async validarDocumentos() {
+    
+    //if
+    //arquivo não enviado ou corrompido
+    //arquivo muito grande
+    //formato inválido
+  }
+
+  async salvarDocumentos() {
+    
+  }
+
+  async verificarArquivoConsultadoAntes() {
+
+    //se sim
+    //- recupera dados armazenado
+    
+    //se não
+    // digitalizar OCR
+  }
 
   // async requestReprocess(laudoId: string, user: UserJwt) {
   //   const laudo = await this.laudoModel.findById(laudoId);
@@ -90,3 +107,4 @@ export class LaudoService {
   //   return { message: 'Reprocesso aprovado e executado com sucesso.' };
   // }
 }
+

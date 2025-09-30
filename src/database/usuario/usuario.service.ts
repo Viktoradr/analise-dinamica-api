@@ -8,7 +8,9 @@ import { cleanNumber } from '../../functions/util';
 @Injectable()
 export class UsuarioService {
 
-  validTimeCode: number = 10; //em minutos
+  TIME_VALIDATE_CODE: number = 10 * 60 * 1000;
+  TIME_BLOCK_USER: number = 15 * 60 * 1000; 
+  maxAttemptErro: number = 5; 
 
   constructor(@InjectModel(Usuario.name) private userModel: Model<UsuarioDocument>) {}
 
@@ -45,8 +47,8 @@ export class UsuarioService {
     await this.validateDtCode(user);
 
     await this.userModel.findOneAndUpdate({ email: user.email }, {
-      codigo: null,
-      dtCodigo: null,
+      // codigo: null,
+      // dtCodigo: null,
       tentativasErro: 0
     })
 
@@ -59,6 +61,18 @@ export class UsuarioService {
       { email },
       { celular: celular }
     );
+  }
+
+  private async generateCodeUnique(): Promise<number> {
+    let codigo: number;
+    let exists: UsuarioDocument | null;
+
+    do {
+      codigo = Math.floor(100000 + Math.random() * 900000); // 100000 a 999999
+      exists = await this.userModel.findOne({ codigo });
+    } while (exists);
+
+    return codigo;
   }
 
   async updateCode(id: string): Promise<UsuarioDocument> {
@@ -110,7 +124,9 @@ export class UsuarioService {
 
   private async validateDtCode(user: UsuarioDocument) {
     const agora = new Date().getTime();
-    const expiracao = user.dtCodigo ? user.dtCodigo.getTime() + this.validTimeCode * 60 * 10000 : 0;
+    const expiracao = user.dtCodigo 
+      ? user.dtCodigo.getTime() + this.TIME_VALIDATE_CODE
+      : 0;
 
     if (user.dtCodigo == null || agora > expiracao) {
       await this.registerFailedLogin(user.email, user);
@@ -119,25 +135,15 @@ export class UsuarioService {
     }
   }
 
-  private async generateCodeUnique(): Promise<number> {
-    let codigo: number;
-    let exists: UsuarioDocument | null;
-
-    do {
-      codigo = Math.floor(100000 + Math.random() * 900000); // 100000 a 999999
-      exists = await this.userModel.findOne({ codigo });
-    } while (exists);
-
-    return codigo;
-  }
-
   private async registerFailedLogin(email: string, user: Usuario) {
     await this.userModel.findOneAndUpdate(
       { email },
       {
         $inc: { tentativasErro: 1 },
         ultimaTentativaErro: new Date(),
-        bloqueadoAte: user && user.tentativasErro + 1 >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null
+        bloqueadoAte: user && user.tentativasErro + 1 >= this.maxAttemptErro 
+          ? new Date(Date.now() + this.TIME_BLOCK_USER) 
+          : null
       }
     );
   }

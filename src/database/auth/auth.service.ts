@@ -55,6 +55,9 @@ export class AuthService {
 
     const token = this.jwtService.sign(payload, { expiresIn: '1h' });
 
+    // verificar aqui aparentemente não está criando novo
+    //porém verificar se precisa criar se já existir
+    //e se precisa atualizar caso ja exista a ulltima atividade
     await this.sessionService.createSession(user.id, jwtId);
 
     //return { tempToken, mfaRequired: true };

@@ -12,6 +12,7 @@ import { PerfilModule } from './database/perfil/perfil.module';
 import { TipoClienteModule } from './database/tipo-cliente/tipo-cliente.module';
 import { AuditInterceptor } from './interceptors/audit.interceptor';
 import { SessionMiddleware } from './middlewares/session.middleware';
+import { ArquivoModule } from './database/arquivos/arquivo.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SessionMiddleware } from './middlewares/session.middleware';
     AuthModule,
     UsuarioModule,
     //LaudoModule,
+    ArquivoModule,
     LogsModule,
     SessionModule,
     PerfilModule,

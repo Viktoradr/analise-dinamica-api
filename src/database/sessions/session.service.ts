@@ -17,7 +17,6 @@ export class SessionService {
     // devido o acesso ser por codigo 
 
     async logout(userId: string, jti: string) {
-        console.log(userId, jti)
         await this.sessionModel.deleteOne({ userId, jwtId: jti });
     }
 
