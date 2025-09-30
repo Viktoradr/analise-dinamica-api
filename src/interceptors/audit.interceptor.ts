@@ -2,6 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } fr
 import { catchError, Observable, tap } from 'rxjs';
 import { LogsService } from '../database/auditoria/logs.service';
 import { EventEnum } from '../enum/event.enum';
+import { LogsObrigatorioEnum } from '../enum/logs-obrigatorio.enum';
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
@@ -40,9 +41,15 @@ export class AuditInterceptor implements NestInterceptor {
         // const origin = stackLines[1]?.trim();
         // const match = origin.match(/at\s([^\s]+)/);
         // const func = match ? match[1] : url;
+
+        let typeEnum = LogsObrigatorioEnum.AUDIT_REVIEW;
+
+        if (fullMethodName == 'AuthController.signIn')
+          typeEnum = LogsObrigatorioEnum.LOGIN_FAIL;
         
         await this.service.createLog({
           event: EventEnum.ERROR,
+          type: typeEnum,
           userId: user?.userId,
           tenantId: user?.tenantId,
           action: `${method} ${url}`,

@@ -5,11 +5,12 @@ import { Jti } from '../../decorators/jti.decorator';
 import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { UserId } from '../../decorators/userid.decorator';
 import { EventEnum } from '../../enum/event.enum';
+import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 import { LogsService } from '../auditoria/logs.service';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,6 +39,7 @@ export class AuthController {
 
     await this.logService.createLog({
       event: EventEnum.INFO,
+      type: LogsObrigatorioEnum.LOGIN_SUCCESS,
       userId: access.user.id,
       tenantId: access.user?.tenantId,
       action: `${req.method} ${req.url}`,

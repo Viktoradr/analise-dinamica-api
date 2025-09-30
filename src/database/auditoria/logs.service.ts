@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EventEnum } from '../../enum/event.enum';
 import { AuditLog, AuditLogDocument } from './schemas/audit-log.schema';
+import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 
 @Injectable()
 export class LogsService {
@@ -13,6 +14,7 @@ export class LogsService {
 
   async createLog(entry: {
     event: EventEnum;
+    type: LogsObrigatorioEnum;
     userId?: string;
     tenantId?: string;
     action: string;

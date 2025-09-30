@@ -8,6 +8,7 @@ import { EventEnum } from '../../enum/event.enum';
 import { MENSAGENS } from '../../constants/mensagens';
 import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 
 @ApiTags('usuario')
 // @Roles(RoleEnum.ADMIN)
@@ -44,6 +45,7 @@ export class UsuarioController {
 
     await this.logService.createLog({
       event: EventEnum.INFO,
+      type: LogsObrigatorioEnum.AUDIT_REVIEW,
       userId: user?.id,
       tenantId: user?.tenantId,
       action: `${req.method} ${req.url}`,

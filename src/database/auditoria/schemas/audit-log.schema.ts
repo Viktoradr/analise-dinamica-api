@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Types } from 'mongoose';
 import { EventEnum } from '../../../enum/event.enum';
+import { LogsObrigatorioEnum } from '../../../enum/logs-obrigatorio.enum';
 
 export type AuditLogDocument = HydratedDocument<AuditLog> & { _id: Types.ObjectId };
 
@@ -9,6 +10,9 @@ export class AuditLog extends Document {
 
   @Prop({ required: true })
   event: EventEnum;
+
+  @Prop()
+  type: LogsObrigatorioEnum;
 
   @Prop({ default: null })
   userId: string;
