@@ -11,23 +11,23 @@ export class Session extends Document {
 
   @Prop({ required: true })
   createdAt: Date;
-  
+
   @Prop({ required: true })
   expiresAt: Date;
-  
+
   @Prop({ required: true })
   lastActivity: Date;
-  
+
   @Prop({ required: true })
   active: Boolean;
-  
+
   @Prop({ default: null })
   inactivatedAt: Date;
 
-  @Prop({ 
+  @Prop({
     default: null,
-    minLength: 6, 
-    maxlength: 6 
+    minLength: 6,
+    maxlength: 6
   })
   codigo: number;
 
@@ -47,10 +47,10 @@ export class Session extends Document {
     userAgent: string;
     ip: {
       xForwardedFor: string;
-        xRealIp: string;
-        connRemoteAddress: string;
-        socketRemoteAddress: string;
-        infoRemoteAddress: string;
+      xRealIp: string;
+      connRemoteAddress: string;
+      socketRemoteAddress: string;
+      infoRemoteAddress: string;
     }
   };
 }

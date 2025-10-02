@@ -1,4 +1,3 @@
-// decorators/fingerprint.decorator.ts
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import * as crypto from 'crypto';
 

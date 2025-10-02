@@ -11,7 +11,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { LoginDto } from './dto/login.dto';
-import { DeviceInfo } from 'src/decorators/fingerprint.decorator';
+import { DeviceInfo } from '../../decorators/fingerprint.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
