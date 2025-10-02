@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../../providers/email/email.service';
 import { SessionService } from '../sessions/session.service';
-import { Usuario, UsuarioDocument } from '../usuario/schemas/usuario.schema';
 import { UsuarioService } from '../usuario/usuario.service';
+import { CodigoService } from '../codigos/codigos.service';
 import { v4 as uuidv4 } from 'uuid';
+import { LoginCodigoDto } from './dto/login-codigo.dto';
+import { CodigoExpiradoException } from '../../exceptions/codigo-expirado.exception';
 
 @Injectable()
 export class AuthService {
@@ -13,58 +15,68 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UsuarioService,
     private sessionService: SessionService,
-    private emailService: EmailService
-  ) {}
+    private emailService: EmailService,
+    private codigoService: CodigoService
+  ) { }
 
-  async generateCode(id: string): Promise<Usuario> {
-    return await this.userService.updateCode(id);
-  }
-
-  async savePhone(email: string, celular: string) {
-    await this.userService.updatePhone(email, celular);
-  }
-
-  async validateUserByEmail(email: string): Promise<UsuarioDocument> {
+  async validateUserByEmail(email: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
 
     this.sessionService.validateMaxAccessSessionInDeterminateTime(user._id.toString())
 
-    const userCode = await this.generateCode(user._id.toString());
+    const userCode = await this.codigoService.generateCodeUnique(user._id.toString());
 
-   this.emailService.enviarEmailLogin(
+    this.emailService.enviarEmailLogin(
       email,
       user.nome,
-      userCode.codigo.toString());
+      userCode.toString());
 
-    return user;
+    return { user, userCode };
   }
 
-  async validateEmailAndCode(codigo: number): Promise<any> {
-    const user = await this.userService.findByCode(codigo);
+  async validateEmailAndCode(body: LoginCodigoDto, deviceInfo: any): Promise<any> {
+    const user = await this.userService.findByEmail(body.email);
 
-    const jwtId = uuidv4(); // ID único do token 
+    await this.userService.updatePhone(body.email, body.celular, user.celular);
 
-    const payload = { 
-      sub: user.id,
-      tenantId: user.tenantId,
-      roles: user.roles,
-      nome: user.nome, 
-      aceite: user.aceiteTermo,
-      jti: jwtId
-    };
+    try {
+      const userCode = await this.codigoService.findByCode(user, body.codigo);
 
-    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+      const jwtId = uuidv4(); // ID único do token 
 
-    // verificar aqui aparentemente não está criando novo
-    //porém verificar se precisa criar se já existir
-    //e se precisa atualizar caso ja exista a ulltima atividade
-    await this.sessionService.createSession(user.id, jwtId);
+      const payload = {
+        sub: user.id,
+        tenantId: user.tenantId,
+        roles: user.roles,
+        nome: user.nome,
+        aceite: user.aceiteTermo,
+        jti: jwtId
+      };
 
-    //return { tempToken, mfaRequired: true };
-    return { access_token: token, user: user };
+      const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+
+      const activeExistsSession = await this.sessionService.findByUserIdAndCode(user.id, userCode.codigo);
+
+      if (!activeExistsSession)
+        await this.sessionService.createSession(user.id, jwtId, userCode.codigo, deviceInfo);
+
+      await this.userService.updateAttemptError(user.id);
+
+      //return { tempToken, mfaRequired: true };
+      return { access_token: token, user: user };
+
+    } catch (error) {
+
+      if (error instanceof CodigoExpiradoException) {
+        this.userService.registerFailedLogin(body.email, user);
+      }
+
+      throw error;
+    }
   }
 
   async logout(id: string, jti: string) {
+    // await this.codigoService.deleteCode(user.id, userCode.codigo);
     await this.sessionService.logout(id, jti);
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuario, UsuarioDocument } from './schemas/usuario.schema';
@@ -8,11 +8,10 @@ import { cleanNumber } from '../../functions/util';
 @Injectable()
 export class UsuarioService {
 
-  TIME_VALIDATE_CODE: number = 10 * 60 * 1000;
-  TIME_BLOCK_USER: number = 15 * 60 * 1000; 
-  maxAttemptErro: number = 5; 
+  TIME_BLOCK_USER: number = 15 * 60 * 1000;
+  MAX_ATTEMPT_ERRO: number = 5;
 
-  constructor(@InjectModel(Usuario.name) private userModel: Model<UsuarioDocument>) {}
+  constructor(@InjectModel(Usuario.name) private userModel: Model<UsuarioDocument>) { }
 
   async create(data: Partial<Usuario>): Promise<Usuario> {
     const created = await this.userModel.create(data);
@@ -23,70 +22,49 @@ export class UsuarioService {
     return this.userModel.find().lean({ virtuals: true });
   }
 
-  async findByEmail(email: string): Promise<UsuarioDocument> {
-    const user = await this.userModel.findOne({ email }).lean({ virtuals: true });
-
-    if (!user) {
-      throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
-    }
-
-    await this.validateBlockUser(user);
-
-    return user;
-  }
-
-  async findByCode(codigo: number): Promise<UsuarioDocument> {
-    const user = await this.userModel.findOne({ codigo });
-    
-    if (!user) {
-      throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
-    }
-
-    await this.validateBlockUser(user);
-    await this.validateCode(codigo, user);
-    await this.validateDtCode(user);
-
-    await this.userModel.findOneAndUpdate({ email: user.email }, {
-      // codigo: null,
-      // dtCodigo: null,
-      tentativasErro: 0
-    })
-
-    return user;
-  }
-  
-  async updatePhone(email: string, celular: string) {
-    celular = cleanNumber(celular)
-    await this.userModel.findOneAndUpdate(
-      { email },
-      { celular: celular }
-    );
-  }
-
-  private async generateCodeUnique(): Promise<number> {
-    let codigo: number;
-    let exists: UsuarioDocument | null;
-
-    do {
-      codigo = Math.floor(100000 + Math.random() * 900000); // 100000 a 999999
-      exists = await this.userModel.findOne({ codigo });
-    } while (exists);
-
-    return codigo;
-  }
-
-  async updateCode(id: string): Promise<UsuarioDocument> {
+  async findById(id: string): Promise<UsuarioDocument> {
     const user = await this.userModel.findById(id);
 
     if (!user) {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
     }
+    return user;
+  }
 
-    user.codigo = await this.generateCodeUnique();
-    user.dtCodigo = new Date();
+  async findByEmail(email: string): Promise<UsuarioDocument> {
+    const user = await this.userModel.findOne({ email });
 
-    await user.save();
-    return user.toJSON();
+    if (!user) {
+      throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
+    }
+
+    await this.validateBlockUser(user);
+
+    return user;
+  }
+
+  private async validateBlockUser(user: UsuarioDocument) {
+    if (user?.bloqueadoAte && user.bloqueadoAte > new Date()) {
+      throw new ForbiddenException(MENSAGENS.USER_BLOCK_ACCOUNT);
+    }
+  }
+
+  async updateAttemptError(userId: string): Promise<void> {
+    await this.userModel.findOneAndUpdate({ id: userId }, {
+      tentativasErro: 0
+    })
+  }
+
+  async updatePhone(email: string, celular: string, userCel: string) {
+    if (celular && celular !== "" && (!userCel || userCel === "")) {
+
+      celular = cleanNumber(celular)
+
+      await this.userModel.findOneAndUpdate(
+        { email },
+        { celular: celular }
+      );
+    }
   }
 
   async acceptTerms(userId: string, accepted: boolean): Promise<UsuarioDocument> {
@@ -108,42 +86,20 @@ export class UsuarioService {
     return user;
   }
 
-  private async validateBlockUser(user: UsuarioDocument) {
-    if (user?.bloqueadoAte && user.bloqueadoAte > new Date()) {
-      throw new ForbiddenException('Conta temporariamente bloqueada');
-    }
-  }
+  async registerFailedLogin(email: string, user: Usuario) {
+    const novasTentativasErro = (user.tentativasErro || 0) + 1;
+    const deveBloquear = novasTentativasErro >= this.MAX_ATTEMPT_ERRO;
 
-  private async validateCode(codigo: number, user: UsuarioDocument) {
-    if (!user.codigo || user.codigo != codigo) {
-      await this.registerFailedLogin(user.email, user);
-
-      throw new BadRequestException(MENSAGENS.USER_COD_INVALID_ATTEMPT.replace('{qtdTentativa}', user.tentativasErro.toString()));
-    }
-  }
-
-  private async validateDtCode(user: UsuarioDocument) {
-    const agora = new Date().getTime();
-    const expiracao = user.dtCodigo 
-      ? user.dtCodigo.getTime() + this.TIME_VALIDATE_CODE
-      : 0;
-
-    if (user.dtCodigo == null || agora > expiracao) {
-      await this.registerFailedLogin(user.email, user);
-
-      throw new BadRequestException(MENSAGENS.USER_COD_INVALID_ATTEMPT.replace('{qtdTentativa}', user.tentativasErro.toString()));
-    }
-  }
-
-  private async registerFailedLogin(email: string, user: Usuario) {
     await this.userModel.findOneAndUpdate(
       { email },
       {
-        $inc: { tentativasErro: 1 },
-        ultimaTentativaErro: new Date(),
-        bloqueadoAte: user && user.tentativasErro + 1 >= this.maxAttemptErro 
-          ? new Date(Date.now() + this.TIME_BLOCK_USER) 
-          : null
+        $set: {
+          tentativasErro: novasTentativasErro,
+          ultimaTentativaErro: new Date(),
+          bloqueadoAte: deveBloquear
+            ? new Date(Date.now() + this.TIME_BLOCK_USER)
+            : null
+        }
       }
     );
   }

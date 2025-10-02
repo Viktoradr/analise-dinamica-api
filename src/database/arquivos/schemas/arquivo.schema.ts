@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { DocumentoEnum } from 'src/enum/documento.enum';
 
 export type ArquivoDocument = Arquivo & Document & { _id: Types.ObjectId };
 
@@ -11,11 +12,15 @@ export class Arquivo extends Document {
   @Prop()
   tenantId: string;
 
-  @Prop({ required: true })
-  awsId: string;
+  @Prop()
+  awsUrl: string;
 
-  @Prop({ required: true })
-  type: string;
+  @Prop({ 
+    required: true,
+    type: String,
+    enum: DocumentoEnum, 
+  })
+  typeDoc: string;
 
   @Prop({ required: true })
   fileHash: string;
@@ -28,6 +33,9 @@ export class Arquivo extends Document {
 
   @Prop({ required: true })
   fileMimetype: string;
+
+  @Prop({ required: true })
+  filePageCount: number;
 }
 
 export const ArquivoSchema = SchemaFactory.createForClass(Arquivo);

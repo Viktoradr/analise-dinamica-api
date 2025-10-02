@@ -25,7 +25,9 @@ export class SessionMiddleware implements NestMiddleware {
 
     // Expirou por inatividade
     if (inactivity >= 30 * 60 * 1000) {
-      await session.deleteOne();
+      session.active = false;
+      await session.save();
+      
       return res.status(401).json({ message: MENSAGENS.SESSION_EXPIRED });
     }
 

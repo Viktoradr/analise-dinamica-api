@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, BadRequestException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UsuarioService } from './usuario.service';
 import { AcceptTermsDto } from './dto/usuario-accept-term.dto';
@@ -9,7 +9,6 @@ import { MENSAGENS } from '../../constants/mensagens';
 import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
-
 @ApiTags('usuario')
 // @Roles(RoleEnum.ADMIN)
 @UseGuards(JwtAuthGuard)

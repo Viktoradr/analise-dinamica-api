@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { SessionService } from '../../../database/sessions/session.service';
+import { MENSAGENS } from 'src/constants/mensagens';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -23,9 +24,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const session = await this.sessionService.find(payload.jti);
-    if (!session) throw new UnauthorizedException('Sessão inválida ou expirada');
+    if (!session) throw new UnauthorizedException(MENSAGENS.SESSION_JWT_STRATEGY);
     return { 
       userId: payload.sub, 
+      tenantId: payload.tenantId, 
       username: payload.username, 
       roles: payload.roles,
       jti: payload.jti 

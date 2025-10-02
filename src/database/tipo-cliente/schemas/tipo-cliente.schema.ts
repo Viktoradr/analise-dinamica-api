@@ -12,13 +12,13 @@ export class TipoCliente extends Document {
   descricao: string;
 
   @Prop({ type: Number })
-  limiteLaudo: Number;
+  limiteLaudo: number;
 
   @Prop({ type: Number })
-  limiteUsuario: Number;
+  limiteUsuario: number;
 
   @Prop({ type: Number })
-  expiracaoDocumetosPorMes: Number;
+  expiracaoDocumetosPorMes: number;
 
   @Prop({
     type: {

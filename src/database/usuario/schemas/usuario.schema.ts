@@ -42,19 +42,6 @@ export class Usuario {
   })
   roles: RoleEnum[];
 
-  @Prop({ 
-    default: null,
-    minLength: 6, 
-    maxlength: 6 
-  })
-  codigo: number;
-
-  @Prop({ 
-    type: Date,
-    default: null 
-  })
-  dtCodigo: Date;
-
   @Prop({ default: 0 })
   tentativasErro: number;
 
@@ -79,13 +66,6 @@ export class Usuario {
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);
 
-UsuarioSchema.index(
-  { codigo: 1 },
-  {
-    partialFilterExpression: { codigo: { $exists: true } },
-  },
-);
-
 UsuarioSchema.virtual('id').get(function (this: UsuarioDocument) {
   return this._id.toHexString();
 });
@@ -93,11 +73,3 @@ UsuarioSchema.virtual('id').get(function (this: UsuarioDocument) {
 // Garante que o `id` aparece ao converter para JSON
 UsuarioSchema.set('toJSON', { virtuals: true });
 UsuarioSchema.set('toObject', { virtuals: true });
-
-
-UsuarioSchema.pre<UsuarioDocument>('save', function (next) {
-  if (this.isModified('codigo')) {
-    this.dtCodigo = new Date();
-  }
-  next();
-});

@@ -1,12 +1,19 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Arquivo, ArquivoDocument } from './schemas/arquivo.schema';
 import * as crypto from 'crypto';
+import { UsuarioDocument } from '../usuario/schemas/usuario.schema';
+import { DocumentoEnum } from '../../enum/documento.enum';
+import { MENSAGENS } from 'src/constants/mensagens';
 
 
 @Injectable()
 export class ArquivoService {
+
+    MAX_FILE_SIZE: number = 10 * 1024 * 1024;
+    ALLOWED_TYPES: string[] = ['image/png', 'image/jpeg', 'application/pdf']
+
     constructor(
         @InjectModel(Arquivo.name) private readonly model: Model<ArquivoDocument>
     ) { }
@@ -15,29 +22,44 @@ export class ArquivoService {
         return this.model.find().lean({ virtuals: true });
     }
 
-    async salvar(file: Express.Multer.File, userId: string, tenantId: string, tipo: string) {
+    async validarArquivo(file: Express.Multer.File, 
+        totalFiles: number, 
+        pageCount: number, 
+        maxArquivo: number, 
+        maxPaginaPorArquivo: number
+    ) {
         if (!file) {
-            throw new BadRequestException('Nenhum arquivo enviado');
+            throw new BadRequestException(MENSAGENS.UPLOAD_FILE_INVALID);
         }
-
-        // 1. Valida tamanho (ex: 5MB)
-        const MAX_SIZE = 5 * 1024 * 1024;
-        if (file.size > MAX_SIZE) {
-            throw new BadRequestException('Arquivo excede o limite de 5MB');
-        }
-
-        // 2. Valida formato permitido
-        const allowedTypes = ['image/png', 'image/jpeg', 'application/pdf'];
-        if (!allowedTypes.includes(file.mimetype)) {
-            throw new BadRequestException('Formato de arquivo inválido');
-        }
-
-        // 3. Verificar se buffer não está vazio (corrupção simples)
         if (!file.buffer || file.buffer.length === 0) {
-            throw new BadRequestException('Arquivo corrompido ou vazio');
+            throw new BadRequestException(MENSAGENS.UPLOAD_FILE_EMPTY);
         }
+        if (!this.ALLOWED_TYPES.includes(file.mimetype)) {
+            throw new BadRequestException(MENSAGENS.UPLOAD_FILE_MIMETYPE_INVALID);
+        }
+        if (file.size > this.MAX_FILE_SIZE) {
+            throw new BadRequestException(MENSAGENS.UPLOAD_FILE_MAX_SIXE);
+        }
+        if (totalFiles > maxArquivo) {
+            throw new BadRequestException(MENSAGENS.UPLOAD_FILE_MAX_FILE.replace('{limite}', `${maxArquivo}`))
+        }
+        if (pageCount > maxPaginaPorArquivo) {
+            throw new BadRequestException(MENSAGENS.UPLOAD_FILE_MAX_PAGE_FOR_FILE.replace('{limite}', `${maxPaginaPorArquivo}`))
+        }
+    }
 
-        // 4. Calcular hash SHA256
+    async saveFile(file: Express.Multer.File, user: UsuarioDocument, tipo: DocumentoEnum, pageCount: number) {
+        
+        const upload = user.tipoCliente.upload;
+
+        const totalFiles = await this.countFilesByUserId(user.id)
+
+        this.validarArquivo(file, 
+            totalFiles, 
+            pageCount, 
+            upload.maxArquivo, 
+            upload.maxPaginaPorArquivo)
+
         const hash = crypto
             .createHash('sha256')
             .update(file.buffer)
@@ -45,24 +67,18 @@ export class ArquivoService {
 
         await this.checkDuplicateHash(hash);
 
-        const awsId = await this.saveFileAws();
-
         const createdFile = new this.model({
-            userId,
-            tenantId,
-            awsId,
-            type: tipo,
+            userId: user.id,
+            tenantId: user.tenantId,
+            typeDoc: tipo,
             fileHash: hash,
             fileName: file.originalname,
             fileSize: file.size,
-            fileMimetype: file.mimetype
+            fileMimetype: file.mimetype,
+            filePageCount: pageCount
         });
 
         return createdFile.save();
-    }
-
-    private async saveFileAws(): Promise<string> {
-        return ''
     }
 
     private async checkDuplicateHash(hash: string): Promise<void> {
@@ -71,8 +87,24 @@ export class ArquivoService {
         });
 
         if (existingFile) {
-            throw new ConflictException('Arquivo duplicado. Este arquivo já foi enviado anteriormente.');
+            throw new ConflictException(MENSAGENS.UPLOAD_FILE_DUPLICATE);
         }
     }
+
+    async countFilesByUserId(userId: string): Promise<number> {
+        return await this.model.countDocuments({ userId })
+    }
+
+    async updateAwsUrl(id: string, awsUrl: string): Promise<ArquivoDocument> {
+        const arquivo = await this.model.findById(id);
+        
+        if (!arquivo) {
+            throw new NotFoundException(MENSAGENS.UPLOAD_FILE_NOTFOUND);
+        }
+
+        arquivo.awsUrl = awsUrl;
+        
+        return await arquivo.save();
+      }
 }
 

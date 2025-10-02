@@ -1,10 +1,12 @@
-import { IsEmail, IsEnum, IsPhoneNumber, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
+import { DocumentoEnum } from '../../../enum/documento.enum';
 
 export class CreateArquivoDto {
 
   @ApiProperty({ example: '' })
-  tipo: string;
+  tipo: DocumentoEnum
+    
+  @ApiProperty({ example: '' })
+  nomeArquivo: string
 
 }

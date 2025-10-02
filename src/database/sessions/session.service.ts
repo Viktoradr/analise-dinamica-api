@@ -7,31 +7,44 @@ import { MENSAGENS } from '../../constants/mensagens';
 @Injectable()
 export class SessionService {
 
-    activeTime: number = 30; // minutos
-    maxTimeAccess: number = 5;
+    ACTIVE_TIME: number = 30 * 60 * 1000; // minutos
+    MAX_TIME_ACCESS: number = 5;
 
-    constructor(@InjectModel(Session.name) private sessionModel: Model<Session>) { }
-
-    //- Alteração de senha ou redefinição de credenciais encerra todas as sessões ativas do usuário (logout global).
-    // essa regra é conflitante com login em vários dispositivos
-    // devido o acesso ser por codigo 
+    constructor(
+        @InjectModel(Session.name) private model: Model<Session>,
+    ) { }
 
     async logout(userId: string, jti: string) {
-        await this.sessionModel.deleteOne({ userId, jwtId: jti });
+        await this.model.findOneAndUpdate(
+            { userId, jwtId: jti },
+            { 
+                active: false, 
+                inactivatedAt: new Date() 
+            }
+        );
     }
 
     async logoutAllSessions(userId: string) {
-        await this.sessionModel.deleteMany({ userId });
+        await this.model.findOneAndUpdate(
+            { userId },
+            { 
+                active: false, 
+                inactivatedAt: new Date() 
+            }
+        );
     }
 
-    async createSession(userId: string, jwtId: string) {
-        await this.sessionModel.create({
+    async createSession(userId: string, jwtId: string, userCode: number, deviceInfo: any) {
+
+        await this.model.create({
             userId,
             jwtId,
             createdAt: new Date(),
             lastActivity: new Date(),
-            expiresAt: new Date(Date.now() + this.activeTime * 60 * 1000),
-            active: true
+            expiresAt: new Date(Date.now() + this.ACTIVE_TIME),
+            active: true,
+            deviceInfo: deviceInfo,
+            codigo: userCode
         });
     }
 
@@ -52,31 +65,39 @@ export class SessionService {
     async validateMaxAccessSessionInDeterminateTime(userId: string) {
         const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
-        const sessionsLastHour = await this.sessionModel.countDocuments({
+        const sessionsLastHour = await this.model.countDocuments({
             userId: userId,
             createdAt: { $gte: oneHourAgo },
         });
 
-        if (sessionsLastHour >= this.maxTimeAccess) {
+        if (sessionsLastHour >= this.MAX_TIME_ACCESS) {
             throw new ForbiddenException(MENSAGENS.MAX_ACCESS_SESSION);
         }
     }
 
     async findByUserIdAndJti(userId: string, jti: string) {
-        return await this.sessionModel.findOne({
+        return await this.model.findOne({
             userId: userId,
             //tenantId: user.tenantId,
             jwtId: jti,
         });
     }
+    
+    async findByUserIdAndCode(userId: string, codigo: number) {
+        return await this.model.findOne({
+            userId: userId,
+            codigo: codigo,
+            active: true
+        });
+    }
 
     async find(jti: string) {
-        return await this.sessionModel.findOne({ jwtId: jti });
+        return await this.model.findOne({ jwtId: jti });
     }
 
     // Encerrar Sessão Anterior (alternativa)
     // async encerrarSessaoAnterior(userId: string) {
-    //     const sessao = await this.sessionModel.findOne({
+    //     const sessao = await this.model.findOne({
     //         userId: userId
     //     }).sort({ lastActivity: -1 });
 
@@ -90,7 +111,7 @@ export class SessionService {
 
     // Encerrar Sessão Mais Antiga (alternativa)
     // async encerrarSessaoMaisAntiga(userId: string) {
-    //     const sessao = await this.sessionModel.findOne({
+    //     const sessao = await this.model.findOne({
     //         userId: userId
     //     }).sort({ lastActivity: 1 });
 

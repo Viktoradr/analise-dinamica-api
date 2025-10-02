@@ -9,6 +9,7 @@ import { UsuarioModule } from '../usuario/usuario.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { CodigoModule } from '../codigos/codigos.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       }),
     }),
     UsuarioModule,
+    CodigoModule,
     SessionModule,
     LogsModule,
     EmailModule,

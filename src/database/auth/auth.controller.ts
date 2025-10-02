@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { LoginDto } from './dto/login.dto';
+import { DeviceInfo } from 'src/decorators/fingerprint.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -22,20 +23,22 @@ export class AuthController {
   
   @Post('validarEmail')
   async validateEmail(@Body() body: LoginDto) {
-    await this.authService.validateUserByEmail(body.email);
-
-    if (body.celular != '' && body.celular.length > 10) {
-      await this.authService.savePhone(body.email, body.celular);
-    } 
+    const validate = await this.authService.validateUserByEmail(body.email);
  
     return { 
-      message: `Validado`
+      message: `Validado`,
+      showPhone: validate.user.celular === ''
     };
   }
 
   @Post('login')
-  async signIn(@Req() req: Request, @ClassMethodName() fullName: string, @Body() body: LoginCodigoDto) {
-    const access = await this.authService.validateEmailAndCode(body.codigo);
+  async signIn(
+    @DeviceInfo() deviceInfo: any, 
+    @Req() req: Request, 
+    @ClassMethodName() fullName: string, 
+    @Body() body: LoginCodigoDto
+  ) {
+    const access = await this.authService.validateEmailAndCode(body, deviceInfo);
 
     await this.logService.createLog({
       event: EventEnum.INFO,
@@ -53,10 +56,10 @@ export class AuthController {
 
   @Post('reenviarCodigo')
   async atualizarCodigo(@Body() body: LoginDto) {
-    const userCode = await this.authService.validateUserByEmail(body.email);
+    const validate = await this.authService.validateUserByEmail(body.email);
 
     return { 
-      message: `Código reenviado para o e-mail ${userCode.email}`
+      message: `Código reenviado para o e-mail ${validate.user.email}`
     };
   }
 

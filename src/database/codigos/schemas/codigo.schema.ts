@@ -1,0 +1,34 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+
+@Schema({ timestamps: false })
+export class Codigo extends Document {
+  
+  @Prop({ 
+    required: true 
+  })
+  userId: Types.ObjectId;
+
+  @Prop({ 
+    required: true,
+    minLength: 6, 
+    maxlength: 6,
+    default: Math.floor(100000 + Math.random() * 900000) 
+  })
+  codigo: number;
+
+  @Prop({ 
+    required: true,
+    default: new Date()
+  })
+  createAt: Date;
+}
+
+export const CodigoSchema = SchemaFactory.createForClass(Codigo);
+
+CodigoSchema.index(
+  { codigo: 1 },
+  {
+    partialFilterExpression: { codigo: { $exists: true } },
+  },
+);
