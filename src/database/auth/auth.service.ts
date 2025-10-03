@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../../providers/email/email.service';
 import { SessionService } from '../sessions/session.service';
@@ -7,6 +7,7 @@ import { CodigoService } from '../codigos/codigos.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { CodigoExpiradoException } from '../../exceptions/codigo-expirado.exception';
+import { MENSAGENS } from 'src/constants/mensagens';
 
 @Injectable()
 export class AuthService {
@@ -68,7 +69,11 @@ export class AuthService {
     } catch (error) {
 
       if (error instanceof CodigoExpiradoException) {
-        this.userService.registerFailedLogin(body.email, user);
+        const ATTEMPT = await this.userService.registerFailedLogin(body.email, user);
+
+        if (ATTEMPT == 0) 
+          throw new CodigoExpiradoException(ATTEMPT)
+        else throw new BadRequestException(MENSAGENS.USER_BLOCK_ACCOUNT)
       }
 
       throw error;

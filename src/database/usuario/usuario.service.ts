@@ -44,15 +44,21 @@ export class UsuarioService {
   }
 
   private async validateBlockUser(user: UsuarioDocument) {
-    if (user?.bloqueadoAte && user.bloqueadoAte > new Date()) {
+    if (user.bloqueadoAte && user.bloqueadoAte > new Date()) {
       throw new ForbiddenException(MENSAGENS.USER_BLOCK_ACCOUNT);
     }
   }
 
   async updateAttemptError(userId: string): Promise<void> {
-    await this.userModel.findOneAndUpdate({ id: userId }, {
-      tentativasErro: 0
-    })
+    const user = await this.userModel.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
+    }
+
+    user.tentativasErro = 0;
+
+    await user.save();
   }
 
   async updatePhone(email: string, celular: string, userCel: string) {
@@ -86,21 +92,23 @@ export class UsuarioService {
     return user;
   }
 
-  async registerFailedLogin(email: string, user: Usuario) {
+  async registerFailedLogin(email: string, user: UsuarioDocument): Promise<number> {
     const novasTentativasErro = (user.tentativasErro || 0) + 1;
+    console.log('novasTentativasErro', novasTentativasErro)
     const deveBloquear = novasTentativasErro >= this.MAX_ATTEMPT_ERRO;
+    console.log('deveBloquear', deveBloquear)
 
     await this.userModel.findOneAndUpdate(
       { email },
       {
-        $set: {
-          tentativasErro: novasTentativasErro,
-          ultimaTentativaErro: new Date(),
-          bloqueadoAte: deveBloquear
-            ? new Date(Date.now() + this.TIME_BLOCK_USER)
-            : null
-        }
-      }
-    );
+        tentativasErro: deveBloquear ? this.MAX_ATTEMPT_ERRO : novasTentativasErro,
+        ultimaTentativaErro: new Date(),
+        bloqueadoAte: deveBloquear
+          ? new Date(Date.now() + this.TIME_BLOCK_USER)
+          : null
+      } 
+    )
+
+    return this.MAX_ATTEMPT_ERRO - novasTentativasErro;
   }
 }

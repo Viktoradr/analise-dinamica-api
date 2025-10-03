@@ -3,10 +3,10 @@ import { DocumentoEnum } from '../../../enum/documento.enum';
 
 export class CreateArquivoDto {
 
-  @ApiProperty({ example: '' })
+  @ApiProperty()
   tipo: DocumentoEnum
     
-  @ApiProperty({ example: '' })
-  nomeArquivo: string
+  @ApiProperty()
+  file: Express.Multer.File
 
 }

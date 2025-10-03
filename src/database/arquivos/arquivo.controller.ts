@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ArquivoService } from './arquivo.service';
@@ -27,13 +27,12 @@ export class ArquivoController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async salvarAquivo(
-    @UploadedFiles() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateArquivoDto,
     @UserId() userId: string
   ) {
 
     const pageCount = await this.pdfService.getPdfPageCount(file.buffer);
-
     const user = await this.userService.findById(userId);
 
     const fileSaved = await this.arquivoService.saveFile(file, user, dto.tipo, pageCount);

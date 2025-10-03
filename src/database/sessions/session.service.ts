@@ -68,6 +68,7 @@ export class SessionService {
         const sessionsLastHour = await this.model.countDocuments({
             userId: userId,
             createdAt: { $gte: oneHourAgo },
+            active: true
         });
 
         if (sessionsLastHour >= this.MAX_TIME_ACCESS) {
@@ -82,6 +83,16 @@ export class SessionService {
             jwtId: jti,
         });
     }
+
+    async findByUserIdAndJtiActive(userId: string, jti: string) {
+        return await this.model.findOne({
+            userId: userId,
+            //tenantId: user.tenantId,
+            jwtId: jti,
+            active: true
+        })
+        .sort({ createAt: -1 });
+    }
     
     async findByUserIdAndCode(userId: string, codigo: number) {
         return await this.model.findOne({
@@ -89,10 +100,6 @@ export class SessionService {
             codigo: codigo,
             active: true
         });
-    }
-
-    async find(jti: string) {
-        return await this.model.findOne({ jwtId: jti });
     }
 
     // Encerrar Sessão Anterior (alternativa)

@@ -10,7 +10,7 @@ export const MENSAGENS = {
     SESSION_EXPIRED: 'Sessão expirada por inatividade',
     SESSION_JWT_STRATEGY: 'Sessão inválida ou expirada',
     ACCESS_SUCCESS: 'Acesso realizado com sucesso',
-    ACCESS_ROLE: 'Acesso negado.',
+    ACCESS_ROLE: 'Acesso negado',
     TERM_REQUIRED: 'O aceite dos Termos de uso é obrigatório',
     TERM_SUCCESS: 'Termos de uso aceito com sucesso',
     REQUIRED: '{param} é obrigatório',
