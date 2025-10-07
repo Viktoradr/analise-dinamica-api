@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-
-export type LeadDocument = Lead & Document & { _id: Types.ObjectId };
+import { Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Lead {

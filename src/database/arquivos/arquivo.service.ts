@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Arquivo, ArquivoDocument } from './schemas/arquivo.schema';
 import * as crypto from 'crypto';
@@ -52,7 +52,7 @@ export class ArquivoService {
         
         const upload = user.tipoCliente.upload;
 
-        const totalFiles = await this.countFilesByUserId(user.id)
+        const totalFiles = await this.countFilesByUserId(user._id)
 
         this.validarArquivo(file, 
             totalFiles, 
@@ -68,7 +68,7 @@ export class ArquivoService {
         await this.checkDuplicateHash(hash);
 
         const createdFile = new this.model({
-            userId: user.id,
+            userId: user._id,
             tenantId: user.tenantId,
             typeDoc: tipo,
             fileHash: hash,
@@ -91,7 +91,7 @@ export class ArquivoService {
         }
     }
 
-    async countFilesByUserId(userId: string): Promise<number> {
+    async countFilesByUserId(userId: Types.ObjectId): Promise<number> {
         return await this.model.countDocuments({ userId })
     }
 

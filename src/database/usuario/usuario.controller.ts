@@ -9,6 +9,7 @@ import { MENSAGENS } from '../../constants/mensagens';
 import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
+import { Types } from 'mongoose';
 @ApiTags('usuario')
 // @Roles(RoleEnum.ADMIN)
 @UseGuards(JwtAuthGuard)
@@ -39,7 +40,12 @@ export class UsuarioController {
   }
 
   @Post('aceiteTermo')
-  async aceiteTermo(@Req() req: Request, @ClassMethodName() fullName: string, @UserId() userId: string, @Body() dto: AcceptTermsDto) {
+  async aceiteTermo(
+    @Req() req: Request, 
+    @ClassMethodName() fullName: string, 
+    @UserId() userId: Types.ObjectId, 
+    @Body() dto: AcceptTermsDto
+  ) {
     const user = await this.usersService.acceptTerms(userId, dto.aceite);
 
     await this.logService.createLog({

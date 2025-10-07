@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Session extends Document {
-  @Prop({ type: Types.ObjectId, ref: 'Usuario', required: false, default: null })
+  @Prop({ type: Types.ObjectId, ref: 'Usuario', required: true })
   userId: Types.ObjectId;
   
   @Prop({ type: Types.ObjectId, ref: 'Tenant', required: true })

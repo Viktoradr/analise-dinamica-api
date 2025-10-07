@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { SessionService } from '../../../database/sessions/session.service';
 import { MENSAGENS } from 'src/constants/mensagens';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -24,8 +25,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const session = await this.sessionService.findByUserIdAndJtiActive(
-      payload.sub, 
-      payload.tenantId, 
+      new Types.ObjectId((payload.sub as string)), 
+      new Types.ObjectId((payload.tenantId as string)), 
       payload.jti
     );
 

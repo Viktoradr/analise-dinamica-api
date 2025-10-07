@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean } from 'class-validator';
 
 export class AcceptTermsDto {
-  @ApiProperty({ example: true })
+  @ApiProperty()
   @IsBoolean()
   aceite: boolean;
 }

@@ -5,6 +5,8 @@ import { Document, Types } from 'mongoose';
 export class Codigo extends Document {
   
   @Prop({ 
+    type: Types.ObjectId, 
+    ref: 'Usuario', 
     required: true 
   })
   userId: Types.ObjectId;
@@ -12,8 +14,7 @@ export class Codigo extends Document {
   @Prop({ 
     required: true,
     minLength: 6, 
-    maxlength: 6,
-    default: Math.floor(100000 + Math.random() * 900000) 
+    maxlength: 6
   })
   codigo: number;
 

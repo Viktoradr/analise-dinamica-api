@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Usuario, UsuarioDocument } from './schemas/usuario.schema';
 import { MENSAGENS } from '../../constants/mensagens';
 import { cleanNumber } from '../../functions/util';
@@ -22,7 +22,7 @@ export class UsuarioService {
     return this.userModel.find().lean({ virtuals: true });
   }
 
-  async findById(id: string): Promise<UsuarioDocument> {
+  async findById(id: Types.ObjectId): Promise<UsuarioDocument> {
     const user = await this.userModel.findById(id);
 
     if (!user) {
@@ -57,7 +57,7 @@ export class UsuarioService {
     }
   }
 
-  async updateAttemptError(userId: string): Promise<void> {
+  async updateAttemptError(userId: Types.ObjectId): Promise<void> {
     const user = await this.userModel.findById(userId);
 
     if (!user) {
@@ -65,6 +65,7 @@ export class UsuarioService {
     }
 
     user.tentativasErro = 0;
+    user.bloqueadoAte = null;
 
     await user.save();
   }
@@ -81,8 +82,10 @@ export class UsuarioService {
     }
   }
 
-  async acceptTerms(userId: string, accepted: boolean): Promise<UsuarioDocument> {
-    if (accepted == false) {
+  async acceptTerms(userId: Types.ObjectId, accepted: boolean): Promise<UsuarioDocument> {
+    console.log(userId)
+    console.log(accepted)
+    if (accepted === false) {
       throw new ForbiddenException(MENSAGENS.TERM_REQUIRED);
     }
 

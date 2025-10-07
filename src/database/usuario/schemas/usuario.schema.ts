@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { RoleEnum } from '../../../enum/perfil.enum';
 import { TipoCliente, TipoClienteSchema } from '../../tipo-cliente/schemas/tipo-cliente.schema';
 
-export type UsuarioDocument = Usuario & Document & { _id: Types.ObjectId };
+export type UsuarioDocument = HydratedDocument<Usuario> & { _id: Types.ObjectId };
 
 @Schema({ timestamps: true })
 export class Usuario {
@@ -36,7 +36,7 @@ export class Usuario {
   @Prop({
     type: [String],
     enum: RoleEnum,
-    default: [RoleEnum.ADM], 
+    default: [], 
   })
   roles: RoleEnum[];
 
@@ -46,14 +46,14 @@ export class Usuario {
   @Prop({ type: Date })
   ultimaTentativaErro: Date;
 
-  @Prop({ type: Date })
-  bloqueadoAte: Date;
+  @Prop({ type: Date, default: null })
+  bloqueadoAte: Date | null;
   
   @Prop({ default: false })
   aceiteTermo: boolean;
 
   @Prop({ type: Date, default: null })
-  aceiteTermoAt: Date;
+  aceiteTermoAt: Date | null;
 
   @Prop({ type: String, default: 'v1.0' })
   termoVersao: string;
@@ -63,11 +63,3 @@ export class Usuario {
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);
-
-UsuarioSchema.virtual('id').get(function (this: UsuarioDocument) {
-  return this._id.toHexString();
-});
-
-// Garante que o `id` aparece ao converter para JSON
-UsuarioSchema.set('toJSON', { virtuals: true });
-UsuarioSchema.set('toObject', { virtuals: true });

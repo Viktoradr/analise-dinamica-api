@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Lead, LeadDocument } from './schemas/leads.schema';
+import { Lead } from './schemas/leads.schema';
 
 @Injectable()
 export class LeadService {
 
-    constructor(@InjectModel(Lead.name) private model: Model<LeadDocument>) { }
+    constructor(@InjectModel(Lead.name) private model: Model<Lead>) { }
 
     async findAll(): Promise<Lead[]> {
         return this.model.find().lean({ virtuals: true });

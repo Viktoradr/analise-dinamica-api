@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { CodigoExpiradoException } from '../../exceptions/codigo-expirado.exception';
 import { MENSAGENS } from 'src/constants/mensagens';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -23,9 +24,9 @@ export class AuthService {
   async validateUserByEmail(email: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
 
-    this.sessionService.validateMaxAccessSessionInDeterminateTime(user._id.toString())
+    await this.sessionService.validateMaxAccessSessionInDeterminateTime(user._id)
 
-    const userCode = await this.codigoService.generateCodeUnique(user._id.toString());
+    const userCode = await this.codigoService.generateCodeUnique(user._id);
 
     this.emailService.enviarEmailLogin(
       email,
@@ -46,7 +47,7 @@ export class AuthService {
       const jwtId = uuidv4(); // ID único do token 
 
       const payload = {
-        sub: user.id,
+        sub: user._id,
         tenantId: user.tenantId,
         roles: user.roles,
         nome: user.nome,
@@ -56,12 +57,16 @@ export class AuthService {
 
       const token = this.jwtService.sign(payload, { expiresIn: '1h' });
 
-      const activeExistsSession = await this.sessionService.findByUserIdAndCode(user.id, userCode.codigo);
+      const activeExistsSession = await this.sessionService.findByUserIdAndCode(user._id, userCode.codigo);
 
-      if (!activeExistsSession)
-        await this.sessionService.createSession(user.id, user.tenantId, jwtId, userCode.codigo, deviceInfo);
+      if (!activeExistsSession) {
+        await this.sessionService.createSession(user._id, user.tenantId, jwtId, userCode.codigo, deviceInfo);
+      }
+      else {
+        await this.sessionService.updateSession(activeExistsSession, jwtId, deviceInfo);
+      }
 
-      await this.userService.updateAttemptError(user.id);
+      await this.userService.updateAttemptError(user._id);
 
       //return { tempToken, mfaRequired: true };
       return { access_token: token, user: user };
@@ -71,7 +76,7 @@ export class AuthService {
       if (error instanceof CodigoExpiradoException) {
         const ATTEMPT = await this.userService.registerFailedLogin(body.email, user);
 
-        if (ATTEMPT == 0) 
+        if (ATTEMPT != 0) 
           throw new CodigoExpiradoException(ATTEMPT)
         else throw new BadRequestException(MENSAGENS.USER_BLOCK_ACCOUNT)
       }
@@ -80,8 +85,8 @@ export class AuthService {
     }
   }
 
-  async logout(id: string, jti: string) {
+  async logout(id: Types.ObjectId, tenantId: Types.ObjectId, jti: string) {
     // await this.codigoService.deleteCode(user.id, userCode.codigo);
-    await this.sessionService.logout(id, jti);
+    await this.sessionService.logout(id, tenantId, jti);
   }
 }

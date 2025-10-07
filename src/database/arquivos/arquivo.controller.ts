@@ -11,6 +11,7 @@ import { OcrService } from 'src/providers/ocr/ocr.serivce';
 import { AwsBucketService } from 'src/providers/aws/aws-bucket.service';
 import { MENSAGENS } from 'src/constants/mensagens';
 import { DocumentoEnum } from 'src/enum/documento.enum';
+import { Types } from 'mongoose';
 
 @ApiTags('arquivo')
 @UseGuards(JwtAuthGuard)
@@ -29,7 +30,7 @@ export class ArquivoController {
   async salvarAquivo(
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateArquivoDto,
-    @UserId() userId: string
+    @UserId() userId: Types.ObjectId
   ) {
 
     const pageCount = await this.pdfService.getPdfPageCount(file.buffer);

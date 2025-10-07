@@ -12,6 +12,8 @@ import { AuthService } from './auth.service';
 import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { LoginDto } from './dto/login.dto';
 import { DeviceInfo } from '../../decorators/fingerprint.decorator';
+import { TenantId } from 'src/decorators/tenantid.decorator';
+import { Types } from 'mongoose';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -43,7 +45,7 @@ export class AuthController {
     await this.logService.createLog({
       event: EventEnum.INFO,
       type: LogsObrigatorioEnum.LOGIN_SUCCESS,
-      userId: access.user.id,
+      userId: access.user._id,
       tenantId: access.user?.tenantId,
       action: `${req.method} ${req.url}`,
       method: fullName,
@@ -65,8 +67,12 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@UserId() userId: string, @Jti() jti: string) {
-    await this.authService.logout(userId, jti);
+  async logout(
+    @UserId() userId: Types.ObjectId,
+    @TenantId() tenantId: Types.ObjectId, 
+    @Jti() jti: string
+  ) {
+    await this.authService.logout(userId, tenantId, jti);
     return {};
   }
 }

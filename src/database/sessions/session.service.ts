@@ -14,27 +14,37 @@ export class SessionService {
         @InjectModel(Session.name) private model: Model<Session>,
     ) { }
 
-    async logout(userId: string, jti: string) {
-        await this.model.findOneAndUpdate(
-            { userId, jwtId: jti },
-            { 
-                active: false, 
-                inactivatedAt: new Date() 
-            }
-        );
+    async logout(userId: Types.ObjectId, tenantId: Types.ObjectId, jti: string) {
+        console.log(userId, tenantId, jti)
+     
+        let session = await this.findByUserIdAndJti(userId, tenantId, jti);
+        console.log('session', session)
+        if (session) {
+            session.active = false;
+            session.inactivatedAt = new Date();
+
+            await session.save();
+        }
     }
 
-    async logoutAllSessions(userId: string) {
-        await this.model.findOneAndUpdate(
-            { userId },
-            { 
-                active: false, 
-                inactivatedAt: new Date() 
-            }
-        );
+    async logoutAllSessions(userId: Types.ObjectId) {
+        let sessions = await this.model.find({
+            userId: userId
+        });
+
+         if (sessions && sessions.length > 0) {
+            
+            const updatePromises = sessions.map(session => {
+                session.active = false;
+                session.inactivatedAt = new Date();
+                return session.save();
+            });
+
+            await Promise.all(updatePromises);
+        }
     }
 
-    async createSession(userId: string, tenantId: Types.ObjectId, jwtId: string, userCode: number, deviceInfo: any) {
+    async createSession(userId: Types.ObjectId, tenantId: Types.ObjectId, jwtId: string, userCode: number, deviceInfo: any) {
 
         await this.model.create({
             userId,
@@ -48,8 +58,16 @@ export class SessionService {
             codigo: userCode
         });
     }
+    
+    async updateSession(session: Session, newJwtId: string, deviceInfo: any): Promise<void> {
+        session.jwtId = newJwtId;
+        session.deviceInfo = deviceInfo;
+        session.lastActivity = new Date();
 
-    async controleSession(userId: string, tipoCliente: string) {
+        await session.save();
+    }
+
+    async controleSession(userId: Types.ObjectId, tipoCliente: string) {
         if (['trial', 'pf'].includes(tipoCliente.toLowerCase())) {
             this.logoutAllSessions(userId);
         }
@@ -63,7 +81,7 @@ export class SessionService {
         */
     }
 
-    async validateMaxAccessSessionInDeterminateTime(userId: string) {
+    async validateMaxAccessSessionInDeterminateTime(userId: Types.ObjectId) {
         const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
         const sessionsLastHour = await this.model.countDocuments({
@@ -77,7 +95,7 @@ export class SessionService {
         }
     }
 
-    async findByUserIdAndJti(userId: string, tenantId: string, jti: string) {
+    async findByUserIdAndJti(userId: Types.ObjectId, tenantId: Types.ObjectId, jti: string) {
         return await this.model.findOne({
             userId: userId,
             tenantId: tenantId,
@@ -85,17 +103,17 @@ export class SessionService {
         });
     }
 
-    async findByUserIdAndJtiActive(userId: string, tenantId: string, jti: string) {
+    async findByUserIdAndJtiActive(userId: Types.ObjectId, tenantId: Types.ObjectId, jti: string) {
         return await this.model.findOne({
             userId: userId,
             tenantId: tenantId,
             jwtId: jti,
             active: true
         })
-        .sort({ createAt: -1 });
+        .sort({ createdAt: -1 });
     }
     
-    async findByUserIdAndCode(userId: string, codigo: number) {
+    async findByUserIdAndCode(userId: Types.ObjectId, codigo: number) {
         return await this.model.findOne({
             userId: userId,
             codigo: codigo,
@@ -104,7 +122,7 @@ export class SessionService {
     }
 
     // Encerrar Sessão Anterior (alternativa)
-    // async encerrarSessaoAnterior(userId: string) {
+    // async encerrarSessaoAnterior(userId: Types.ObjectId) {
     //     const sessao = await this.model.findOne({
     //         userId: userId
     //     }).sort({ lastActivity: -1 });
@@ -118,7 +136,7 @@ export class SessionService {
     // }
 
     // Encerrar Sessão Mais Antiga (alternativa)
-    // async encerrarSessaoMaisAntiga(userId: string) {
+    // async encerrarSessaoMaisAntiga(userId: Types.ObjectId) {
     //     const sessao = await this.model.findOne({
     //         userId: userId
     //     }).sort({ lastActivity: 1 });
