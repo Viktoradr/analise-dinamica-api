@@ -3,8 +3,11 @@ import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Session extends Document {
-  @Prop({ required: true })
+  @Prop({ type: Types.ObjectId, ref: 'Usuario', required: false, default: null })
   userId: Types.ObjectId;
+  
+  @Prop({ type: Types.ObjectId, ref: 'Tenant', required: true })
+  tenantId: Types.ObjectId;
 
   @Prop({ required: true })
   jwtId: string; // JTI do token

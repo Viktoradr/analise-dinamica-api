@@ -5,15 +5,18 @@ import { DocumentoEnum } from 'src/enum/documento.enum';
 export type ArquivoDocument = Arquivo & Document & { _id: Types.ObjectId };
 
 @Schema({ timestamps: true })
-export class Arquivo extends Document {
-  @Prop({ required: true })
-  userId: string;
+export class Arquivo extends Document {  
+  @Prop({ type: Types.ObjectId, ref: 'Usuario', required: false, default: null })
+  userId: Types.ObjectId;
 
-  @Prop()
-  tenantId: string;
+  @Prop({ type: Types.ObjectId, ref: 'Tenant', required: true })
+  tenantId: Types.ObjectId;
 
   @Prop()
   awsUrl: string;
+
+  @Prop()
+  ocrId: string;
 
   @Prop({ 
     required: true,

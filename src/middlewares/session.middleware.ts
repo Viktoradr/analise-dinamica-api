@@ -11,7 +11,7 @@ export class SessionMiddleware implements NestMiddleware {
     const user = req.user;
     if (!user?.sub || !user?.jti || !user?.tenantId) return next();
 
-    const session = await this.service.findByUserIdAndJti(user.sub, user.jti);
+    const session = await this.service.findByUserIdAndJti(user.sub, user.tenantId, user.jti);
 
     if (!session) return res.status(401).json({ message: MENSAGENS.SESSION_INVALID });
 

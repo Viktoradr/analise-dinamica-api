@@ -23,9 +23,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const session = await this.sessionService.findByUserIdAndJtiActive(payload.sub, payload.jti);
+    const session = await this.sessionService.findByUserIdAndJtiActive(
+      payload.sub, 
+      payload.tenantId, 
+      payload.jti
+    );
 
     if (!session) throw new UnauthorizedException(MENSAGENS.SESSION_JWT_STRATEGY);
+    
     return { 
       userId: payload.sub, 
       tenantId: payload.tenantId, 

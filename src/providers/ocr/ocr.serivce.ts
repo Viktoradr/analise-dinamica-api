@@ -8,8 +8,14 @@ export class OcrService {
 
   constructor() {}
 
-  async send(awsUrl: string, fileType: string): Promise<boolean> {
-    return true;
+  async send(
+    fileName: string,
+    awsUrl: string, 
+    fileType: string,
+    fileSize: number,
+    fileStart: number,
+    fileEnd: number
+  ): Promise<any> {
     // if (!this.mailgunClient || !process.env.MAILGUN_DOMAIN) {
     //   throw new Error('Mailgun not configured');
     // }
@@ -30,6 +36,10 @@ export class OcrService {
     //   this.logger.error('Mailgun error:', error);
     //   throw error;
     // }
+
+    return {
+      id: ""
+    }
   }
 
 }

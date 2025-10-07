@@ -14,11 +14,11 @@ export class AuditLog extends Document {
   @Prop()
   type: LogsObrigatorioEnum;
 
-  @Prop({ default: null })
-  userId: string;
+  @Prop({ type: Types.ObjectId, ref: 'Usuario', required: false, default: null })
+  userId: Types.ObjectId;
 
-  @Prop({ default: null })
-  tenantId: string;
+  @Prop({ type: Types.ObjectId, ref: 'Tenant', required: false, default: null })
+  tenantId: Types.ObjectId;
 
   @Prop({ required: true })
   action: string;

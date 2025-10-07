@@ -30,10 +30,8 @@ export class Usuario {
   })
   celular: string;
 
-  @Prop({
-    default: null
-  })
-  tenantId: string;
+  @Prop({ type: Types.ObjectId, ref: 'Tenant', required: true })
+  tenantId: Types.ObjectId;
 
   @Prop({
     type: [String],

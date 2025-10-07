@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Session } from './schemas/session.schema';
 import { MENSAGENS } from '../../constants/mensagens';
 
@@ -34,10 +34,11 @@ export class SessionService {
         );
     }
 
-    async createSession(userId: string, jwtId: string, userCode: number, deviceInfo: any) {
+    async createSession(userId: string, tenantId: Types.ObjectId, jwtId: string, userCode: number, deviceInfo: any) {
 
         await this.model.create({
             userId,
+            tenantId,
             jwtId,
             createdAt: new Date(),
             lastActivity: new Date(),
@@ -56,9 +57,9 @@ export class SessionService {
 
         }
         /*
-        Controle de sessão
-- Trial / PF → login único. Novo login encerra sessão anterior.
-- PJ / Enterprise → múltiplos logins conforme plano. Excedente encerra sessões mais antigas.
+            Controle de sessão
+            - Trial / PF → login único. Novo login encerra sessão anterior.
+            - PJ / Enterprise → múltiplos logins conforme plano. Excedente encerra sessões mais antigas.
         */
     }
 
@@ -76,18 +77,18 @@ export class SessionService {
         }
     }
 
-    async findByUserIdAndJti(userId: string, jti: string) {
+    async findByUserIdAndJti(userId: string, tenantId: string, jti: string) {
         return await this.model.findOne({
             userId: userId,
-            //tenantId: user.tenantId,
+            tenantId: tenantId,
             jwtId: jti,
         });
     }
 
-    async findByUserIdAndJtiActive(userId: string, jti: string) {
+    async findByUserIdAndJtiActive(userId: string, tenantId: string, jti: string) {
         return await this.model.findOne({
             userId: userId,
-            //tenantId: user.tenantId,
+            tenantId: tenantId,
             jwtId: jti,
             active: true
         })

@@ -31,6 +31,14 @@ export class UsuarioService {
     return user;
   }
 
+  async findByEmailToLead(email: string): Promise<void> {
+    const user = await this.userModel.findOne({ email });
+
+    if (user) {
+      throw new NotFoundException(MENSAGENS.LEAD_EMAIL_EXISTS);
+    }
+  }
+
   async findByEmail(email: string): Promise<UsuarioDocument> {
     const user = await this.userModel.findOne({ email });
 
@@ -74,7 +82,7 @@ export class UsuarioService {
   }
 
   async acceptTerms(userId: string, accepted: boolean): Promise<UsuarioDocument> {
-    if (!accepted) {
+    if (accepted == false) {
       throw new ForbiddenException(MENSAGENS.TERM_REQUIRED);
     }
 

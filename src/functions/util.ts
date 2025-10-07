@@ -77,8 +77,23 @@ export const toBoolean = (value: any): boolean => {
 
 export const generateArray = (num: number) => Array.from({ length: num }, (_, i) => i + 1)
 
-export const cleanString = (str: string): string => !str || str.trim() == "" ? "" : str.replace(/\d+$/g, "")
+export const cleanString = (str: string | null | undefined): string => {
+  if (str == null || str.trim() === "") {
+    return "";
+  }
+  return str.replace(/\d+$/g, "");
+};
 
-export const cleanNumber = (str: string): string => !str || str.trim() == "" ? "" : str.replace(/\D/g, "")
+export const cleanNumber = (str: string | null | undefined): string => {
+  if (str == null || str.trim() === "") {
+    return "";
+  }
+  return str.replace(/\D/g, "");
+};
 
-export const cleanCaracteresEspeciais = (str: string): string => !str || str.trim() == "" ? "" : str.replace(/[^\w\s]/g, "")
+export const cleanCaracteresEspeciais = (str: string | null | undefined): string => {
+  if (str == null || str.trim() === "") {
+    return "";
+  }
+  return str.replace(/[^\w\s]/g, "");
+};

@@ -59,7 +59,7 @@ export class AuthService {
       const activeExistsSession = await this.sessionService.findByUserIdAndCode(user.id, userCode.codigo);
 
       if (!activeExistsSession)
-        await this.sessionService.createSession(user.id, jwtId, userCode.codigo, deviceInfo);
+        await this.sessionService.createSession(user.id, user.tenantId, jwtId, userCode.codigo, deviceInfo);
 
       await this.userService.updateAttemptError(user.id);
 

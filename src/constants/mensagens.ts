@@ -14,6 +14,10 @@ export const MENSAGENS = {
     TERM_REQUIRED: 'O aceite dos Termos de uso é obrigatório',
     TERM_SUCCESS: 'Termos de uso aceito com sucesso',
     REQUIRED: '{param} é obrigatório',
+
+    LEAD_CREATED: 'Lead Criado',
+    LEAD_CREATED_SUCCESS: 'Sua solicitação foi enviada e seus dados estão sendo verificados. Em breve você receberá uma e-mail mais informações',
+    LEAD_EMAIL_EXISTS: 'Email inválido, informe outro para continuar seu cadastro',
     
     UPLOAD_FILE_SUCCESS: 'Arquivo salvo com sucesso',
     UPLOAD_FILE_NOTFOUND: 'Arquivo não encontrado',

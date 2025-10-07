@@ -1,4 +1,4 @@
-export const AUTH_EMAIL_HTML_TEMPLATE = `<!DOCTYPE html>
+export const LEAD_EMAIL_HTML_TEMPLATE = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -24,23 +24,9 @@ export const AUTH_EMAIL_HTML_TEMPLATE = `<!DOCTYPE html>
 
           <tr>
             <td style="text-align:center; font-size:18px; padding-bottom:20px;">
-              <strong>Olá [NOME],</strong><br>
-              Use o código abaixo para acessar sua conta:
-            </td>
-          </tr>
-
-          <tr>
-            <td align="center" style="padding:20px;">
-              <span style="font-size:32px; font-family: 'Courier New', monospace; color:#ffffff; background-color:#007bff; padding:15px 30px; border-radius:8px; letter-spacing:4px;">
-                [CODIGO]
-              </span>
-            </td>
-          </tr>
-
-          <tr>
-            <td style="text-align:center; font-size:14px; color:#555; padding-top:10px; padding-bottom:20px;">
-              Este código expira em [TIME] minutos.<br>
-              Se você não solicitou este código, ignore este e-mail.
+              <strong>Novo Lead, [NOME]</strong><br>
+              [EMAIL]<br>
+              Está aguardando aprovação. Consulte a plataforma para liberar o acesso.
             </td>
           </tr>
 

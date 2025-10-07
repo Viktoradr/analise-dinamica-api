@@ -43,7 +43,15 @@ export class ArquivoController {
 
       try {
         //Perguntar o retorno do OCR ou ver no Swagger
-        await this.ocrService.send(awsUrl, dto.tipo == DocumentoEnum.rgi ? 'rgi' : 'processo');
+        await this.ocrService.send(
+          fileSaved.fileName,
+          awsUrl, 
+          dto.tipo == DocumentoEnum.rgi ? 'property_register' : 'processo',
+          fileSaved.filePageCount,
+          1,
+          fileSaved.filePageCount);
+
+        //await this.arquivoService.updateOcrId(fileSaved.id, ocrRetorno.id);
         
       } catch (error) {}
 

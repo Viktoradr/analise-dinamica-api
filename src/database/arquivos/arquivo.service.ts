@@ -105,6 +105,18 @@ export class ArquivoService {
         arquivo.awsUrl = awsUrl;
         
         return await arquivo.save();
-      }
+    }
+
+    async updateOcrId(id: string, ocrId: string): Promise<ArquivoDocument> {
+        const arquivo = await this.model.findById(id);
+        
+        if (!arquivo) {
+            throw new NotFoundException(MENSAGENS.UPLOAD_FILE_NOTFOUND);
+        }
+
+        arquivo.ocrId = ocrId;
+        
+        return await arquivo.save();
+    }
 }
 

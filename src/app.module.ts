@@ -13,6 +13,8 @@ import { TipoClienteModule } from './database/tipo-cliente/tipo-cliente.module';
 import { AuditInterceptor } from './interceptors/audit.interceptor';
 import { SessionMiddleware } from './middlewares/session.middleware';
 import { ArquivoModule } from './database/arquivos/arquivo.module';
+import { TenantModule } from './database/tenant/tenant.module';
+import { LeadModule } from './database/leads/leads.module';
 
 @Module({
   imports: [
@@ -26,7 +28,9 @@ import { ArquivoModule } from './database/arquivos/arquivo.module';
     }),
     AuthModule,
     UsuarioModule,
+    TenantModule,
     //LaudoModule,
+    LeadModule,
     ArquivoModule,
     LogsModule,
     SessionModule,

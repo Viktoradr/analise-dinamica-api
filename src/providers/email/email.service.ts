@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import sendgrid from '@sendgrid/mail';
-import { AUTH_EMAIL_HTML_TEMPLATE } from './modelos/auth.template';
 import dotenv from "dotenv";
 import Mailgun from 'mailgun.js';
 dotenv.config();
+import { AUTH_EMAIL_HTML_TEMPLATE } from './modelos/auth.template';
+import { LEAD_EMAIL_HTML_TEMPLATE } from './modelos/lead.template';
 
 export interface EmailOptions {
   to: string;
@@ -45,14 +46,25 @@ export class EmailService {
     });
   }
 
+  async enviarEmailLead(email: string, nomeLead: string, emailLead: string) {
+    this.sendEmail({
+      to: email, 
+      subject: 'Novo Lead',
+      text: `Um novo lead se cadastrou`,
+      html: LEAD_EMAIL_HTML_TEMPLATE
+          .replace('[NOME]', nomeLead)
+          .replace('[EMAIL]', emailLead)
+    });
+  }
+
   async sendEmail(options: EmailOptions): Promise<boolean> {
     // Tenta SendGrid primeiro, depois Mailgun
-    try {
-      const sendGridSuccess = await this.sendWithSendGrid(options);
-      // if (sendGridSuccess) return true;
-    } catch (error) {
-      this.logger.warn('SendGrid failed, trying Mailgun...');
-    }
+    // try {
+    //   const sendGridSuccess = await this.sendWithSendGrid(options);
+    //   // if (sendGridSuccess) return true;
+    // } catch (error) {
+    //   this.logger.warn('SendGrid failed, trying Mailgun...');
+    // }
 
     try {
       const mailgunSuccess = await this.sendWithMailgun(options);

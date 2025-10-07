@@ -1,0 +1,97 @@
+### Variáveis
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
+@tenantId = 68e454359773fb05a7f7a013
+
+### ════════════════════════════════════════════════
+### AUTH - AUTENTICAÇÃO
+### ════════════════════════════════════════════════
+
+### ValidarEmail
+# @name validarEmail
+POST {{baseUrl}}/auth/validarEmail
+Content-Type: {{contentType}}
+
+{
+  "email": "victor.adrodrigues@outlook.com.br"
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "victor.adrodrigues@outlook.com.br",
+  "codigo": 516168
+}
+
+### Guardar token da resposta
+@accessToken = {{login.response.body.$.accessToken}}
+@refreshToken = {{login.response.body.$.refreshToken}}
+
+### Refresh Token
+POST {{baseUrl}}/auth/refresh
+Content-Type: {{contentType}}
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### ════════════════════════════════════════════════
+### TENANTS - GERENCIAMENTO (Admin)
+### ════════════════════════════════════════════════
+
+### Criar novo Tenant
+POST {{baseUrl}}/tenant
+Content-Type: {{contentType}}
+
+{
+  "name": "Analise Dinamica LTDA",
+  "email": "contato@analisedinamica.com"
+}
+
+### Listar todos Tenants (Admin)
+GET {{baseUrl}}/tenants
+Authorization: Bearer {{accessToken}}
+
+
+### ════════════════════════════════════════════════
+### USERS - USUÁRIOS (Por Tenant)
+### ════════════════════════════════════════════════
+
+
+### Criar usuário
+POST {{baseUrl}}/users
+Content-Type: {{contentType}}
+X-Tenant-Id: {{tenantId}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Novo Usuário",
+  "email": "novo@empresa.com",
+  "password": "senha123"
+}
+
+### ════════════════════════════════════════════════
+### HEALTH CHECK & METRICS
+### ════════════════════════════════════════════════
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Status da API
+GET {{baseUrl}}/status
+
+### Métricas do Tenant
+GET {{baseUrl}}/tenants/{{tenantId}}/metrics
+Authorization: Bearer {{accessToken}}
