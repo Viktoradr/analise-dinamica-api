@@ -65,7 +65,7 @@ export class ArquivoService {
             .update(file.buffer)
             .digest('hex');
 
-        await this.checkDuplicateHash(hash);
+        await this.checkDuplicateHash(user._id, hash);
 
         const createdFile = new this.model({
             userId: user._id,
@@ -81,9 +81,10 @@ export class ArquivoService {
         return createdFile.save();
     }
 
-    private async checkDuplicateHash(hash: string): Promise<void> {
+    private async checkDuplicateHash(userId: Types.ObjectId, hash: string): Promise<void> {
         const existingFile = await this.model.findOne({
-            where: { fileHash: hash }
+            userId,
+            fileHash: hash
         });
 
         if (existingFile) {
@@ -95,19 +96,20 @@ export class ArquivoService {
         return await this.model.countDocuments({ userId })
     }
 
-    async updateAwsUrl(id: string, awsUrl: string): Promise<ArquivoDocument> {
+    async updateAwsUrl(id: string, awsKey: string, awsUrl: string): Promise<ArquivoDocument> {
         const arquivo = await this.model.findById(id);
         
         if (!arquivo) {
             throw new NotFoundException(MENSAGENS.UPLOAD_FILE_NOTFOUND);
         }
 
+        arquivo.awsKey = awsKey;
         arquivo.awsUrl = awsUrl;
         
         return await arquivo.save();
     }
 
-    async updateOcrId(id: string, ocrId: string): Promise<ArquivoDocument> {
+    async updateOcrId(id: Types.ObjectId, ocrStatus: string, ocrId: string): Promise<ArquivoDocument> {
         const arquivo = await this.model.findById(id);
         
         if (!arquivo) {
@@ -115,6 +117,7 @@ export class ArquivoService {
         }
 
         arquivo.ocrId = ocrId;
+        arquivo.ocrStatus = ocrStatus;
         
         return await arquivo.save();
     }

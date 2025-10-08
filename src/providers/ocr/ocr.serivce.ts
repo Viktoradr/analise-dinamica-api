@@ -1,45 +1,65 @@
 import { Injectable, Logger } from '@nestjs/common';
 import dotenv from "dotenv";
+import { HttpRequestService } from '../http/http.service';
 dotenv.config();
+
+export interface OcrParams {
+  file_name: string,
+  download_link: string,
+  file_type: string,
+  created_at: Date,
+  total_page: number,
+  start_page: number,
+  end_page: number
+}
 
 @Injectable()
 export class OcrService {
   private readonly logger = new Logger(OcrService.name);
+  private baseUrl: string;
+  private basePrimaryUrl: string;
+  private baseSecondaryUrl: string;
+  private user: string;
+  private pass: string;
 
-  constructor() {}
+  constructor(private readonly httpService: HttpRequestService) {
+    this.basePrimaryUrl = process.env.OCR_URL as string;
+    this.basePrimaryUrl = process.env.OCR_URL_REDUNDANCIA as string;
+    this.user = process.env.OCR_USERNAME as string;
+    this.pass = process.env.OCR_PASSWORD as string;
 
-  async send(
-    fileName: string,
-    awsUrl: string, 
-    fileType: string,
-    fileSize: number,
-    fileStart: number,
-    fileEnd: number
+    this.baseUrl = this.basePrimaryUrl;
+  }
+
+  async send(params: OcrParams
   ): Promise<any> {
-    // if (!this.mailgunClient || !process.env.MAILGUN_DOMAIN) {
-    //   throw new Error('Mailgun not configured');
-    // }
 
-    // const messageData = {
-    //   from: process.env.FROM_EMAIL || `Mailgun <mailgun@${process.env.MAILGUN_DOMAIN}>`,
-    //   to: options.to,
-    //   subject: options.subject,
-    //   text: options.text,
-    //   html: options.html,
-    // };
+    const { status } = await this.liveness()
 
-    // try {
-    //   await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN, messageData);
-    //   this.logger.log(`Email sent via Mailgun to: ${options.to}`);
-    //   return true;
-    // } catch (error) {
-    //   this.logger.error('Mailgun error:', error);
-    //   throw error;
-    // }
+    if (status != 'ok') this.baseUrl = this.baseSecondaryUrl;
 
-    return {
-      id: ""
-    }
+    const { data } = await this.httpService.post<any>(
+      `${this.baseUrl}/send-message`,
+      params,
+      {
+        headers: this.httpService.getAuthBasicHeaders(this.user, this.pass),
+        timeout: 30000, // 30 segundos
+      },
+    );
+
+    return data;
+  }
+
+  async liveness(): Promise<any> {
+    const { data } = await this.httpService.get<any>(
+      `${this.baseUrl}/liveness`,
+      {
+        headers: this.httpService.getAuthBasicHeaders(this.user, this.pass),
+        timeout: 30000, // 30 segundos
+      },
+    );
+
+    return data;
   }
 
 }

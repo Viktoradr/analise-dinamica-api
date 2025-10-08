@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import sendgrid from '@sendgrid/mail';
-import dotenv from "dotenv";
 import Mailgun from 'mailgun.js';
+import dotenv from "dotenv";
 dotenv.config();
 import { AUTH_EMAIL_HTML_TEMPLATE } from './modelos/auth.template';
 import { LEAD_EMAIL_HTML_TEMPLATE } from './modelos/lead.template';

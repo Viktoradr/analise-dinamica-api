@@ -12,10 +12,16 @@ export class Arquivo extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Tenant', required: true })
   tenantId: Types.ObjectId;
 
-  @Prop()
+  @Prop({ type: String })
+  awsKey: string;
+
+  @Prop({ type: String })
   awsUrl: string;
 
-  @Prop()
+  @Prop({ type: String, uppercase: true, default: 'NO_SEND' })
+  ocrStatus: string;
+
+  @Prop({ type: String })
   ocrId: string;
 
   @Prop({ 
