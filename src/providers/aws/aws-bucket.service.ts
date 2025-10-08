@@ -49,7 +49,7 @@ export class AwsBucketService {
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
-        ACL: ObjectCannedACL.public_read_write
+        ACL: ObjectCannedACL.public_read
       });
 
       await this.s3Client.send(command);
