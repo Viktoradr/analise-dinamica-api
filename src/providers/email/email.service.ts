@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 // import sendgrid from '@sendgrid/mail';
-// import Mailgun from 'mailgun.js';
-// import dotenv from "dotenv";
-// dotenv.config();
+import Mailgun from 'mailgun.js';
 import { AUTH_EMAIL_HTML_TEMPLATE } from './modelos/auth.template';
 import { LEAD_EMAIL_HTML_TEMPLATE } from './modelos/lead.template';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 
 export interface EmailOptions {
   to: string;
@@ -17,22 +16,23 @@ export interface EmailOptions {
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  //private mailgunClient: any;
+  private mailgunClient: any;
 
-  constructor(private readonly mailerService: MailerService) {
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService
+  ) {
     // // Configurar SendGrid
     // if (process.env.SENDGRID_API_KEY) {
     //   sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
     // }
 
     // // Configurar Mailgun
-    // if (process.env.MAILGUN_API_KEY && process.env.MAILGUN_DOMAIN) {
-    //   const mailgun = new Mailgun(FormData);
-    //   this.mailgunClient = mailgun.client({
-    //     username: 'api',
-    //     key: process.env.MAILGUN_API_KEY,
-    //   });
-    // }
+    const mailgun = new Mailgun(FormData);
+    this.mailgunClient = mailgun.client({
+      username: 'api',
+      key: configService.get('MAILGUN_API_KEY') as string,
+    });
   }
 
   async enviarEmailLogin(email: string, nomeUsuario: string, codigo: string) {
@@ -68,7 +68,7 @@ export class EmailService {
     // }
 
     try {
-      const mailgunSuccess = await this.sendNodeMailer(options);
+      const mailgunSuccess = await this.sendWithMailgun(options);
       if (mailgunSuccess) return true;
     } catch (error) {
       this.logger.error('Both email services failed');
@@ -116,26 +116,22 @@ export class EmailService {
   //   }
   // }
 
-  // private async sendWithMailgun(options: EmailOptions): Promise<boolean> {
-  //   if (!this.mailgunClient || !process.env.MAILGUN_DOMAIN) {
-  //     throw new Error('Mailgun not configured');
-  //   }
+  private async sendWithMailgun(options: EmailOptions): Promise<boolean> {
+    const messageData = {
+      from: `No Reply <${this.configService.get('SMTP_FROM') as string}>`,
+      to: options.to,
+      subject: options.subject,
+      text: options.text,
+      html: options.html,
+    };
 
-  //   const messageData = {
-  //     from: process.env.FROM_EMAIL || `Mailgun <mailgun@${process.env.MAILGUN_DOMAIN}>`,
-  //     to: options.to,
-  //     subject: options.subject,
-  //     text: options.text,
-  //     html: options.html,
-  //   };
-
-  //   try {
-  //     await this.mailgunClient.messages.create(process.env.MAILGUN_DOMAIN, messageData);
-  //     this.logger.log(`Email sent via Mailgun to: ${options.to}`);
-  //     return true;
-  //   } catch (error) {
-  //     this.logger.error('Mailgun error:', error);
-  //     throw error;
-  //   }
-  // }
+    try {
+      await this.mailgunClient.messages.create(this.configService.get('MAILGUN_DOMAIN') as string, messageData);
+      this.logger.log(`Email sent via Mailgun to: ${options.to}`);
+      return true;
+    } catch (error) {
+      this.logger.error('Mailgun error:', error);
+      throw error;
+    }
+  }
 }
