@@ -10,8 +10,9 @@ import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 import { Types } from 'mongoose';
+import { Roles } from '../../decorators/roles.decorator';
+import { RoleEnum } from '../../enum/perfil.enum';
 @ApiTags('usuario')
-// @Roles(RoleEnum.ADMIN)
 @UseGuards(JwtAuthGuard)
 @Controller('usuario')
 export class UsuarioController {
@@ -19,7 +20,6 @@ export class UsuarioController {
     private usersService: UsuarioService,
     private logService: LogsService) {}
 
-  //exemplo da utilizacao de role @Roles('admin', 'auditor')
   @Post()
   async create(@Body() body: { name: string; email: string; password: string }) {
     return this.usersService.create(body);

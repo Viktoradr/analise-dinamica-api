@@ -11,19 +11,19 @@ export class UsuarioService {
   TIME_BLOCK_USER: number = 15 * 60 * 1000;
   MAX_ATTEMPT_ERRO: number = 5;
 
-  constructor(@InjectModel(Usuario.name) private userModel: Model<UsuarioDocument>) { }
+  constructor(@InjectModel(Usuario.name) private model: Model<UsuarioDocument>) { }
 
   async create(data: Partial<Usuario>): Promise<Usuario> {
-    const created = await this.userModel.create(data);
+    const created = await this.model.create(data);
     return created.toJSON();
   }
 
   async findAll(): Promise<Usuario[]> {
-    return this.userModel.find().lean({ virtuals: true });
+    return this.model.find().lean({ virtuals: true });
   }
 
   async findById(id: Types.ObjectId): Promise<UsuarioDocument> {
-    const user = await this.userModel.findById(id);
+    const user = await this.model.findById(id);
 
     if (!user) {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
@@ -32,7 +32,7 @@ export class UsuarioService {
   }
 
   async findByEmailToLead(email: string): Promise<void> {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.model.findOne({ email });
 
     if (user) {
       throw new NotFoundException(MENSAGENS.LEAD_EMAIL_EXISTS);
@@ -40,7 +40,7 @@ export class UsuarioService {
   }
 
   async findByEmail(email: string): Promise<UsuarioDocument> {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.model.findOne({ email });
 
     if (!user) {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
@@ -58,7 +58,7 @@ export class UsuarioService {
   }
 
   async updateAttemptError(userId: Types.ObjectId): Promise<void> {
-    const user = await this.userModel.findById(userId);
+    const user = await this.model.findById(userId);
 
     if (!user) {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
@@ -75,7 +75,7 @@ export class UsuarioService {
 
       celular = cleanNumber(celular)
 
-      await this.userModel.findOneAndUpdate(
+      await this.model.findOneAndUpdate(
         { email },
         { celular: celular }
       );
@@ -83,13 +83,11 @@ export class UsuarioService {
   }
 
   async acceptTerms(userId: Types.ObjectId, accepted: boolean): Promise<UsuarioDocument> {
-    console.log(userId)
-    console.log(accepted)
     if (accepted === false) {
       throw new ForbiddenException(MENSAGENS.TERM_REQUIRED);
     }
 
-    const user = await this.userModel.findById(userId);
+    const user = await this.model.findById(userId);
 
     if (!user) {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
@@ -109,7 +107,7 @@ export class UsuarioService {
     const deveBloquear = novasTentativasErro >= this.MAX_ATTEMPT_ERRO;
     console.log('deveBloquear', deveBloquear)
 
-    await this.userModel.findOneAndUpdate(
+    await this.model.findOneAndUpdate(
       { email },
       {
         tentativasErro: deveBloquear ? this.MAX_ATTEMPT_ERRO : novasTentativasErro,

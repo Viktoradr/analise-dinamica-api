@@ -16,6 +16,8 @@ import { LogsService } from '../auditoria/logs.service';
 import { EventEnum } from '../../enum/event.enum';
 import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 import { ClassMethodName } from '../../decorators/method-logger.decorator';
+import { Roles } from '../../decorators/roles.decorator';
+import { RoleEnum } from '../../enum/perfil.enum';
 
 @ApiTags('arquivo')
 @UseGuards(JwtAuthGuard)
@@ -29,7 +31,7 @@ export class ArquivoController {
     private readonly pdfService: PdfService,
     private readonly logService: LogsService) { }
 
-  //exemplo da utilizacao de role @Roles('admin', 'auditor')
+  @Roles(RoleEnum.CLIENTE, RoleEnum.ADM, RoleEnum.ADM_TOTAL)
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async salvarAquivo(

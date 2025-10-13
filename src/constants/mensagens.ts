@@ -15,6 +15,9 @@ export const MENSAGENS = {
     TERM_SUCCESS: 'Termos de uso aceito com sucesso',
     REQUIRED: '{param} é obrigatório',
 
+    SCREEN_INVALID: 'Tela não encontrada',
+    SCREEN_UPDATED: 'Tela {nome} foi atualizada com sucesso',
+
     LEAD_CREATED: 'Lead Criado',
     LEAD_CREATED_SUCCESS: 'Sua solicitação foi enviada e seus dados estão sendo verificados. Em breve você receberá uma e-mail mais informações',
     LEAD_EMAIL_EXISTS: 'Email inválido, informe outro para continuar seu cadastro',

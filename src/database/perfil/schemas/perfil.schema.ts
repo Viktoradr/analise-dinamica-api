@@ -14,10 +14,13 @@ export class Perfil extends Document {
   descricao: string;
 
   @Prop({ type: [PermissaoSchema] })
-  permissoes: Permissao[];
+  permissoes: Types.Array<Permissao>;
 
   @Prop({ type: [RestricoesSchema] })
-  restricoes: Restricoes[];
+  restricoes: Types.Array<Restricoes>;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Tela' }] })
+  telas: Types.Array<Types.ObjectId>;
 }
 
 export const PerfilSchema = SchemaFactory.createForClass(Perfil);
