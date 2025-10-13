@@ -15,6 +15,11 @@ import { ConfigService } from '@nestjs/config';
             user: configService.get('SMTP_USER'),
             pass: configService.get('SMTP_PASS'), // App Password aqui
           },
+          connectionTimeout: 60000,    // 60 segundos
+          greetingTimeout: 60000,      // 60 segundos
+          socketTimeout: 60000,        // 60 segundos
+          logger: true,
+          debug: true,
         },
         defaults: {
           from: `"No Reply" <${configService.get('SMTP_FROM')}>`,

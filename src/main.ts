@@ -21,9 +21,9 @@ async function bootstrap() {
   
   configSwagger(app);
 
-  // Redireciona a raiz "/" para "/api"
+  //Redireciona a raiz "/" para "/api"
   app.getHttpAdapter().get('/', (req, res) => {
-    res.redirect('/api');
+    res.redirect('/api-docs'); // ou para onde você quer redirecionar
   });
   
   const PORT = process.env.PORT || 3000;

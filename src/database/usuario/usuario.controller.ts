@@ -10,8 +10,7 @@ import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 import { Types } from 'mongoose';
-import { Roles } from '../../decorators/roles.decorator';
-import { RoleEnum } from '../../enum/perfil.enum';
+
 @ApiTags('usuario')
 @UseGuards(JwtAuthGuard)
 @Controller('usuario')

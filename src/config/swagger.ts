@@ -7,7 +7,7 @@ export function configSwagger(app: INestApplication) {
     .setTitle('API Análise Dinâmica')
     .setDescription('API description')
     .setVersion('1.0')
-    .addBearerAuth() // 🔥 habilita botão Authorize
+    .addBearerAuth()
     .build();
 
     
