@@ -71,7 +71,7 @@ export class LaudoService {
   //     action: 'REQUEST_REPROCESS',
   //     resource: `laudo:${laudo._id}`,
   //     details: { status: laudo.status },
-  //     timestamp: new Date(),
+  //     timestamp: new Date(Date.now()),
   //   });
 
   //   return { message: 'Reprocesso solicitado com sucesso. Aguarde aprovação.' };
@@ -101,7 +101,7 @@ export class LaudoService {
   //     action: 'APPROVE_REPROCESS',
   //     resource: `laudo:${laudo._id}`,
   //     details: { status: laudo.status },
-  //     timestamp: new Date(),
+  //     timestamp: new Date(Date.now()),
   //   });
 
   //   return { message: 'Reprocesso aprovado e executado com sucesso.' };

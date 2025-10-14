@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-@Schema({ timestamps: false })
+@Schema({ timestamps: true })
 export class Codigo extends Document {
   
   @Prop({ 
@@ -18,11 +18,8 @@ export class Codigo extends Document {
   })
   codigo: number;
 
-  @Prop({ 
-    required: true,
-    default: new Date()
-  })
-  createAt: Date;
+  @Prop()
+  createdAt: Date;
 }
 
 export const CodigoSchema = SchemaFactory.createForClass(Codigo);

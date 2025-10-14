@@ -24,7 +24,7 @@ export class LogsService {
   }): Promise<void> {
     await this.auditModel.create({
       ...entry,
-      timestamp: new Date(),
+      timestamp: new Date(Date.now()),
     });
   }
 

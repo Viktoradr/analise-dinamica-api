@@ -15,13 +15,12 @@ export class SessionService {
     ) { }
 
     async logout(userId: Types.ObjectId, tenantId: Types.ObjectId, jti: string) {
-        console.log(userId, tenantId, jti)
-     
+
         let session = await this.findByUserIdAndJti(userId, tenantId, jti);
-        console.log('session', session)
+
         if (session) {
             session.active = false;
-            session.inactivatedAt = new Date();
+            session.inactivatedAt = new Date(Date.now());
 
             await session.save();
         }
@@ -32,11 +31,11 @@ export class SessionService {
             userId: userId
         });
 
-         if (sessions && sessions.length > 0) {
-            
+        if (sessions && sessions.length > 0) {
+
             const updatePromises = sessions.map(session => {
                 session.active = false;
-                session.inactivatedAt = new Date();
+                session.inactivatedAt = new Date(Date.now());
                 return session.save();
             });
 
@@ -50,19 +49,19 @@ export class SessionService {
             userId,
             tenantId,
             jwtId,
-            createdAt: new Date(),
-            lastActivity: new Date(),
+            createdAt: new Date(Date.now()),
+            lastActivity: new Date(Date.now()),
             expiresAt: new Date(Date.now() + this.ACTIVE_TIME),
             active: true,
             deviceInfo: deviceInfo,
             codigo: userCode
         });
     }
-    
+
     async updateSession(session: Session, newJwtId: string, deviceInfo: any): Promise<void> {
         session.jwtId = newJwtId;
         session.deviceInfo = deviceInfo;
-        session.lastActivity = new Date();
+        session.lastActivity = new Date(Date.now());
 
         await session.save();
     }
@@ -112,7 +111,7 @@ export class SessionService {
         })
         .sort({ createdAt: -1 });
     }
-    
+
     async findByUserIdAndCode(userId: Types.ObjectId, codigo: number) {
         return await this.model.findOne({
             userId: userId,
@@ -129,7 +128,7 @@ export class SessionService {
 
     //     if (sessao) {
     //         sessao.active = false;
-    //         sessao.logoutAt = new Date();
+    //         sessao.logoutAt = new Date(Date.now());
     //         return await sessao.save();
     //     }
     //     return null;
@@ -143,7 +142,7 @@ export class SessionService {
 
     //     if (sessao) {
     //         sessao.active = false;
-    //         sessao.logoutAt = new Date();
+    //         sessao.logoutAt = new Date(Date.now());
     //         return await sessao.save();
     //     }
     //     return null;

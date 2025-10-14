@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import Mailgun from 'mailgun.js';
 import { AUTH_EMAIL_HTML_TEMPLATE } from './modelos/auth.template';
 import { LEAD_EMAIL_HTML_TEMPLATE } from './modelos/lead.template';
-import { MailerService } from '@nestjs-modules/mailer';
+// import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 
 export interface EmailOptions {
@@ -19,7 +19,7 @@ export class EmailService {
   private mailgunClient: any;
 
   constructor(
-    private readonly mailerService: MailerService,
+    // private readonly mailerService: MailerService,
     private readonly configService: ConfigService
   ) {
     // // Configurar SendGrid
@@ -32,6 +32,7 @@ export class EmailService {
     this.mailgunClient = mailgun.client({
       username: 'api',
       key: configService.get('MAILGUN_API_KEY') as string,
+      timeout: 60000,
     });
   }
 
@@ -78,21 +79,21 @@ export class EmailService {
     return false;
   }
 
-  private async sendNodeMailer(options: EmailOptions): Promise<boolean> {
-    try {
-      await this.mailerService.sendMail({
-        to: options.to,
-        subject: options.subject,
-        text: options.text, // Versão texto
-        html: options.html, // Versão HTML
-      });
-      this.logger.log(`Email sent via Nodemailer to: ${options.to}`);
-      return true;
-    } catch (error) {
-      this.logger.error('Nodemailer error:', error);
-      throw error;
-    }
-  }
+  // private async sendNodeMailer(options: EmailOptions): Promise<boolean> {
+  //   try {
+  //     await this.mailerService.sendMail({
+  //       to: options.to,
+  //       subject: options.subject,
+  //       text: options.text, // Versão texto
+  //       html: options.html, // Versão HTML
+  //     });
+  //     this.logger.log(`Email sent via Nodemailer to: ${options.to}`);
+  //     return true;
+  //   } catch (error) {
+  //     this.logger.error('Nodemailer error:', error);
+  //     throw error;
+  //   }
+  // }
 
 
   // private async sendWithSendGrid(options: EmailOptions): Promise<boolean> {

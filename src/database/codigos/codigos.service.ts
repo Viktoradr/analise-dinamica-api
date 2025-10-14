@@ -15,7 +15,7 @@ export class CodigoService {
         @InjectModel(Codigo.name) private model: Model<Codigo>
     ) { }
 
-     async deleteCode(userId: Types.ObjectId, codigo: number) {
+    async deleteCode(userId: Types.ObjectId, codigo: number) {
         await this.model.deleteOne({ userId, codigo });
     }
 
@@ -33,20 +33,21 @@ export class CodigoService {
     }
 
     async findByCode(user: UsuarioDocument, codigo: number): Promise<Codigo> {
-        
         const dezMinutosAtras = new Date(Date.now() - this.TIME_VALIDATE_CODE);
         
         const userCode = await this.model.findOne({
-            userId: user._id, 
+            userId: user._id,
             codigo: codigo
         })
-        .sort({ createAt: -1 });
+        .sort({ createAt: -1 })
+        .exec();
+        
 
         if (!userCode) {
             throw new BadRequestException(MENSAGENS.ACCESS_ROLE);
         }
         
-        if (userCode.createAt < dezMinutosAtras) {
+        if (new Date(userCode.createdAt) < dezMinutosAtras) {
             throw new CodigoExpiradoException(0);
         }
 

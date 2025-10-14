@@ -52,7 +52,7 @@ export class UsuarioService {
   }
 
   private async validateBlockUser(user: UsuarioDocument) {
-    if (user.bloqueadoAte && user.bloqueadoAte > new Date()) {
+    if (user.bloqueadoAte && user.bloqueadoAte > new Date(Date.now())) {
       throw new ForbiddenException(MENSAGENS.USER_BLOCK_ACCOUNT);
     }
   }
@@ -94,7 +94,7 @@ export class UsuarioService {
     }
 
     user.aceiteTermo = accepted;
-    user.aceiteTermoAt = new Date();
+    user.aceiteTermoAt = new Date(Date.now());
 
     await user.save();
 
@@ -111,7 +111,7 @@ export class UsuarioService {
       { email },
       {
         tentativasErro: deveBloquear ? this.MAX_ATTEMPT_ERRO : novasTentativasErro,
-        ultimaTentativaErro: new Date(),
+        ultimaTentativaErro: new Date(Date.now()),
         bloqueadoAte: deveBloquear
           ? new Date(Date.now() + this.TIME_BLOCK_USER)
           : null

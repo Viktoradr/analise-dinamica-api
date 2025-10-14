@@ -55,7 +55,7 @@ export class ArquivoController {
         file_name: fileSaved.fileName,
         download_link: awsResonse.url,
         file_type: dto.tipo == DocumentoEnum.rgi ? 'property_register' : 'processo',
-        created_at: new Date(),
+        created_at: new Date(Date.now()),
         total_page: fileSaved.filePageCount,
         start_page: 1,
         end_page: fileSaved.filePageCount

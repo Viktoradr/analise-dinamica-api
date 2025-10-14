@@ -11,7 +11,7 @@ export class CodigoExpiradoException extends HttpException {
         message: MENSAGENS.USER_COD_INVALID_ATTEMPT.replace('{qtdTentativa}', tentativasErro.toString()),
         error: LogsObrigatorioEnum.LOGIN_FAIL,
         code: LogsObrigatorioEnum.LOGIN_FAIL,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(Date.now()).toISOString(),
       },
       HttpStatus.BAD_REQUEST,
     );

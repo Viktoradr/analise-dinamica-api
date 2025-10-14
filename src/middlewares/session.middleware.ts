@@ -15,7 +15,7 @@ export class SessionMiddleware implements NestMiddleware {
 
     if (!session) return res.status(401).json({ message: MENSAGENS.SESSION_INVALID });
 
-    const now = new Date();
+    const now = new Date(Date.now());
     const inactivity = now.getTime() - session.lastActivity.getTime();
 
     // Aviso de 25 min

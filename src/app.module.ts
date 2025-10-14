@@ -18,22 +18,29 @@ import { LeadModule } from './database/leads/leads.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }), // carrega variáveis do .env
+    ConfigModule.forRoot({ 
+      isGlobal: true,
+      cache: true, // Adiciona cache para melhor performance
+    }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         uri: config.get<string>('MONGO_URI'),
+        retryAttempts: 3,
+        retryDelay: 1000,
+        bufferCommands: false, // Melhor para serverless
+        autoIndex: config.get('NODE_ENV') === 'development', // Indexação automática apenas em dev
       })
     }),
     AuthModule,
+    SessionModule,
     UsuarioModule,
     TenantModule,
     //LaudoModule,
     LeadModule,
     ArquivoModule,
     LogsModule,
-    SessionModule,
     PerfilModule,
     TipoClienteModule
   ],
