@@ -31,6 +31,8 @@ export class LogsService {
   async findLogs(filter: any = {}, limit = 100): Promise<AuditLog[]> {
     return this.auditModel
       .find(filter)
+      .populate('userId', 'nome') // substitua 'nome email' pelos campos que você quer do usuário
+      .populate('tenantId', 'name') // substitua pelos campos que você quer do tenant
       .sort({ createdAt: -1 })
       .limit(limit)
       .lean();

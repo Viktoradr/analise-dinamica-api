@@ -60,6 +60,9 @@ export class Usuario {
 
   @Prop({ type: TipoClienteSchema, default: null })
   tipoCliente: TipoCliente;
+
+  @Prop({ type: Boolean, default: true })
+  ativo: boolean;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);

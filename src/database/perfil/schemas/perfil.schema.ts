@@ -21,6 +21,12 @@ export class Perfil extends Document {
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Tela' }] })
   telas: Types.Array<Types.ObjectId>;
+
+  @Prop({ type: Date })
+  createdAt: Date;
+
+  @Prop({ type: Date })
+  updatedAt: Date;
 }
 
 export const PerfilSchema = SchemaFactory.createForClass(Perfil);

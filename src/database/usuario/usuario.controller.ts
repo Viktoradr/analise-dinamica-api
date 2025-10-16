@@ -10,6 +10,9 @@ import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 import { Types } from 'mongoose';
+import { Roles } from '../../decorators/roles.decorator';
+import { RoleEnum } from '../../enum/perfil.enum';
+import { TenantId } from '../../decorators/tenantid.decorator';
 
 @ApiTags('usuario')
 @UseGuards(JwtAuthGuard)
@@ -25,16 +28,23 @@ export class UsuarioController {
   }
 
   @Get()
-  async findAllUsers() {
-    const usuarios = await this.usersService.findAll();
+  @Roles(RoleEnum.ADM)
+  async findAllUsers(
+    @TenantId() tenantId: Types.ObjectId
+  ) {
+    const usuarios = await this.usersService.findAll({ tenantId});
 
     return usuarios.map((u: any) => ({
       id: u._id, // virtual
-      name: u.name,
+      nome: u.nome,
       email: u.email,
-      perfil: u.perfil,
-      codigo: u.codigo,
-      dtCodigo: u.dtCodigo
+      roles: u.roles,
+      ativo: u.ativo,
+      aceiteTermo: u.aceiteTermo,
+      bloqueado: u.bloqueadoAte != null,
+      tipoCliente: u.tipoCliente?.nome,
+      tenantName: (u.tenantId as any)?.name,
+      createdAt: u.createdAt,
     }));
   }
 

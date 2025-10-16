@@ -18,8 +18,11 @@ export class UsuarioService {
     return created.toJSON();
   }
 
-  async findAll(): Promise<Usuario[]> {
-    return this.model.find().lean({ virtuals: true });
+  async findAll(filter: any = {}): Promise<Usuario[]> {
+    return this.model
+      .find(filter)
+      .populate('tenantId', 'name')
+      .lean({ virtuals: true });
   }
 
   async findById(id: Types.ObjectId): Promise<UsuarioDocument> {

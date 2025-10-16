@@ -31,6 +31,9 @@ export class AuditLog extends Document {
 
   @Prop({ type: Object })
   details: Record<string, any>;
+
+  @Prop()
+  createdAt: Date;
 }
 
 export const AuditLogSchema = SchemaFactory.createForClass(AuditLog);

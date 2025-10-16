@@ -10,7 +10,9 @@ export class PerfilService {
     constructor(@InjectModel(Perfil.name) private model: Model<PerfilDocument>) { }
 
     async findAll(): Promise<Perfil[]> {
-        return this.model.find().lean({ virtuals: true });
+        return this.model
+        .find()
+        .lean();
     }
 
     async getScreens(roles: RoleEnum[]): Promise<Types.ObjectId[]> {
