@@ -1,7 +1,6 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { LeadService } from './leads.service';
-import { CreateLeadDto } from './schemas/dto/lead-create.dto';
 import { UsuarioService } from '../usuario/usuario.service';
 import { DeviceInfo } from '../../decorators/fingerprint.decorator';
 import { ClassMethodName } from '../../decorators/method-logger.decorator';
@@ -10,6 +9,7 @@ import { EventEnum } from '../../enum/event.enum';
 import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 import { MENSAGENS } from '../../constants/mensagens';
 import { EmailService } from '../../providers/email/email.service';
+import { CreateLeadDto } from './dto/lead-create.dto';
 
 @ApiTags('lead')
 @Controller('lead')

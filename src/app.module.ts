@@ -15,6 +15,7 @@ import { SessionMiddleware } from './middlewares/session.middleware';
 import { ArquivoModule } from './database/arquivos/arquivo.module';
 import { TenantModule } from './database/tenant/tenant.module';
 import { LeadModule } from './database/leads/leads.module';
+import { DominioModule } from './database/dominio/dominio.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { LeadModule } from './database/leads/leads.module';
     ArquivoModule,
     LogsModule,
     PerfilModule,
+    DominioModule,
     TipoClienteModule
   ],
   controllers: [AppController],

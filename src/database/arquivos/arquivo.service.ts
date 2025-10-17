@@ -75,7 +75,8 @@ export class ArquivoService {
             fileName: file.originalname,
             fileSize: file.size,
             fileMimetype: file.mimetype,
-            filePageCount: pageCount
+            filePageCount: pageCount,
+            filetype: file.mimetype.split('/')[1],
         });
 
         return createdFile.save();

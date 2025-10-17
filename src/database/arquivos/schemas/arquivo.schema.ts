@@ -41,10 +41,19 @@ export class Arquivo extends Document {
   fileSize: number;
 
   @Prop({ required: true })
+  filetype: string;
+
+  @Prop({ required: true })
   fileMimetype: string;
 
   @Prop({ required: true })
   filePageCount: number;
+
+  @Prop({ type: String })
+  resumo: string;
+
+  @Prop({ type: Boolean, default: true })
+  active: boolean;
 }
 
 export const ArquivoSchema = SchemaFactory.createForClass(Arquivo);
