@@ -105,7 +105,7 @@ export class ArquivoService {
         }
 
         arquivo.awsKey = awsKey;
-        arquivo.awsUrl = awsUrl;
+        arquivo.link = awsUrl;
         
         return await arquivo.save();
     }
@@ -118,7 +118,7 @@ export class ArquivoService {
         }
 
         arquivo.ocrId = ocrId;
-        arquivo.ocrStatus = ocrStatus;
+        arquivo.ocrOk = ocrStatus == 'ok';
         
         return await arquivo.save();
     }

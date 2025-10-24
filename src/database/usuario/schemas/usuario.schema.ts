@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { RoleEnum } from '../../../enum/perfil.enum';
 import { TipoCliente, TipoClienteSchema } from '../../tipo-cliente/schemas/tipo-cliente.schema';
+import { StatusUserEnum } from '../../../enum/status-user.enum';
 
 export type UsuarioDocument = HydratedDocument<Usuario> & { _id: Types.ObjectId };
 
@@ -63,6 +64,14 @@ export class Usuario {
 
   @Prop({ type: Boolean, default: true })
   ativo: boolean;
+
+  @Prop({ 
+    type: String,
+    enum: StatusUserEnum, 
+    default: StatusUserEnum.ATIVO,
+    lowercase: true
+  })
+  status: StatusUserEnum;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);

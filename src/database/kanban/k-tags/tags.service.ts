@@ -29,7 +29,7 @@ export class TagKanbanService {
     }
 
     async verifyExist(tenantId: Types.ObjectId, codName: string): Promise<boolean> {
-        const result = await this.model.findOne({ tenantId, codName });
+        const result = await this.model.findOne({ tenantId, cd_tag: codName });
         return !!result;
     }
 

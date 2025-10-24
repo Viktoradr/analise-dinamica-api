@@ -5,6 +5,8 @@ export type ChecklistKanbanDocument = HydratedDocument<ChecklistKanban> & { _id:
 
 @Schema({ timestamps: false })
 export class ChecklistKanban {
+    @Prop({ lowercase: true, trim: true })
+    idItem: string;
 
     @Prop({ lowercase: true, trim: true })
     task: string;

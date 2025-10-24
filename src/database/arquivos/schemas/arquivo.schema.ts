@@ -16,18 +16,24 @@ export class Arquivo extends Document {
   awsKey: string;
 
   @Prop({ type: String })
-  awsUrl: string;
-
-  @Prop({ type: String, uppercase: true, default: 'NO_SEND' })
-  ocrStatus: string;
+  link: string;
 
   @Prop({ type: String })
   ocrId: string;
 
+  @Prop({ type: Boolean, default: false })
+  ocrOk: boolean;
+
+  // @Prop({ type: Boolean, default: false })
+  // embeddingsOk: boolean;
+
+  @Prop({ type: [String], default: [] })
+  tags: string[];
+
   @Prop({ 
     required: true,
     type: String,
-    enum: DocumentoEnum, 
+    enum: DocumentoEnum, //mudar para collection
   })
   typeDoc: string;
 
@@ -48,6 +54,9 @@ export class Arquivo extends Document {
 
   @Prop({ required: true })
   filePageCount: number;
+
+  @Prop({ type: Object })
+  sectionMetadata: object;
 
   @Prop({ type: String })
   resumo: string;

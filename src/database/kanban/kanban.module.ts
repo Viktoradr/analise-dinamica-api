@@ -9,12 +9,16 @@ import { CardKanbanController } from './k-cards/cards.controller';
 import { CardKanbanService } from './k-cards/cards.service';
 import { CardKanban, CardKanbanSchema } from './schemas/card.schema';
 import { TagKanban, TagKanbanSchema } from './schemas/tags.schema';
+import { Template, TemplateSchema } from './schemas/template.schema';
+import { TipoCard, TipoCardSchema } from './schemas/tipo-card.schema';
 
 @Module({
     imports: [
         MongooseModule.forFeature([{ name: Kanban.name, schema: KanbanSchema }]),
         MongooseModule.forFeature([{ name: TagKanban.name, schema: TagKanbanSchema }]),
-        MongooseModule.forFeature([{ name: CardKanban.name, schema: CardKanbanSchema }])
+        MongooseModule.forFeature([{ name: CardKanban.name, schema: CardKanbanSchema }]),
+        MongooseModule.forFeature([{ name: Template.name, schema: TemplateSchema }]),
+        MongooseModule.forFeature([{ name: TipoCard.name, schema: TipoCardSchema }])
     ],
     controllers: [
         KanbanController,

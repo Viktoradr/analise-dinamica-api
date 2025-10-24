@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { ChecklistKanban, ChecklistKanbanSchema } from './checklist.schema';
 
-export type ColumnKanbanDocument = HydratedDocument<ColumnKanban> & { _id: Types.ObjectId };
+export type RaiaKanbanDocument = HydratedDocument<RaiaKanban> & { _id: Types.ObjectId };
 
 @Schema({ timestamps: true })
-export class ColumnKanban {
+export class RaiaKanban {
 
     @Prop({ lowercase: true, trim: true })
     name: string;
@@ -17,4 +17,4 @@ export class ColumnKanban {
     checklist: Types.Array<ChecklistKanban>;
 }
 
-export const ColumnKanbanSchema = SchemaFactory.createForClass(ColumnKanban);
+export const RaiaKanbanSchema = SchemaFactory.createForClass(RaiaKanban);

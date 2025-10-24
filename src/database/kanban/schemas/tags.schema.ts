@@ -11,7 +11,7 @@ export class TagKanban {
     tenantId: Types.ObjectId;
 
     @Prop({ required: true, lowercase: true, trim: true })
-    codName: string;
+    codTag: string;
 
     @Prop({ lowercase: true, trim: true })
     name: string;
@@ -21,7 +21,8 @@ export class TagKanban {
 
     @Prop({
         type: String,
-        enum: PrioridadeEnum
+        enum: PrioridadeEnum,
+        trim: true
     })
     priority: PrioridadeEnum;
 
