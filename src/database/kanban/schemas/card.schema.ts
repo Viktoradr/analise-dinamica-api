@@ -32,9 +32,6 @@ export class CardKanban {
     @Prop({ lowercase: true, trim: true })
     codNegocio: string; //1004395-14.2024.8.26.0572
 
-    @Prop({ lowercase: true, trim: true })
-    name: string;
-
     @Prop({ type: Boolean, default: true })
     active: boolean;
 
