@@ -14,6 +14,12 @@ export class WorkflowCardKanban {
 
     @Prop({ type: Types.ObjectId, required: true })
     checklistItemId: Types.ObjectId;
+    
+    @Prop({ type: String, trim: true })
+    name: string;
+    
+    @Prop({ type: Boolean, default: false })
+    check: boolean;
 
     @Prop({ type: Number })
     executionsOk: number;

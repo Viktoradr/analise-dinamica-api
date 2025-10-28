@@ -11,7 +11,7 @@ export class TagKanban {
     tenantId: Types.ObjectId;
 
     @Prop({ required: true, lowercase: true, trim: true })
-    codTag: string;
+    codigo: string;
 
     @Prop({ lowercase: true, trim: true })
     name: string;

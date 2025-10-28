@@ -20,11 +20,11 @@ export class CardKanban {
     @Prop({ type: Types.ObjectId, ref: 'TipoCard', required: true })
     tipoCardId: Types.ObjectId;
 
-    @Prop({ type: Types.ObjectId, ref: 'Template', required: true })
+    @Prop({ type: Types.ObjectId, ref: 'CardTemplate', required: true })
     templateId: Types.ObjectId;
 
     @Prop({ type: Types.ObjectId })
-    raiaId: Types.ObjectId;
+    atualRaiaId: Types.ObjectId; //ref: KanbanRaia
 
     @Prop({ uppercase: true, trim: true, required: true })
     codInterno: string; //ARP-MIN-2025-000123

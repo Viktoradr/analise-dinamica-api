@@ -15,7 +15,13 @@ export class ChecklistCardKanban {
     @Prop({ type: Types.ObjectId, required: true })
     checklistItemId: Types.ObjectId;
 
-    @Prop({ type: Number })
+    @Prop({ type: String, trim: true })
+    name: string;
+    
+    @Prop({ type: Boolean, default: false })
+    check: boolean;
+
+    @Prop({ type: Number, default: 0 })
     executionsOk: number;
 }
 

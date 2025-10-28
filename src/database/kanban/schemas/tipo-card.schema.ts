@@ -7,7 +7,7 @@ export type TipoCardDocument = HydratedDocument<TipoCard> & { _id: Types.ObjectI
 export class TipoCard {
 
     @Prop({ required: true, lowercase: true, trim: true })
-    codCard: string;
+    codigo: string;
 
     @Prop({ lowercase: true, trim: true })
     name: string;

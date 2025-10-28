@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
-export type ChecklistKanbanDocument = HydratedDocument<ChecklistKanban> & { _id: Types.ObjectId };
+export type TemplateChecklistDocument = HydratedDocument<TemplateChecklist> & { _id: Types.ObjectId };
 
 @Schema({ timestamps: false })
-export class ChecklistKanban {
+export class TemplateChecklist {
     @Prop({ lowercase: true, trim: true })
-    idItem: string;
+    codigo: string;
 
     @Prop({ lowercase: true, trim: true })
     task: string;
@@ -14,8 +14,8 @@ export class ChecklistKanban {
     @Prop({ type: Boolean, default: false })
     required: boolean;
 
-    @Prop({ type: Number })
+    @Prop({ type: Number, default: 0 })
     executions: number;
 }
 
-export const ChecklistKanbanSchema = SchemaFactory.createForClass(ChecklistKanban);
+export const TemplateChecklistSchema = SchemaFactory.createForClass(TemplateChecklist);

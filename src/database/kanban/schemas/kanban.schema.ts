@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { RaiaKanban, RaiaKanbanSchema } from './raia.schema';
+import { KanbanRaia, KanbanRaiaSchema } from './kanban-raia.schema';
 
 export type KanbanDocument = HydratedDocument<Kanban> & { _id: Types.ObjectId };
 
@@ -14,7 +14,7 @@ export class Kanban {
     tipoCardId: Types.ObjectId;
 
     @Prop({ required: true, lowercase: true, trim: true })
-    codKanban: string;
+    codigo: string;
 
     @Prop({ lowercase: true, trim: true })
     name: string;
@@ -25,8 +25,8 @@ export class Kanban {
     @Prop({ type: Boolean, default: true })
     active: boolean;
 
-    @Prop({ type: [{ type: RaiaKanbanSchema }], default: [] })
-    raias: Types.Array<RaiaKanban>;
+    @Prop({ type: [{ type: KanbanRaiaSchema }], default: [] })
+    raias: Types.Array<KanbanRaia>;
 }
 
 export const KanbanSchema = SchemaFactory.createForClass(Kanban);

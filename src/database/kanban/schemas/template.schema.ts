@@ -1,16 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { TemplateChecklist, TemplateChecklistSchema } from './template-checklist.schema';
+import { TemplateWorkflow, TemplateWorkflowSchema } from './template-workflow.schema';
 
-export type TemplateDocument = HydratedDocument<Template> & { _id: Types.ObjectId };
+export type CardTemplateDocument = HydratedDocument<CardTemplate> & { _id: Types.ObjectId };
 
 @Schema({ timestamps: true })
-export class Template {
+export class CardTemplate {
 
     @Prop({ type: Types.ObjectId, ref: 'TipoCard', required: true })
     tipoCardId: Types.ObjectId;
-
-    @Prop({ required: true, lowercase: true, trim: true })
-    cd_tag: string;
 
     @Prop({ lowercase: true, trim: true })
     name: string;
@@ -21,13 +20,11 @@ export class Template {
     @Prop({ type: Object })
     campos: object; //Campos de negócio dinâmicos - {cd_pasta:'A10002', ...}
 
-    @Prop({ type: [Object] })
-    raias: Array<{
-        name: string;
-        order: number;  
-        checklist: Array<any>;
-        workflow: Array<any>;
-    }>;
+    @Prop({ type: [TemplateChecklistSchema] })
+    checklist: Types.Array<TemplateChecklist>;
+    
+    @Prop({ type: [TemplateWorkflowSchema] })
+    workflow: Types.Array<TemplateWorkflow>;
 }
 
-export const TemplateSchema = SchemaFactory.createForClass(Template);
+export const CardTemplateSchema = SchemaFactory.createForClass(CardTemplate);

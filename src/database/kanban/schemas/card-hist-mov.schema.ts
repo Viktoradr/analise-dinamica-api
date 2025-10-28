@@ -6,11 +6,14 @@ export type HistMovCardKanbanDocument = HydratedDocument<HistMovCardKanban> & { 
 @Schema({ timestamps: false })
 export class HistMovCardKanban {
 
+    @Prop({ type: Types.ObjectId, ref: 'TipoCard', required: true })
+    tipoCardId: Types.ObjectId;
+
+    @Prop({ type: Types.ObjectId, ref: 'CardTemplate', required: true })
+    cardTemplateId: Types.ObjectId;
+
     @Prop({ type: Types.ObjectId, ref: 'Kanban', required: true })
     kanbanId: Types.ObjectId;
-
-    @Prop({ type: Types.ObjectId, ref: 'Template', required: true })
-    templateId: Types.ObjectId;
 
     @Prop({ type: Types.ObjectId, required: true })
     raiaId: Types.ObjectId;
