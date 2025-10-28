@@ -19,7 +19,10 @@ export class ArquivoService {
     ) { }
 
     async findAll(): Promise<Arquivo[]> {
-        return this.model.find().lean({ virtuals: true });
+        return this.model
+        .find()
+        .sort({ createdAt: -1 })
+        .lean({ virtuals: true });
     }
 
     async validarArquivo(file: Express.Multer.File, 
@@ -110,7 +113,7 @@ export class ArquivoService {
         return await arquivo.save();
     }
 
-    async updateOcrId(id: Types.ObjectId, ocrStatus: string, ocrId: string): Promise<ArquivoDocument> {
+    async updateOcrId(id: Types.ObjectId, ocrStatus: boolean, ocrId: string): Promise<ArquivoDocument> {
         const arquivo = await this.model.findById(id);
         
         if (!arquivo) {
@@ -118,7 +121,7 @@ export class ArquivoService {
         }
 
         arquivo.ocrId = ocrId;
-        arquivo.ocrOk = ocrStatus == 'ok';
+        arquivo.ocrOk = ocrStatus;
         
         return await arquivo.save();
     }

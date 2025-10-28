@@ -12,14 +12,14 @@ export class HttpRequestService {
         const auth = Buffer.from(`${username}:${password}`).toString('base64');
 
         return {
-            'Authorization': `Basic ${auth}`,
+            Authorization: `Basic ${auth}`,
             'Content-Type': 'application/json',
         };
     }
 
     getAuthBearerHeaders(key: string): any {
         return {
-            'Authorization': `Bearer ${key}`,
+            Authorization: `Bearer ${key}`,
             'Content-Type': 'application/json',
         };
     }

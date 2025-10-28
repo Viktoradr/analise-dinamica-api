@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, UseInterceptors, UploadedFile, Req, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ArquivoService } from './arquivo.service';
@@ -19,8 +19,8 @@ import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { Roles } from '../../decorators/roles.decorator';
 import { RoleEnum } from '../../enum/perfil.enum';
 
-@ApiTags('arquivo')
 @UseGuards(JwtAuthGuard)
+@ApiTags('arquivo')
 @Controller('arquivo')
 export class ArquivoController {
   constructor(
@@ -29,7 +29,15 @@ export class ArquivoController {
     private readonly ocrService: OcrService,
     private readonly awsBucketService: AwsBucketService,
     private readonly pdfService: PdfService,
-    private readonly logService: LogsService) { }
+    private readonly logService: LogsService) 
+    { }
+
+  
+  @Get()
+  async GetArquivos()
+  {
+    return await this.arquivoService.findAll();
+  }
 
   @Roles(RoleEnum.CLIENTE, RoleEnum.ADM, RoleEnum.ADM_TOTAL)
   @Post('upload')
@@ -54,8 +62,8 @@ export class ArquivoController {
       const ocrRequest: OcrParams = {
         file_name: fileSaved.fileName,
         download_link: awsResonse.url,
-        file_type: dto.tipo == DocumentoEnum.rgi ? 'property_register' : 'processo',
-        created_at: new Date(Date.now()),
+        file_type: dto.tipo == DocumentoEnum.rgi ? 'property_register' : 'process',
+        created_at: new Date(Date.now()).toISOString(),
         total_page: fileSaved.filePageCount,
         start_page: 1,
         end_page: fileSaved.filePageCount
@@ -63,7 +71,7 @@ export class ArquivoController {
 
       try {
         //Perguntar o retorno do OCR ou ver no Swagger
-        const { status } = await this.ocrService.send(ocrRequest);
+        const status = await this.ocrService.send(ocrRequest);
         
         await this.arquivoService.updateOcrId(fileSaved.id, status, '');
 
@@ -100,4 +108,5 @@ export class ArquivoController {
 
     return { message: MENSAGENS.UPLOAD_FILE_SUCCESS };
   }
+
 }
