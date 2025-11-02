@@ -55,7 +55,7 @@ export class ArquivoService {
         
         const upload = user.tipoCliente.upload;
 
-        const totalFiles = await this.countFilesByUserId(user._id)
+        const totalFiles = await this.countFilesByUserId(user.id)
 
         this.validarArquivo(file, 
             totalFiles, 
@@ -68,10 +68,10 @@ export class ArquivoService {
             .update(file.buffer)
             .digest('hex');
 
-        await this.checkDuplicateHash(user._id, hash);
+        await this.checkDuplicateHash(user.id, hash);
 
         const createdFile = new this.model({
-            userId: user._id,
+            userId: (user.id as Types.ObjectId),
             tenantId: user.tenantId,
             typeDoc: tipo,
             fileHash: hash,

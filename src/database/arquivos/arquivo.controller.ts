@@ -62,7 +62,7 @@ export class ArquivoController {
       const ocrRequest: OcrParams = {
         file_name: fileSaved.fileName,
         download_link: awsResonse.url,
-        file_type: dto.tipo == DocumentoEnum.rgi ? 'property_register' : 'process',
+        file_type: 'property_register', // dto.tipo == DocumentoEnum.rgi ? 'property_register' : 'process',
         created_at: new Date(Date.now()).toISOString(),
         total_page: fileSaved.filePageCount,
         start_page: 1,
@@ -95,7 +95,7 @@ export class ArquivoController {
       await this.logService.createLog({
         event: EventEnum.ERROR,
         type: LogsObrigatorioEnum.AUDIT_REVIEW,
-        userId: user._id,
+        userId: user?.id,
         tenantId: user?.tenantId,
         action: `${req.method} ${req.url}`,
         method: fullName,
