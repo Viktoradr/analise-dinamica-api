@@ -23,6 +23,7 @@ export const MENSAGENS = {
     LEAD_EMAIL_EXISTS: 'Email inválido, informe outro para continuar seu cadastro',
     
     UPLOAD_FILE_SUCCESS: 'Arquivo salvo com sucesso',
+    UPLOAD_FILE_ERROR: 'Não foi possível salvar o arquivo',
     UPLOAD_FILE_NOTFOUND: 'Arquivo não encontrado',
     UPLOAD_FILE_INVALID: 'Nenhum arquivo enviado',
     UPLOAD_FILE_EMPTY: 'Arquivo corrompido ou vazio',

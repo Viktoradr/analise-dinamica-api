@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, UseInterceptors, UploadedFile, Req, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, UseInterceptors, UploadedFile, Req, Get, BadRequestException } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ArquivoService } from './arquivo.service';
@@ -104,6 +104,9 @@ export class ArquivoController {
           arquivoId: fileSaved.id
         }
       })
+
+      await this.arquivoService.delete(fileSaved.id);
+      throw new BadRequestException( MENSAGENS.UPLOAD_FILE_ERROR);
     }
 
     return { message: MENSAGENS.UPLOAD_FILE_SUCCESS };

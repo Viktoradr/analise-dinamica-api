@@ -51,6 +51,11 @@ export class ArquivoService {
         }
     }
 
+    async delete(arquivoId: Types.ObjectId) {
+        await this.model.deleteOne({ _id: arquivoId });
+    }
+
+
     async saveFile(file: Express.Multer.File, user: UsuarioDocument, tipo: DocumentoEnum, pageCount: number) {
         
         const upload = user.tipoCliente.upload;
