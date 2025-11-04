@@ -70,7 +70,7 @@ export class CardKanban {
     @Prop({ type: Types.ObjectId, ref: 'Usuario', default: null })
     updatedBy: Types.ObjectId;
 
-    @Prop({ default: null })
+    @Prop({ type: Date, default: null })
     finalizedAt: Date | null; //Conclusão permanente
 }
 

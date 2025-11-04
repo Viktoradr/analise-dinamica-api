@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { TagKanban, TagKanbanDocument } from '../schemas/tags.schema';
+import { CreateTagDto } from './dto/tag-create.dto';
 
 @Injectable()
 export class TagKanbanService {
@@ -10,13 +11,17 @@ export class TagKanbanService {
         @InjectModel(TagKanban.name) private model: Model<TagKanbanDocument>
     ) { }
 
-    findAll(tenantId: Types.ObjectId) {
+    findAllActive(tenantId: Types.ObjectId): Promise<TagKanban[]> {
+        return this.model.find({ tenantId, active: true }).exec();
+    }
+
+    findAll(tenantId: Types.ObjectId): Promise<TagKanban[]> {
         return this.model.find({ tenantId }).exec();
     }
     
-    async create(userId: Types.ObjectId, tenantId: Types.ObjectId, body: any): Promise<TagKanban> {
+    async create(userId: Types.ObjectId, tenantId: Types.ObjectId, body: CreateTagDto): Promise<TagKanban> {
 
-        if (await this.verifyExist(tenantId, body.codName)) {
+        if (await this.verifyExist(tenantId, body.name)) {
             throw new BadRequestException('Tag já existe.');
         }
 
@@ -28,8 +33,8 @@ export class TagKanbanService {
         return createdTag.save();
     }
 
-    async verifyExist(tenantId: Types.ObjectId, codName: string): Promise<boolean> {
-        const result = await this.model.findOne({ tenantId, cd_tag: codName });
+    async verifyExist(tenantId: Types.ObjectId, name: string): Promise<boolean> {
+        const result = await this.model.findOne({ tenantId, name });
         return !!result;
     }
 
@@ -51,7 +56,7 @@ export class TagKanbanService {
         return tag.save();
     }
 
-    async delete(id: Types.ObjectId, tenantId: Types.ObjectId): Promise<TagKanban | null> {
-        return this.model.findByIdAndDelete(id);
+    async delete(id: Types.ObjectId, tenantId: Types.ObjectId) {
+        return await this.model.deleteOne({ _id: id, tenantId });
     }
 }

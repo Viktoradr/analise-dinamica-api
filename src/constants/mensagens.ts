@@ -18,6 +18,11 @@ export const MENSAGENS = {
     SCREEN_INVALID: 'Tela não encontrada',
     SCREEN_UPDATED: 'Tela {nome} foi atualizada com sucesso',
 
+    TAG_CREATED: 'Tag criada com sucesso',
+    TAG_UPDATED: 'Tag atualizada com sucesso',
+    TAG_DELETED: 'Tag removida com sucesso',
+    TAG_DEACTIVE: 'Tag inativada com sucesso',
+
     LEAD_CREATED: 'Lead Criado',
     LEAD_CREATED_SUCCESS: 'Sua solicitação foi enviada e seus dados estão sendo verificados. Em breve você receberá uma e-mail mais informações',
     LEAD_EMAIL_EXISTS: 'Email inválido, informe outro para continuar seu cadastro',

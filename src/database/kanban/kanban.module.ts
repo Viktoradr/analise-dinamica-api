@@ -23,17 +23,20 @@ import { CardTemplate, CardTemplateSchema } from './schemas/template.schema';
     controllers: [
         KanbanController,
         TagKanbanController,
-        CardKanbanController
+        CardKanbanController,
+        TagKanbanController
     ],
     providers: [
         KanbanService,
         TagKanbanService,
-        CardKanbanService
+        CardKanbanService,
+        TagKanbanService
     ],
     exports: [
         KanbanService,
         TagKanbanService,
-        CardKanbanService
+        CardKanbanService,
+        TagKanbanService
     ],
 })
 export class KanbanModule { }

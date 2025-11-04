@@ -16,6 +16,7 @@ import { ArquivoModule } from './database/arquivos/arquivo.module';
 import { TenantModule } from './database/tenant/tenant.module';
 import { LeadModule } from './database/leads/leads.module';
 import { DominioModule } from './database/dominio/dominio.module';
+import { KanbanModule } from './database/kanban/kanban.module';
 
 @Module({
   imports: [
@@ -44,7 +45,8 @@ import { DominioModule } from './database/dominio/dominio.module';
     LogsModule,
     PerfilModule,
     DominioModule,
-    TipoClienteModule
+    TipoClienteModule,
+    KanbanModule
   ],
   controllers: [AppController],
   providers: [
