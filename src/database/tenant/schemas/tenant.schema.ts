@@ -8,18 +8,19 @@ export class Tenant extends Document {
   name: string;
 
   @Prop({ type: String })
-  descricao: string;
+  description: string;
 
   @Prop({ type: String })
   email: string;
 
   @Prop({ type: Boolean, default: true })
-  ativo: boolean;
+  active: boolean;
 
   @Prop({ type: String, required: true, lowercase: true, unique: true })
   codPrefixoInterno: string;
 
-  // pre_set: (tipos, regras, templates)
+  @Prop({ type: Object, default: true })
+  preSet: object; //(tipos, regras, templates)
 }
 
 export const TenantSchema = SchemaFactory.createForClass(Tenant);

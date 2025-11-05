@@ -26,7 +26,7 @@ import { CodigoModule } from '../codigos/codigos.module';
     CodigoModule,
     SessionModule,
     LogsModule,
-    EmailModule,
+    EmailModule
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],

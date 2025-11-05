@@ -20,4 +20,6 @@ export class CardKanbanService {
 
     // "cod_name": "LOC-000123",
     //ver como vai criar o gerar do cod_name
+
+    
 }

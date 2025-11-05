@@ -22,11 +22,6 @@ export class UsuarioController {
     private usersService: UsuarioService,
     private logService: LogsService) {}
 
-  @Post()
-  async create(@Body() body: { name: string; email: string; password: string }) {
-    return this.usersService.create(body);
-  }
-
   @Get()
   @Roles(RoleEnum.ADM)
   async findAllUsers(

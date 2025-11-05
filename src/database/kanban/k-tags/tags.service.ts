@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { TagKanban, TagKanbanDocument } from '../schemas/tags.schema';
 import { CreateTagDto } from './dto/tag-create.dto';
+import { TAG_DEFAULT } from './tags_default';
 
 @Injectable()
 export class TagKanbanService {
@@ -25,12 +26,29 @@ export class TagKanbanService {
             throw new BadRequestException('Tag já existe.');
         }
 
-        const createdTag = new this.model({
+        const created = new this.model({
             ...body,
             createdBy: userId,
             tenantId: tenantId
         });
-        return createdTag.save();
+        return created.save();
+    }
+    
+    async createInitalTag(userId: Types.ObjectId, tenantId: Types.ObjectId): Promise<void> {
+
+        const tagsToInsert = TAG_DEFAULT.map(tag => ({
+            name: tag.name,
+            description: tag.description,
+            priority: tag.priority,
+            colorHex: tag.colorHex,
+            active: true,
+            createdBy: userId,
+            tenantId: tenantId,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        }));
+        
+        await this.model.insertMany(tagsToInsert);
     }
 
     async verifyExist(tenantId: Types.ObjectId, name: string): Promise<boolean> {

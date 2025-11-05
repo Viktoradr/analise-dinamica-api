@@ -23,6 +23,16 @@ export const MENSAGENS = {
     TAG_DELETED: 'Tag removida com sucesso',
     TAG_DEACTIVE: 'Tag inativada com sucesso',
 
+    TIPOCARD_CREATED: 'Tipo de card criado com sucesso',
+    TIPOCARD_UPDATED: 'Tipo de card atualizado com sucesso',
+    TIPOCARD_DELETED: 'Tipo de card removido com sucesso',
+    TIPOCARD_DEACTIVE: 'Tipo de card inativado com sucesso',
+
+    TEMPLATE_CARD_CREATED: 'Template de card criado com sucesso',
+    TEMPLATE_CARD_UPDATED: 'Template de card atualizado com sucesso',
+    TEMPLATE_CARD_DELETED: 'Template de card removido com sucesso',
+    TEMPLATE_CARD_DEACTIVE: 'Template de card inativado com sucesso',
+
     LEAD_CREATED: 'Lead Criado',
     LEAD_CREATED_SUCCESS: 'Sua solicitação foi enviada e seus dados estão sendo verificados. Em breve você receberá uma e-mail mais informações',
     LEAD_EMAIL_EXISTS: 'Email inválido, informe outro para continuar seu cadastro',

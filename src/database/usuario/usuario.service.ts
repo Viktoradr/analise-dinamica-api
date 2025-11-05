@@ -13,9 +13,9 @@ export class UsuarioService {
 
   constructor(@InjectModel(Usuario.name) private model: Model<UsuarioDocument>) { }
 
-  async create(data: Partial<Usuario>): Promise<Usuario> {
-    const created = await this.model.create(data);
-    return created.toJSON();
+  async create(data: Partial<Usuario>): Promise<UsuarioDocument> {
+    const user = await this.model.create(data);
+    return user.save();
   }
 
   async findAll(filter: any = {}): Promise<Usuario[]> {
@@ -41,13 +41,19 @@ export class UsuarioService {
       throw new NotFoundException(MENSAGENS.LEAD_EMAIL_EXISTS);
     }
   }
-
+  
   async findByEmail(email: string): Promise<UsuarioDocument> {
     const user = await this.model.findOne({ email });
 
     if (!user) {
       throw new NotFoundException(MENSAGENS.USER_COD_INVALID);
     }
+
+    return user;
+  }
+
+  async findByEmailToLogin(email: string): Promise<UsuarioDocument> {
+    const user = await this.findByEmail(email)
 
     await this.validateBlockUser(user);
 

@@ -13,9 +13,6 @@ export class TemplateWorkflow {
 
     @Prop({ type: Boolean, default: false })
     required: boolean;
-
-    @Prop({ type: Number, default: 0 })
-    executions: number;
 }
 
 export const TemplateWorkflowSchema = SchemaFactory.createForClass(TemplateWorkflow);

@@ -10,7 +10,11 @@ import { CardKanbanService } from './k-cards/cards.service';
 import { CardKanban, CardKanbanSchema } from './schemas/card.schema';
 import { TagKanban, TagKanbanSchema } from './schemas/tags.schema';
 import { TipoCard, TipoCardSchema } from './schemas/tipo-card.schema';
-import { CardTemplate, CardTemplateSchema } from './schemas/template.schema';
+import { CardTemplate, CardTemplateSchema } from './schemas/template-card.schema';
+import { TemplateController } from './k-template/template.controller';
+import { TipoCardService } from './k-tipo-card/tipoCard.service';
+import { TemplateCardService } from './k-template/template-card.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
     imports: [
@@ -24,19 +28,24 @@ import { CardTemplate, CardTemplateSchema } from './schemas/template.schema';
         KanbanController,
         TagKanbanController,
         CardKanbanController,
-        TagKanbanController
+        TemplateController
     ],
     providers: [
+        JwtService,
         KanbanService,
         TagKanbanService,
         CardKanbanService,
-        TagKanbanService
+        TagKanbanService,
+        TipoCardService,
+        TemplateCardService
     ],
     exports: [
         KanbanService,
         TagKanbanService,
         CardKanbanService,
-        TagKanbanService
+        TagKanbanService,
+        TipoCardService,
+        TemplateCardService
     ],
 })
 export class KanbanModule { }

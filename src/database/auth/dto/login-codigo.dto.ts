@@ -11,13 +11,12 @@ export class LoginCodigoDto {
   @ApiProperty({ 
     example: '(00) 00000-0000', 
     description: 'Celular de validação', 
-    required: true,
     type: String
   })
   celular: string;
 
   @ApiProperty({ 
-    example: '000000', 
+    example: 111111, 
     description: 'Código de validação',
     type: Number
   })

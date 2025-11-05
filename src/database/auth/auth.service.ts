@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../../providers/email/email.service';
 import { SessionService } from '../sessions/session.service';
@@ -22,7 +22,7 @@ export class AuthService {
   ) { }
 
   async validateUserByEmail(email: string): Promise<any> {
-    const user = await this.userService.findByEmail(email);
+    const user = await this.userService.findByEmailToLogin(email);
 
     await this.sessionService.validateMaxAccessSessionInDeterminateTime(user._id)
 
@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   async validateEmailAndCode(body: LoginCodigoDto, deviceInfo: any): Promise<any> {
-    const user = await this.userService.findByEmail(body.email);
+    const user = await this.userService.findByEmailToLogin(body.email);
 
     await this.userService.updatePhone(body.email, body.celular, user.celular);
 
@@ -88,5 +88,28 @@ export class AuthService {
   async logout(id: Types.ObjectId, tenantId: Types.ObjectId, jti: string) {
     // await this.codigoService.deleteCode(user.id, userCode.codigo);
     await this.sessionService.logout(id, tenantId, jti);
+  }
+
+  async validateEmailToService(email: string): Promise<any> {
+    const user = await this.userService.findByEmail(email);
+
+    if (!user.tenantId.equals('68e454359773fb05a7f7a013')) {
+      throw new UnauthorizedException(MENSAGENS.ACCESS_ROLE)
+    }
+    
+    const jwtId = uuidv4(); // ID único do token 
+
+    const payload = {
+      sub: user._id,
+      tenantId: user.tenantId,
+      roles: user.roles,
+      nome: user.nome,
+      service: true,
+      jti: jwtId
+    };
+
+    const token = this.jwtService.sign(payload, { expiresIn: '6h' });
+
+    return { access_token: token, user: user };
   }
 }
