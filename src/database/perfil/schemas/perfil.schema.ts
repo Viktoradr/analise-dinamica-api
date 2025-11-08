@@ -22,7 +22,7 @@ export class Perfil extends Document {
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Tela' }] })
   telas: Types.Array<Types.ObjectId>;
 
-  @Prop({ type: Date })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
   @Prop({ type: Date })

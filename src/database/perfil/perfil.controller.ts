@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PerfilService } from './perfil.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -13,8 +13,14 @@ export class PerfilController {
 
   @Get()
   @Roles(RoleEnum.ADM)
-  async findAll() {
-    const perfis = await this.perfilService.findAll();
+  async findAll(
+    @Query() params: {
+      nome?: string;
+      dtInicio?: Date | string;
+      dtFim?: Date | string;
+    }
+  ) {
+    const perfis = await this.perfilService.findAll(params);
   
     return perfis.map(perfil => ({
       ...perfil,

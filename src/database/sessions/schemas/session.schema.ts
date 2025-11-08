@@ -12,7 +12,7 @@ export class Session extends Document {
   @Prop({ required: true })
   jwtId: string; // JTI do token
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: Date.now })
   createdAt: Date;
 
   @Prop({ required: true })

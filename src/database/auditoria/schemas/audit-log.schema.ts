@@ -32,7 +32,7 @@ export class AuditLog extends Document {
   @Prop({ type: Object })
   details: Record<string, any>;
 
-  @Prop()
+  @Prop({ Type: Date, default: Date.now() })
   createdAt: Date;
 }
 

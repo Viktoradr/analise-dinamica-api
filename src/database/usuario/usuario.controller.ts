@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, BadRequestException, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UsuarioService } from './usuario.service';
 import { AcceptTermsDto } from './dto/usuario-accept-term.dto';
@@ -25,9 +25,19 @@ export class UsuarioController {
   @Get()
   @Roles(RoleEnum.ADM)
   async findAllUsers(
+    @Query() params: {
+      nome?: string;
+      email?: string;
+      tipoCliente?: string;
+      aceiteTermo?: boolean;
+      bloqueado?: boolean;
+      dtInicio?: Date | string;
+      dtFim?: Date | string;
+      role?: string;
+    },
     @TenantId() tenantId: Types.ObjectId
   ) {
-    const usuarios = await this.usersService.findAll({ tenantId});
+    const usuarios = await this.usersService.findAll(tenantId, params);
 
     return usuarios.map((u: any) => ({
       id: u._id, // virtual

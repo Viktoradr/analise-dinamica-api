@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { LogsService } from './logs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -7,6 +7,7 @@ import { RoleEnum } from '../../enum/perfil.enum';
 import { Roles } from '../../decorators/roles.decorator';
 import { TenantId } from '../../decorators/tenantid.decorator';
 import { LogResponseDto } from './dto/logs-response';
+import { EventEnum } from 'src/enum/event.enum';
 
 @Controller('logs')
 @UseGuards(JwtAuthGuard)
@@ -16,9 +17,18 @@ export class LogsController {
   @Get('logsSla')
   @Roles(RoleEnum.OPERACAO, RoleEnum.ADM_TOTAL)
   async logsSla(
+    @Query() params: {
+      event?: EventEnum;
+      type?: LogsObrigatorioEnum[];
+      message?: string;
+      userName?: string;
+      tenantName?: string;
+      dtInicio?: Date | string;
+      dtFim?: Date | string;
+    },
     @TenantId() tenantId: Types.ObjectId
   ) {
-    const logs = await this.service.findLogs({ tenantId });
+    const logs = await this.service.findLogs(tenantId, params);
 
     return logs.map(log => new LogResponseDto({
       event: log.event,
@@ -33,12 +43,19 @@ export class LogsController {
   @Get('logsAcesso')
   @Roles(RoleEnum.AUDITORIA, RoleEnum.ADM_TOTAL)
   async logsAcesso(
+    @Query() params: {
+      event?: EventEnum;
+      type?: LogsObrigatorioEnum[];
+      message?: string;
+      userName?: string;
+      tenantName?: string;
+      dtInicio?: Date | string;
+      dtFim?: Date | string;
+    },
     @TenantId() tenantId: Types.ObjectId
   ) {
-    const logs = await this.service.findLogs({
-      tenantId,
-      type: { $in: [LogsObrigatorioEnum.LOGIN_FAIL, LogsObrigatorioEnum.LOGIN_SUCCESS] }
-    });
+    params.type = [LogsObrigatorioEnum.LOGIN_FAIL, LogsObrigatorioEnum.LOGIN_SUCCESS];
+    const logs = await this.service.findLogs(tenantId, params);
 
     return logs.map(log => new LogResponseDto({
       event: log.event,

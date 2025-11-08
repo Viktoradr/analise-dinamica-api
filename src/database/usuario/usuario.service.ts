@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Usuario, UsuarioDocument } from './schemas/usuario.schema';
 import { MENSAGENS } from '../../constants/mensagens';
-import { cleanNumber } from '../../functions/util';
+import { cleanNumber, convertToUTC, toBoolean } from '../../functions/util';
 
 @Injectable()
 export class UsuarioService {
@@ -18,11 +18,41 @@ export class UsuarioService {
     return user.save();
   }
 
-  async findAll(filter: any = {}): Promise<Usuario[]> {
+  async findAll(tenantId: Types.ObjectId, params: {
+    nome?: string;
+    email?: string;
+    tipoCliente?: string;
+    aceiteTermo?: boolean;
+    bloqueado?: boolean;
+    dtInicio?: Date | string;
+    dtFim?: Date | string;
+    role?: string;
+  }): Promise<Usuario[]> {
+
+    const { nome, email, tipoCliente, aceiteTermo, bloqueado, dtInicio, dtFim, role } = params;
+  
+    const filter: any = { tenantId };
+
+    if (nome?.trim()) filter.nome = { $regex: nome.trim(), $options: 'i' };
+    if (email?.trim()) filter.email = { $regex: email.trim(), $options: 'i' };
+    if (tipoCliente?.trim()) filter['tipoCliente.nome'] = { $regex: tipoCliente.trim(), $options: 'i' };
+    if (role?.trim()) filter.roles = { $regex: role.trim(), $options: 'i' };
+
+    if (aceiteTermo) filter.aceiteTermo = aceiteTermo;
+    if (bloqueado && toBoolean(bloqueado) == true) filter.bloqueadoAte.$ne = null;
+
+    if (dtInicio || dtFim) {
+      filter.createdAt = {};
+      if (dtInicio) filter.createdAt.$gte = convertToUTC(dtInicio, false);
+      if (dtFim) filter.createdAt.$lte = convertToUTC(dtFim, true);
+    }
+  
+    //console.log('Filter:', JSON.stringify(filter, null, 2));
+
     return this.model
       .find(filter)
       .populate('tenantId', 'name')
-      .lean({ virtuals: true });
+      .lean();
   }
 
   async findById(id: Types.ObjectId): Promise<UsuarioDocument> {

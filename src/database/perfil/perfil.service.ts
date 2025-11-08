@@ -3,15 +3,32 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Perfil, PerfilDocument } from './schemas/perfil.schema';
 import { RoleEnum } from 'src/enum/perfil.enum';
+import { convertToUTC } from 'src/functions/util';
 
 @Injectable()
 export class PerfilService {
 
     constructor(@InjectModel(Perfil.name) private model: Model<PerfilDocument>) { }
 
-    async findAll(): Promise<Perfil[]> {
+    async findAll(params: {
+        nome?: string;
+        dtInicio?: Date | string;
+        dtFim?: Date | string;
+    }): Promise<Perfil[]> {
+        const { nome, dtInicio, dtFim } = params;
+          
+        const filter: any = { };
+    
+        if (nome?.trim()) filter.nome = { $regex: nome.trim(), $options: 'i' };
+        
+        if (dtInicio || dtFim) {
+            filter.createdAt = {};
+            if (dtInicio) filter.createdAt.$gte = convertToUTC(dtInicio, false);
+            if (dtFim) filter.createdAt.$lte = convertToUTC(dtFim, true);
+        }
+
         return this.model
-        .find()
+        .find(filter)
         .lean();
     }
 

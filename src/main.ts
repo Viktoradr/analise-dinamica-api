@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { configSwagger } from './config/swagger';
 import dotenv from "dotenv";
+import { ValidationPipe } from '@nestjs/common';
 dotenv.config();
 
 async function bootstrap() {
@@ -18,6 +19,10 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api');
+
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true, // Importante para transformar strings em Date
+  }));
   
   configSwagger(app);
 

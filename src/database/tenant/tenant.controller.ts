@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, Param, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LogsService } from '../auditoria/logs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -30,8 +30,15 @@ export class TenantController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findAll() {
-    return (await this.service.findAll()).map(tenant => {
+  async findAll(
+    @Query() params: {
+    name?: string;
+    email?: string;
+    dtInicio?: Date | string;
+    dtFim?: Date | string;
+  }
+  ) {
+    return (await this.service.findAll(params)).map(tenant => {
       const t = tenant.toObject();
       delete t.__v;
       return t;
