@@ -9,6 +9,9 @@ export class TipoClienteService {
     constructor(@InjectModel(TipoCliente.name) private model: Model<TipoClienteDocument>) { }
 
     async findAll(): Promise<TipoCliente[]> {
-        return this.model.find().lean({ virtuals: true });
+        const result = await this.model
+            .find()
+            .exec()
+        return result.map(doc => doc.toObject());
     }
 }

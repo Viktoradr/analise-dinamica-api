@@ -12,7 +12,10 @@ export class TelaService {
     ) { }
 
     async findAll() : Promise<Tela[]> {
-        return await this.model.find().lean({ virtuals: true });
+        const result = await this.model
+            .find()
+            .exec()
+        return result.map(doc => doc.toObject());
     }
 
     async findAllByIds(ids: Types.ObjectId[]) : Promise<Tela[]> {

@@ -10,7 +10,7 @@ export class TagKanban {
     @Prop({ type: Types.ObjectId, ref: 'Tenant', required: true })
     tenantId: Types.ObjectId;
 
-    @Prop({ lowercase: true, trim: true })
+    @Prop({ trim: true })
     name: string;
 
     @Prop({ type: String, trim: true })

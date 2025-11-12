@@ -19,10 +19,12 @@ export class ArquivoService {
     ) { }
 
     async findAll(): Promise<Arquivo[]> {
-        return this.model
-        .find()
-        .sort({ createdAt: -1 })
-        .lean({ virtuals: true });
+        
+        const result = await this.model
+            .find()
+            .sort({ createdAt: -1 })
+            .exec();
+        return result.map(doc => doc.toObject());
     }
 
     async validarArquivo(file: Express.Multer.File, 

@@ -61,14 +61,13 @@ export class LogsService {
     console.log('$gte value:', filter.createdAt?.$gte);
 
     console.log('Filter:', JSON.stringify(filter, null, 2));
-
-    return this.auditModel
+    const result = await this.auditModel
       .find(filter)
       .populate('userId', 'nome') // substitua 'nome email' pelos campos que você quer do usuário
       .populate('tenantId', 'name') // substitua pelos campos que você quer do tenant
       .sort({ createdAt: -1 })
       .limit(limit)
-      .lean();
+    return result.map(doc => doc.toObject());
   }
 
   async exportLogs(filter: any = {}): Promise<any[]> {

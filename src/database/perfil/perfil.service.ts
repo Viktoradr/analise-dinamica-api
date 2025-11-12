@@ -27,9 +27,8 @@ export class PerfilService {
             if (dtFim) filter.createdAt.$lte = convertToUTC(dtFim, true);
         }
 
-        return this.model
-        .find(filter)
-        .lean();
+        const result = await this.model.find(filter).exec();
+        return result.map(doc => doc.toObject());
     }
 
     async getScreens(roles: RoleEnum[]): Promise<Types.ObjectId[]> {
