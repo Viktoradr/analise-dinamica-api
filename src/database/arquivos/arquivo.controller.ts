@@ -1,5 +1,5 @@
 import { Controller, Post, Body, UseGuards, UseInterceptors, UploadedFile, Req, Get, BadRequestException } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ArquivoService } from './arquivo.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -18,6 +18,7 @@ import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { Roles } from '../../decorators/roles.decorator';
 import { RoleEnum } from '../../enum/perfil.enum';
 
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
 @ApiTags('arquivo')
 @Controller('arquivo')

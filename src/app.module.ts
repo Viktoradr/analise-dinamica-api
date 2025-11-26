@@ -39,7 +39,6 @@ import { KanbanModule } from './database/kanban/kanban.module';
     SessionModule,
     UsuarioModule,
     TenantModule,
-    //LaudoModule,
     LeadModule,
     ArquivoModule,
     LogsModule,

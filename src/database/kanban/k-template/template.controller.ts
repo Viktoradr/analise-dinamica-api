@@ -8,9 +8,9 @@ import { TipoCardService } from '../k-tipo-card/tipoCard.service';
 import { CreateTipoCardDto } from '../k-tipo-card/dto/tipo-card-create.dto';
 import { TemplateCardService } from './template-card.service';
 import { CreateTemplateCardDto } from './dto/template-card-create.dto';
-import { ServiceGuard } from 'src/guards/service.guard';
 import { JwtAuthGuard } from 'src/database/auth/guards/jwt-auth.guard';
 
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
 @ApiTags('template')
 @Controller('template')
@@ -76,9 +76,7 @@ export class TemplateController {
         summary: 'Listar os templates dos tipos',
         description: 'Endpoint responsável por retornar os templates dos tipos de card cadastrados. Requer autenticação e permissões específicas.'
     })
-    async getTipos(
-        @UserId() userId: Types.ObjectId
-    ) {
+    async getTipos() {
         const tipos = await this.tipoCardService.findAll();
         return tipos;
     }

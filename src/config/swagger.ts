@@ -22,5 +22,9 @@ export function configSwagger(app: INestApplication) {
 
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document);
+  SwaggerModule.setup('api-docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true, // Mantém o token entre recarregamentos
+    },
+  });
 }

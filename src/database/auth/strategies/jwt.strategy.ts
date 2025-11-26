@@ -24,19 +24,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const session = await this.sessionService.findByUserIdAndJtiActive(
-      new Types.ObjectId((payload.sub as string)), 
-      new Types.ObjectId((payload.tenantId as string)), 
-      payload.jti
-    );
 
-    if (!session) throw new UnauthorizedException(MENSAGENS.SESSION_JWT_STRATEGY);
+    if (!payload.service) {
+      const session = await this.sessionService.findByUserIdAndJtiActive(
+        new Types.ObjectId((payload.sub as string)), 
+        new Types.ObjectId((payload.tenantId as string)), 
+        payload.jti
+      );
+
+      if (!session) throw new UnauthorizedException(MENSAGENS.SESSION_JWT_STRATEGY);
+    }
     
     return { 
       userId: payload.sub, 
       tenantId: payload.tenantId, 
       username: payload.username, 
       roles: payload.roles,
+      service: payload.service,
       jti: payload.jti 
     };
   }

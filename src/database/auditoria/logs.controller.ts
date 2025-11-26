@@ -8,9 +8,11 @@ import { Roles } from '../../decorators/roles.decorator';
 import { TenantId } from '../../decorators/tenantid.decorator';
 import { LogResponseDto } from './dto/logs-response';
 import { EventEnum } from 'src/enum/event.enum';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
-@Controller('logs')
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
+@Controller('logs')
 export class LogsController {
   constructor(private readonly service: LogsService) { }
 

@@ -1,11 +1,12 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PerfilService } from './perfil.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RoleEnum } from 'src/enum/perfil.enum';
 
 @ApiTags('perfil')
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
 @Controller('perfil')
 export class PerfilController {

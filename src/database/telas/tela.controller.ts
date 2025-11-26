@@ -1,5 +1,5 @@
 import { Controller, Post, Body, UseGuards, Put, Param, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TelaService } from './tela.service';
 import { CreateTelaDto } from './dto/tela-create.dto';
@@ -12,6 +12,7 @@ import { PerfilService } from '../perfil/perfil.service';
 import { UserRoles } from '../../decorators/user-roles.decorator';
 
 @ApiTags('tela')
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
 @Controller('tela')
 export class TenantController {

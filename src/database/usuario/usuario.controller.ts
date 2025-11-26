@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, UseGuards, Req, BadRequestException, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsuarioService } from './usuario.service';
 import { AcceptTermsDto } from './dto/usuario-accept-term.dto';
 import { UserId } from '../../decorators/userid.decorator';
@@ -15,6 +15,7 @@ import { RoleEnum } from '../../enum/perfil.enum';
 import { TenantId } from '../../decorators/tenantid.decorator';
 
 @ApiTags('usuario')
+@ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
 @Controller('usuario')
 export class UsuarioController {
