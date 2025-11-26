@@ -10,7 +10,6 @@ import { PdfService } from '../../providers/pdf/pdf.service';
 import { OcrParams, OcrService } from '../../providers/ocr/ocr.serivce';
 import { AwsBucketService } from '../../providers/aws/aws-bucket.service';
 import { MENSAGENS } from '../../constants/mensagens';
-import { DocumentoEnum } from '../../enum/documento.enum';
 import { Types } from 'mongoose';
 import { LogsService } from '../auditoria/logs.service';
 import { EventEnum } from '../../enum/event.enum';
@@ -52,6 +51,8 @@ export class ArquivoController {
 
     const pageCount = await this.pdfService.getPdfPageCount(file.buffer);
     const user = await this.userService.findById(userId);
+
+    //recuperar a integração do usuário que está fazendo o upload
 
     const fileSaved = await this.arquivoService.saveFile(file, user, dto.tipo, pageCount);
 

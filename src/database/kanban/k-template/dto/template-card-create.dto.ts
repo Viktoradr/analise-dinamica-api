@@ -14,6 +14,23 @@ export class TemplateFlowDto {
   required: boolean;
 }
 
+export class TemplateFlowRaiaDto {
+  @ApiProperty({ required: true })
+  etapa: number;
+
+  @ApiProperty({ type: [TemplateFlowDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TemplateFlowDto)
+  checklist: TemplateFlowDto[];
+
+  @ApiProperty({ type: [TemplateFlowDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TemplateFlowDto)
+  workflow: TemplateFlowDto[];
+}
+
 export class CreateTemplateCardDto {
   @ApiProperty({ example: "690a826a0494d00123784a49", required: true })
   @IsString()
@@ -27,17 +44,11 @@ export class CreateTemplateCardDto {
   @IsString()
   description: string;
 
-  @ApiProperty({ type: [TemplateFlowDto] })
+  @ApiProperty({ type: [TemplateFlowRaiaDto] })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => TemplateFlowDto)
-  checklist: TemplateFlowDto[];
-
-  @ApiProperty({ type: [TemplateFlowDto] })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => TemplateFlowDto)
-  workflow: TemplateFlowDto[];
+  @Type(() => TemplateFlowRaiaDto)
+  etapas: TemplateFlowRaiaDto[];
 
   @ApiProperty({ type: Object })
   @IsObject()

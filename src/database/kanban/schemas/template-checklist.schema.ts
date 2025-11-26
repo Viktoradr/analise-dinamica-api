@@ -13,9 +13,6 @@ export class TemplateChecklist {
 
     @Prop({ type: Boolean, default: false })
     required: boolean;
-
-    // @Prop({ type: Number, default: 0 })
-    // executions: number;
 }
 
 export const TemplateChecklistSchema = SchemaFactory.createForClass(TemplateChecklist);

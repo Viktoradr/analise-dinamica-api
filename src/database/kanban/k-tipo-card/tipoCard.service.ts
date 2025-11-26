@@ -10,6 +10,14 @@ export class TipoCardService {
     constructor(
         @InjectModel(TipoCard.name) private model: Model<TipoCardDocument>
     ) { }
+    
+    async findAll(): Promise<TipoCardDocument[]> {
+        const result = await this.model
+            .find({}, { id: 1, name: 1 })
+            .exec();
+
+        return result;
+    }
 
     async verifyExist(tenantId: Types.ObjectId, name: string): Promise<boolean> {
         const result = await this.model.findOne({ tenantId, name });

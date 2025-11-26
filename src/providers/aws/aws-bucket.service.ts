@@ -25,14 +25,20 @@ export class AwsBucketService {
     this.region = process.env.AWS_REGION as string;
     this.bucketName = process.env.AWS_BUCKET as string;
 
-    this.s3Client = new S3Client({
+    this.s3Client = this.setClient(
+      process.env.AWS_ACCESS_KEY_ID as string, 
+      process.env.AWS_SECRET_ACCESS_KEY as string);
+
+  }
+
+  setClient(AWS_ACCESS_KEY_ID: string, AWS_SECRET_ACCESS_KEY: string) {
+    return new S3Client({
       region: this.region,
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string
+        accessKeyId: AWS_ACCESS_KEY_ID as string,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY as string
       },
     });
-
   }
 
   async uploadFile(
