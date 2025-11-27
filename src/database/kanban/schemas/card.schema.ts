@@ -64,8 +64,8 @@ export class CardKanban {
     @Prop({ type: Object })
     campos: object; 
 
-    @Prop({ type: Object })
-    camposPersonagem: object; 
+    @Prop({ type: [String] })
+    camposPersonagem: Types.Array<string>; 
 
     @Prop({ type: Types.ObjectId, ref: 'Usuario', required: true })
     createdBy: Types.ObjectId;

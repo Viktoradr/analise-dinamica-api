@@ -19,8 +19,8 @@ export class CardTemplate {
     @Prop({ type: Object })
     campos: object; 
 
-    @Prop({ type: Object })
-    camposPersonagem: object; 
+    @Prop({ type: [String] })
+    camposPersonagem: Types.Array<string>; 
 
     @Prop({ type: [TemplateRaiaSchema] })
     etapas: Types.Array<TemplateRaia>;
