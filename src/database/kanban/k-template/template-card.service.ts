@@ -13,7 +13,7 @@ export class TemplateCardService {
 
     async findAll(): Promise<CardTemplate[]> {
         const result = await this.model
-            .find({}, { id: 1, name: 1 })
+            .find({})
             .exec();
 
         return result;

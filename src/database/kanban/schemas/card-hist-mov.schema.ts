@@ -26,6 +26,9 @@ export class HistMovCardKanban {
 
     @Prop({ type: [String], required: true })
     workflow_snapshot: string[];
+
+    @Prop({ type: Types.ObjectId, ref: 'Usuario', default: null })
+    createdBy: Types.ObjectId;
 }
 
 export const HistMovCardKanbanSchema = SchemaFactory.createForClass(HistMovCardKanban);

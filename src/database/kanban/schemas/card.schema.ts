@@ -62,7 +62,10 @@ export class CardKanban {
     historyActivities: Types.Array<HistMovCardKanban>;
 
     @Prop({ type: Object })
-    campos: object; //Campos de negócio dinâmicos - {cd_pasta:'A10002', ...}
+    campos: object; 
+
+    @Prop({ type: Object })
+    camposPersonagem: object; 
 
     @Prop({ type: Types.ObjectId, ref: 'Usuario', required: true })
     createdBy: Types.ObjectId;

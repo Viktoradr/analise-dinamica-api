@@ -6,9 +6,6 @@ export type WorkflowCardKanbanDocument = HydratedDocument<WorkflowCardKanban> & 
 @Schema({ timestamps: false })
 export class WorkflowCardKanban {
 
-    @Prop({ type: Types.ObjectId, ref: 'Kanban', required: true })
-    kanbanId: Types.ObjectId;
-
     @Prop({ type: Types.ObjectId, required: true })
     raiaId: Types.ObjectId;
 
@@ -21,8 +18,8 @@ export class WorkflowCardKanban {
     @Prop({ type: Boolean, default: false })
     check: boolean;
 
-    @Prop({ type: Number })
-    executionsOk: number;
+    @Prop({ type: Date, default: null })
+    baixaAt: Date | null; 
 }
 
 export const WorkflowCardKanbanSchema = SchemaFactory.createForClass(WorkflowCardKanban);

@@ -55,6 +55,8 @@ export class ArquivoController {
 
     //recuperar a integração do usuário que está fazendo o upload
 
+    //se o campo cardKanbanId for preenchido devo criar um vinculo com o card
+
     const fileSaved = await this.arquivoService.saveFile(file, user, dto.tipo, pageCount);
 
     try {

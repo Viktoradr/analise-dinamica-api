@@ -15,6 +15,9 @@ export class HistActivCardKanban {
     @Prop({ required: true })
     createdAt: Date;
 
+    @Prop({ type: Types.ObjectId, ref: 'Usuario', default: null })
+    createdBy: Types.ObjectId;
+
     @Prop({ type: String, required: true })
     description: string;
 }

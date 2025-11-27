@@ -6,9 +6,6 @@ export type ChecklistCardKanbanDocument = HydratedDocument<ChecklistCardKanban> 
 @Schema({ timestamps: false })
 export class ChecklistCardKanban {
 
-    @Prop({ type: Types.ObjectId, ref: 'Kanban', required: true })
-    kanbanId: Types.ObjectId;
-
     @Prop({ type: Types.ObjectId, required: true })
     raiaId: Types.ObjectId;
 
@@ -21,8 +18,8 @@ export class ChecklistCardKanban {
     @Prop({ type: Boolean, default: false })
     check: boolean;
 
-    @Prop({ type: Number, default: 0 })
-    executionsOk: number;
+    @Prop({ type: Date, default: null })
+    baixaAt: Date | null; 
 }
 
 export const ChecklistCardKanbanSchema = SchemaFactory.createForClass(ChecklistCardKanban);
