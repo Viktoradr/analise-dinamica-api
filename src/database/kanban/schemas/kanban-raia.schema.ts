@@ -1,15 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
-export type KanbanRaiaDocument = HydratedDocument<KanbanRaia> & { _id: Types.ObjectId };
-
-@Schema({ timestamps: true })
+@Schema({ _id: false, timestamps: false })
 export class KanbanRaia {
+
+    @Prop({ type: Types.ObjectId, required: true })
+    id: Types.ObjectId;
 
     @Prop({ lowercase: true, trim: true })
     name: string;
 
-    @Prop({ type: Number })
+    @Prop({ type: Number, required: true })
     order: number;
 }
 

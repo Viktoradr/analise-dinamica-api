@@ -7,16 +7,19 @@ export type WorkflowCardKanbanDocument = HydratedDocument<WorkflowCardKanban> & 
 export class WorkflowCardKanban {
 
     @Prop({ type: Types.ObjectId, required: true })
-    raiaId: Types.ObjectId;
-
-    @Prop({ type: Types.ObjectId, required: true })
     checklistItemId: Types.ObjectId;
     
     @Prop({ type: String, trim: true })
-    name: string;
+    task: string;
+    
+    @Prop({ type: Boolean })
+    required: boolean;
     
     @Prop({ type: Boolean, default: false })
     check: boolean;
+
+    @Prop({ type: Types.ObjectId, ref: 'Usuario' })
+    checkedBy: Types.ObjectId | null;
 
     @Prop({ type: Date, default: null })
     baixaAt: Date | null; 

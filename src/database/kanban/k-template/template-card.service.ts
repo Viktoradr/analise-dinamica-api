@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CardTemplate, CardTemplateDocument } from '../schemas/template-card.schema';
 import { CreateTemplateCardDto } from './dto/template-card-create.dto';
+import { MENSAGENS } from 'src/constants/mensagens';
 
 @Injectable()
 export class TemplateCardService {
@@ -16,6 +17,14 @@ export class TemplateCardService {
             .find({})
             .exec();
 
+        return result;
+    }
+    
+    async findById(id: Types.ObjectId): Promise<CardTemplateDocument> {
+        const result = await this.model.findOne({ _id: id });
+        if (!result) {
+            throw new NotFoundException(MENSAGENS.TEMPLATE_CARD_NOTFOUND);
+        }
         return result;
     }
 

@@ -12,8 +12,7 @@ export class Usuario {
     required: true, 
     lowercase: true,
     trim: true, 
-    minlength: 2, 
-    maxlength: 100 
+    minlength: 2 
   })
   nome: string;
 

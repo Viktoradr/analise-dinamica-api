@@ -8,6 +8,9 @@ import { UsuarioModule } from '../usuario/usuario.module';
 import { OcrModule } from '../../providers/ocr/ocr.module';
 import { AwsBucketModule } from '../../providers/aws/aws-bucket.module';
 import { PdfModule } from '../../providers/pdf/pdf.module';
+import { CardKanbanService } from '../kanban/k-cards/cards.service';
+import { KanbanModule } from '../kanban/kanban.module';
+import { IntegracaoModule } from '../integracoes/integracao.module';
  
 @Module({
   imports: [
@@ -16,7 +19,9 @@ import { PdfModule } from '../../providers/pdf/pdf.module';
     UsuarioModule,
     OcrModule,
     AwsBucketModule,
-    PdfModule
+    PdfModule,
+    KanbanModule,
+    IntegracaoModule
   ],
   controllers: [ArquivoController],
   providers: [ArquivoService],

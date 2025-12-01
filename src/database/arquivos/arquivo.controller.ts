@@ -17,6 +17,9 @@ import { LogsObrigatorioEnum } from '../../enum/logs-obrigatorio.enum';
 import { ClassMethodName } from '../../decorators/method-logger.decorator';
 import { Roles } from '../../decorators/roles.decorator';
 import { RoleEnum } from '../../enum/perfil.enum';
+import { CardKanbanService } from '../kanban/k-cards/cards.service';
+import { TenantId } from 'src/decorators/tenantid.decorator';
+import { IntegracaoService } from '../integracoes/integracao.service';
 
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
@@ -29,13 +32,14 @@ export class ArquivoController {
     private readonly ocrService: OcrService,
     private readonly awsBucketService: AwsBucketService,
     private readonly pdfService: PdfService,
-    private readonly logService: LogsService) 
+    private readonly logService: LogsService,
+    private readonly cardKanbanService: CardKanbanService,
+    private readonly integacaoService: IntegracaoService) 
     { }
 
   
   @Get()
-  async GetArquivos()
-  {
+  async GetArquivos() {
     return await this.arquivoService.findAll();
   }
 
@@ -47,17 +51,23 @@ export class ArquivoController {
     @ClassMethodName() fullName: string,
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateArquivoDto,
-    @UserId() userId: Types.ObjectId
+    @UserId() userId: Types.ObjectId,
+    @TenantId() tenantId: Types.ObjectId
   ) {
 
     const pageCount = await this.pdfService.getPdfPageCount(file.buffer);
     const user = await this.userService.findById(userId);
 
     //recuperar a integração do usuário que está fazendo o upload
-
-    //se o campo cardKanbanId for preenchido devo criar um vinculo com o card
+    //const integracoes = this.integacaoService.getIntegracaoByTenant(tenantId);
 
     const fileSaved = await this.arquivoService.saveFile(file, user, dto.tipo, pageCount);
+
+    //se o campo cardKanbanId for preenchido devo criar um vinculo com o card
+    if (dto.cardKanbanId != null) {
+      const cardKanbanId = new Types.ObjectId((dto.cardKanbanId as string));
+      this.cardKanbanService.addArquivoToCardKanban(cardKanbanId, fileSaved.id);
+    }
 
     try {
       const awsResonse = await this.awsBucketService.uploadFile(file, 'adfiles');

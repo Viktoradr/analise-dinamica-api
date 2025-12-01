@@ -10,8 +10,8 @@ export class Kanban {
     @Prop({ type: Types.ObjectId, ref: 'Tenant', required: true })
     tenantId: Types.ObjectId;
 
-    @Prop({ type: Types.ObjectId, ref: 'TipoCard', required: true })
-    tipoCardId: Types.ObjectId;
+    @Prop({ type: Types.ObjectId, ref: 'Usuario' })
+    createdBy: Types.ObjectId | null;
 
     @Prop({ required: true, lowercase: true, trim: true })
     codigo: string;
@@ -24,8 +24,8 @@ export class Kanban {
 
     @Prop({ type: Boolean, default: true })
     active: boolean;
-
-    @Prop({ type: [{ type: KanbanRaiaSchema }], default: [] })
+    
+    @Prop({ type: [KanbanRaiaSchema], default: [] })
     raias: Types.Array<KanbanRaia>;
 }
 

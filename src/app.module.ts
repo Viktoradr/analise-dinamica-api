@@ -17,6 +17,8 @@ import { TenantModule } from './database/tenant/tenant.module';
 import { LeadModule } from './database/leads/leads.module';
 import { DominioModule } from './database/dominio/dominio.module';
 import { KanbanModule } from './database/kanban/kanban.module';
+import { PersonagemModule } from './database/personagem/personagem.module';
+import { IntegracaoModule } from './database/integracoes/integracao.module';
 
 @Module({
   imports: [
@@ -45,7 +47,9 @@ import { KanbanModule } from './database/kanban/kanban.module';
     PerfilModule,
     DominioModule,
     TipoClienteModule,
-    KanbanModule
+    KanbanModule,
+    PersonagemModule,
+    IntegracaoModule
   ],
   controllers: [AppController],
   providers: [

@@ -21,11 +21,11 @@ export class HistMovCardKanban {
     @Prop({ required: true })
     movementAt: Date;
 
-    @Prop({ type: [String], required: true })
-    checklists_snapshot: string[];
+    @Prop({ type: [Object], required: true })
+    checklists_snapshot: object[];
 
-    @Prop({ type: [String], required: true })
-    workflow_snapshot: string[];
+    @Prop({ type: [Object], required: true })
+    workflow_snapshot: object[];
 
     @Prop({ type: Types.ObjectId, ref: 'Usuario', default: null })
     createdBy: Types.ObjectId;

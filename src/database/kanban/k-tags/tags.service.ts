@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { TagKanban, TagKanbanDocument } from '../schemas/tags.schema';
 import { CreateTagDto } from './dto/tag-create.dto';
 import { TAG_DEFAULT } from './tags_default';
+import { MENSAGENS } from 'src/constants/mensagens';
 
 @Injectable()
 export class TagKanbanService {
@@ -18,6 +19,16 @@ export class TagKanbanService {
 
     findAll(tenantId: Types.ObjectId): Promise<TagKanban[]> {
         return this.model.find({ tenantId }).exec();
+    }
+
+    async findById(id: Types.ObjectId, tenantId: Types.ObjectId): Promise<TagKanban> {
+        const tag = await this.model.findOne({ _id: id, tenantId });
+
+        if (!tag) {
+            throw new NotFoundException(MENSAGENS.TAG_NOTFOUND);
+        }
+
+        return tag;
     }
     
     async create(userId: Types.ObjectId, tenantId: Types.ObjectId, body: CreateTagDto): Promise<TagKanban> {

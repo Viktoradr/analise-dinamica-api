@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LogsModule } from '../auditoria/logs.module';
 import { Tenant, TenantSchema } from './schemas/tenant.schema';
@@ -13,7 +13,7 @@ import { KanbanModule } from '../kanban/kanban.module';
     MongooseModule.forFeature([{ name: Tenant.name, schema: TenantSchema }]),
     LogsModule,
     UsuarioModule,
-    KanbanModule
+    forwardRef(() => KanbanModule),
   ],
   controllers: [TenantController],
   providers: [TenantService, JwtService],

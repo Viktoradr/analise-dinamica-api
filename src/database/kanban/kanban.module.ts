@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { KanbanController } from './kanban.controller';
 import { KanbanService } from './kanban.service';
@@ -15,6 +15,7 @@ import { TemplateController } from './k-template/template.controller';
 import { TipoCardService } from './k-tipo-card/tipoCard.service';
 import { TemplateCardService } from './k-template/template-card.service';
 import { JwtService } from '@nestjs/jwt';
+import { TenantModule } from '../tenant/tenant.module';
 
 @Module({
     imports: [
@@ -22,7 +23,8 @@ import { JwtService } from '@nestjs/jwt';
         MongooseModule.forFeature([{ name: TagKanban.name, schema: TagKanbanSchema }]),
         MongooseModule.forFeature([{ name: CardKanban.name, schema: CardKanbanSchema }]),
         MongooseModule.forFeature([{ name: CardTemplate.name, schema: CardTemplateSchema }]),
-        MongooseModule.forFeature([{ name: TipoCard.name, schema: TipoCardSchema }])
+        MongooseModule.forFeature([{ name: TipoCard.name, schema: TipoCardSchema }]),
+        forwardRef(() => TenantModule),
     ],
     controllers: [
         KanbanController,

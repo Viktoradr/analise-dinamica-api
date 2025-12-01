@@ -5,6 +5,9 @@ import { StatusCardEnum } from '../../../enum/status-card.enum';
 import { HistMovCardKanban, HistMovCardKanbanSchema } from './card-hist-mov.schema';
 import { ChecklistCardKanban, ChecklistCardKanbanSchema } from './card-checklist.schema';
 import { WorkflowCardKanban, WorkflowCardKanbanSchema } from './card-workflow.schema';
+import { TipoCardKanban, TipoCardKanbanSchema } from './card-tipocard.schema';
+import { CardTemplateKanban, CardTemplateKanbanSchema } from './card-template.schema';
+import { KanbanRaia, KanbanRaiaSchema } from './kanban-raia.schema';
 
 export type CardKanbanDocument = HydratedDocument<CardKanban> & { _id: Types.ObjectId };
 
@@ -17,25 +20,25 @@ export class CardKanban {
     @Prop({ type: Types.ObjectId, ref: 'Kanban', required: true })
     kanbanId: Types.ObjectId;
 
-    @Prop({ type: Types.ObjectId, ref: 'TipoCard', required: true })
-    tipoCardId: Types.ObjectId;
+    @Prop({ type: TipoCardKanbanSchema, required: true })
+    tipoCard: TipoCardKanban;
 
-    @Prop({ type: Types.ObjectId, ref: 'CardTemplate', required: true })
-    templateId: Types.ObjectId;
+    @Prop({ type: CardTemplateKanbanSchema, required: true })
+    cardTemplate: CardTemplateKanban;
 
-    @Prop({ type: Types.ObjectId })
-    atualRaiaId: Types.ObjectId; //ref: KanbanRaia
+    @Prop({ type: KanbanRaiaSchema })
+    atualRaia: KanbanRaia;
 
     @Prop({ uppercase: true, trim: true, required: true })
-    codInterno: string; //ARP-MIN-2025-000123
+    codInterno: string;
 
     @Prop({ lowercase: true, trim: true })
-    codNegocio: string; //1004395-14.2024.8.26.0572
+    codNegocio: string;
 
     @Prop({ type: Boolean, default: true })
     active: boolean;
 
-    @Prop({ type: [Types.ObjectId], ref: 'Tags', default: [] })
+    @Prop({ type: [Types.ObjectId], ref: 'TagKanban', default: [] })
     tags: Types.Array<Types.ObjectId>;
 
     @Prop({ type: [Types.ObjectId], ref: 'Arquivo', default: [] })
@@ -50,22 +53,16 @@ export class CardKanban {
     status: StatusCardEnum;
 
     @Prop({ type: [ChecklistCardKanbanSchema], default: [] })
-    checklist: Types.Array<ChecklistCardKanban>; //[{id:'upload_cnh_locatario', status:'pendente'}]
+    checklist: Types.Array<ChecklistCardKanban>;
 
     @Prop({ type: [WorkflowCardKanbanSchema], default: [] })
-    workflow: Types.Array<WorkflowCardKanban>; //[{id:'gerar_minuta_modelo', agente:'LLM', status:'ok'}]
+    workflow: Types.Array<WorkflowCardKanban>;
 
     @Prop({ type: [HistMovCardKanbanSchema], default: [] })
     historyMovement: Types.Array<HistMovCardKanban>;
 
     @Prop({ type: [HistActivCardKanbanSchema], default: [] })
     historyActivities: Types.Array<HistMovCardKanban>;
-
-    @Prop({ type: Object })
-    campos: object; 
-
-    @Prop({ type: [String] })
-    camposPersonagem: Types.Array<string>; 
 
     @Prop({ type: Types.ObjectId, ref: 'Usuario', required: true })
     createdBy: Types.ObjectId;
@@ -78,3 +75,20 @@ export class CardKanban {
 }
 
 export const CardKanbanSchema = SchemaFactory.createForClass(CardKanban);
+
+CardKanbanSchema.index({ tenantId: 1, kanbanId: 1 });
+
+// 🔥 Virtuals (se precisar de relacionamentos)
+CardKanbanSchema.virtual('tenant', {
+  ref: 'Tenant',
+  localField: 'tenantId',
+  foreignField: '_id',
+  justOne: true
+});
+
+CardKanbanSchema.virtual('kanban', {
+  ref: 'Kanban',
+  localField: 'kanbanId',
+  foreignField: '_id',
+  justOne: true
+});

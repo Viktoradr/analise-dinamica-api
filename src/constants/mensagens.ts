@@ -18,20 +18,39 @@ export const MENSAGENS = {
     SCREEN_INVALID: 'Tela não encontrada',
     SCREEN_UPDATED: 'Tela {nome} foi atualizada com sucesso',
 
+    TENANT_NOTFOUND: 'Tenant não encontrado',
+
+    PERSONAGEM_CREATED: 'Personagem criado com sucesso',
+    PERSONAGEM_UPDATED: 'Personagem atualizado com sucesso',
+
+    INTEGRACAO_CREATED: 'Integração criada com sucesso',
+    INTEGRACAO_UPDATED: 'Integração atualizada com sucesso',
+
+    TAG_NOTFOUND: 'Tag não encontrada',
     TAG_CREATED: 'Tag criada com sucesso',
     TAG_UPDATED: 'Tag atualizada com sucesso',
     TAG_DELETED: 'Tag removida com sucesso',
     TAG_DEACTIVE: 'Tag inativada com sucesso',
 
+    TIPOCARD_NOTFOUND: 'Tipo de card não encontrado',
     TIPOCARD_CREATED: 'Tipo de card criado com sucesso',
     TIPOCARD_UPDATED: 'Tipo de card atualizado com sucesso',
     TIPOCARD_DELETED: 'Tipo de card removido com sucesso',
     TIPOCARD_DEACTIVE: 'Tipo de card inativado com sucesso',
 
+    TEMPLATE_CARD_NOTFOUND: 'Template de card não encontrado',
     TEMPLATE_CARD_CREATED: 'Template de card criado com sucesso',
     TEMPLATE_CARD_UPDATED: 'Template de card atualizado com sucesso',
     TEMPLATE_CARD_DELETED: 'Template de card removido com sucesso',
     TEMPLATE_CARD_DEACTIVE: 'Template de card inativado com sucesso',
+
+    KANBAN_NOTFOUND: 'Kanban não encontrado',
+
+    CARD_KANBAN_NOTFOUND: 'Card não encontrado',
+    CARD_KANBAN_CREATED: 'Card criado com sucesso',
+    CARD_KANBAN_UPDATED: 'Card atualizado com sucesso',
+    CARD_KANBAN_DELETED: 'Card removido com sucesso',
+    CARD_KANBAN_DEACTIVE: 'Card inativado com sucesso',
 
     LEAD_CREATED: 'Lead Criado',
     LEAD_CREATED_SUCCESS: 'Sua solicitação foi enviada e seus dados estão sendo verificados. Em breve você receberá uma e-mail mais informações',
