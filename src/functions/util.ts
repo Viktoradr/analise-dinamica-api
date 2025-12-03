@@ -1,3 +1,5 @@
+import { OpcoesFormatacao } from "src/interfaces/opcoes-formatacao.interface";
+
 export const newId = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
   const r = Math.random() * 16 | 0;
   const v = c === 'x' ? r : (r & 0x3 | 0x8);
@@ -109,5 +111,76 @@ export const convertToUTC = (dateInput: Date | string, isEndOfDay = false, offse
     return new Date(Date.UTC(year, month, day, 23 + offsetHours, 59, 59, 999));
   } else {
     return new Date(Date.UTC(year, month, day, 0 + offsetHours, 0, 0, 0));
+  }
+}
+
+export const formatarDataHumanizada = (
+  data: Date | string | number, 
+  opcoes: OpcoesFormatacao = {}
+): string => {
+  const {
+    mostrarHora = true,
+    formatoData = 'curto',
+    limiarDias = 7
+  } = opcoes;
+
+  const dataObj = new Date(data);
+  const hoje = new Date();
+  
+  // Configura horários para comparar apenas as datas
+  const dataLimpa = new Date(dataObj.getFullYear(), dataObj.getMonth(), dataObj.getDate());
+  const hojeLimpo = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  
+  const diffMs = hojeLimpo.getTime() - dataLimpa.getTime();
+  const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  // Formata a hora
+  const horaFormatada = dataObj.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  } as Intl.DateTimeFormatOptions);
+
+  // Define formato da data CORRETAMENTE
+  const formatosData: Record<string, Intl.DateTimeFormatOptions> = {
+    curto: { day: '2-digit', month: '2-digit', year: 'numeric' },
+    longo: { day: '2-digit', month: 'long', year: 'numeric' },
+    completo: { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }
+  };
+
+  const dataFormatada = dataObj.toLocaleDateString('pt-BR', formatosData[formatoData]);
+
+  // Se passou do limiar de dias, retorna data formatada
+  if (diffDias > limiarDias) {
+    return mostrarHora 
+      ? `${dataFormatada} às ${horaFormatada}` 
+      : dataFormatada;
+  }
+
+  // Formatações humanizadas
+  switch (diffDias) {
+    case 0:
+      return mostrarHora ? `Hoje às ${horaFormatada}` : 'Hoje';
+    
+    case 1:
+      return mostrarHora ? `Ontem às ${horaFormatada}` : 'Ontem';
+    
+    case 2:
+      return 'Há 2 dias atrás';
+    
+    case 3:
+      return 'Há 3 dias atrás';
+    
+    case 4:
+    case 5:
+      return `Há ${diffDias} dias atrás`;
+    
+    case 6:
+      return 'Há 6 dias atrás';
+    
+    case 7:
+      return 'Há uma semana atrás';
+    
+    default:
+      return `Há ${diffDias} dias atrás`;
   }
 }

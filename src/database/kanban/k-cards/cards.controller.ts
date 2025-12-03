@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiParam } from '@nestjs/swagger';
 import { CardKanbanService } from './cards.service';
 import { JwtAuthGuard } from 'src/database/auth/guards/jwt-auth.guard';
 import { Types } from 'mongoose';
@@ -13,6 +13,7 @@ import { TenantService } from 'src/database/tenant/tenant.service';
 import { KanbanService } from '../kanban.service';
 import { UpdateCardCheckDto } from './dto/card-check-update.dto';
 import { TagKanbanService } from '../k-tags/tags.service';
+import { CardResponse } from './dto/card-response.dto';
 
 @ApiTags('cards')
 @ApiBearerAuth('JWT-auth')
@@ -24,7 +25,8 @@ export class CardKanbanController {
         private readonly tipoCardService: TipoCardService,
         private readonly templateCardService: TemplateCardService,
         private readonly tenantService: TenantService,
-        private readonly kanbanService: KanbanService
+        private readonly kanbanService: KanbanService,
+        private readonly tagKanbanService: TagKanbanService
     ) { }
 
     @Get('comboTipoCard')
@@ -59,6 +61,25 @@ export class CardKanbanController {
         //criar log de auditoria
         
         return { card, message: MENSAGENS.CARD_KANBAN_CREATED }
+    }
+
+    @Get(':id')
+    @ApiOperation({
+        summary: 'Retorna o card pelo id',
+        description: 'Endpoint responsável por retornar o card'
+    })
+    @ApiParam({
+        name: 'id',
+        type: String,
+        format: 'ObjectId',
+        example: '507f1f77bcf86cd799439011'
+    })
+    async getCard(
+        @Param('id') cardKanbanId: Types.ObjectId,
+        @TenantId() tenantId: Types.ObjectId
+    ) {
+        const card = await this.service.findPopulateByIdActive(cardKanbanId, tenantId);
+        return CardResponse(card);
     }
 
     @Post('checkChecklistItem')
@@ -103,10 +124,16 @@ export class CardKanbanController {
         return { message: MENSAGENS.CARD_KANBAN_UPDATED }
     }
 
-    @Put('mudarRaia/:id')
+    @Put(':id/mudarRaia')
     @ApiOperation({
         summary: 'Dar check ao um dos itens do workflow',
         description: 'Endpoint responsável por dar check ao um dos itens do workflow. Requer autenticação e permissões específicas.'
+    })
+    @ApiParam({
+        name: 'id',
+        type: String,
+        format: 'ObjectId',
+        example: '507f1f77bcf86cd799439011'
     })
     async mudarRaia(
         @Param('id') cardKanbanId: Types.ObjectId,
@@ -132,12 +159,20 @@ export class CardKanbanController {
         summary: 'Adiciona tag ao card',
         description: 'Endpoint responsável por adicionar a tag ao card.'
     })
+    @ApiParam({
+        name: 'id',
+        type: String,
+        format: 'ObjectId',
+        example: '507f1f77bcf86cd799439011'
+    })
     async addTag(
         @Param('id') cardKanbanId: Types.ObjectId,
+        @UserId() userId: Types.ObjectId,
         @TenantId() tenantId: Types.ObjectId,
         @Body() body: { tagId: Types.ObjectId }
     ) {
-        await this.service.addTag(cardKanbanId, tenantId, body.tagId);
+        const tag = await this.tagKanbanService.findById(body.tagId, tenantId);
+        await this.service.addTag(cardKanbanId, tenantId, userId, tag.name, body.tagId);
 
         return { message: MENSAGENS.CARD_KANBAN_UPDATED }
     }
@@ -147,12 +182,20 @@ export class CardKanbanController {
         summary: 'Remover tag do card',
         description: 'Endpoint responsável por remover a tag do card.'
     })
+    @ApiParam({
+        name: 'id',
+        type: String,
+        format: 'ObjectId',
+        example: '507f1f77bcf86cd799439011'
+    })
     async removerTag(
         @Param('id') cardKanbanId: Types.ObjectId,
+        @UserId() userId: Types.ObjectId,
         @TenantId() tenantId: Types.ObjectId,
         @Body() body: { tagId: Types.ObjectId }
     ) {
-        await this.service.removerTag(cardKanbanId, tenantId, body.tagId);
+        const tag = await this.tagKanbanService.findById(body.tagId, tenantId);
+        await this.service.removerTag(cardKanbanId, tenantId, userId, tag.name, body.tagId);
 
         return { message: MENSAGENS.CARD_KANBAN_UPDATED }
     }

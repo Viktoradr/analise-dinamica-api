@@ -19,6 +19,7 @@ import { DominioModule } from './database/dominio/dominio.module';
 import { KanbanModule } from './database/kanban/kanban.module';
 import { PersonagemModule } from './database/personagem/personagem.module';
 import { IntegracaoModule } from './database/integracoes/integracao.module';
+import { ConsumerModule } from './database/consumer/consumer.module';
 
 @Module({
   imports: [
@@ -49,7 +50,8 @@ import { IntegracaoModule } from './database/integracoes/integracao.module';
     TipoClienteModule,
     KanbanModule,
     PersonagemModule,
-    IntegracaoModule
+    IntegracaoModule,
+    ConsumerModule
   ],
   controllers: [AppController],
   providers: [

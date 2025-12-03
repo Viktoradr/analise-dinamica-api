@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { HistActivCardKanbanSchema } from './card-hist-activ.schema';
+import { HistActivCardKanban, HistActivCardKanbanSchema } from './card-hist-activ.schema';
 import { StatusCardEnum } from '../../../enum/status-card.enum';
 import { HistMovCardKanban, HistMovCardKanbanSchema } from './card-hist-mov.schema';
 import { ChecklistCardKanban, ChecklistCardKanbanSchema } from './card-checklist.schema';
@@ -62,7 +62,7 @@ export class CardKanban {
     historyMovement: Types.Array<HistMovCardKanban>;
 
     @Prop({ type: [HistActivCardKanbanSchema], default: [] })
-    historyActivities: Types.Array<HistMovCardKanban>;
+    historyActivities: Types.Array<HistActivCardKanban>;
 
     @Prop({ type: Types.ObjectId, ref: 'Usuario', required: true })
     createdBy: Types.ObjectId;

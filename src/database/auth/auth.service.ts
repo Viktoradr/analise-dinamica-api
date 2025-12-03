@@ -9,16 +9,18 @@ import { LoginCodigoDto } from './dto/login-codigo.dto';
 import { CodigoExpiradoException } from '../../exceptions/codigo-expirado.exception';
 import { MENSAGENS } from 'src/constants/mensagens';
 import { Types } from 'mongoose';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
 
   constructor(
-    private jwtService: JwtService,
-    private userService: UsuarioService,
-    private sessionService: SessionService,
-    private emailService: EmailService,
-    private codigoService: CodigoService
+    private readonly jwtService: JwtService,
+    private readonly userService: UsuarioService,
+    private readonly sessionService: SessionService,
+    private readonly emailService: EmailService,
+    private readonly codigoService: CodigoService,
+    private readonly config: ConfigService
   ) { }
 
   async validateUserByEmail(email: string): Promise<any> {
@@ -55,7 +57,9 @@ export class AuthService {
         jti: jwtId
       };
 
-      const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+      const expiresIn = this.config.get('NODE_ENV') === 'development' ? '24h' : '1h';
+
+      const token = this.jwtService.sign(payload, { expiresIn });
 
       const activeExistsSession = await this.sessionService.findByUserIdAndCode(user._id, userCode.codigo);
 

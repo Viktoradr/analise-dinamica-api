@@ -8,6 +8,7 @@ import { UserId } from 'src/decorators/userid.decorator';
 import { TagKanbanService } from './k-tags/tags.service';
 import { TenantService } from '../tenant/tenant.service';
 import { CardKanbanService } from './k-cards/cards.service';
+import { CardResponse } from './k-cards/dto/card-response.dto';
 
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
@@ -35,54 +36,9 @@ export class KanbanController {
             return {
                 id: raia.id,
                 title: raia.name,
-                cards: cards.filter((card: any) => card.atualRaia.id.equals(raia.id)).map((card: any) => {
-                    return {
-                        id: card._id,
-                        template: { name: 'Contrato de Locação' },
-                        tipoCard: { 
-                            name: card.cardTemplate.name, 
-                            campos: card.cardTemplate.campos, 
-                            camposPersonagem: card.cardTemplate.camposPersonagem 
-                        },
-                        tags: card.tags.map((tag: any) => {
-                            return {
-                                id: tag._id,
-                                name: tag.name,
-                                priority: tag.priority,
-                                colorHex: tag.colorHex
-                            }
-                        }),
-                        codInterno: card.codInterno,
-                        codNegocio: card.codNegocio,
-                        prazo: 'Esta Semana',
-                        createdAt: card.createdAt,
-                        updatedAt: card.updatedAt,
-                        finalizedAt: card.finalizedAt,
-                        status: card.status,
-                        membros: [],
-                        checklist: card.checklist.map((c: any) => {
-                            return {
-                                id: c.checklistItemId,
-                                title: c.task,
-                                required: c.required,
-                                check: c.check,
-                            }
-                        }),
-                        checklistToDo: `${card.checklist.filter((c: any)=> c.check).length}/${card.checklist.length}`,
-                        workflow: card.workflow.map((w: any) => {
-                            return {
-                                id: w.checklistItemId,
-                                title: w.task,
-                                required: w.required,
-                                check: w.check,
-                            }
-                        }),
-                        workflowToDo: `${card.workflow.filter((c: any)=> c.check).length}/${card.workflow.length}`,
-                        arquivos: [],
-                        historyActivities: [],
-                        active: true
-                    }
-                })
+                cards: cards
+                    .filter((card: any) => card.atualRaia.id.equals(raia.id))
+                    .map((card: any) => CardResponse(card))
             }
         })
 

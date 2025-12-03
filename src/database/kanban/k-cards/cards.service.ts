@@ -123,7 +123,24 @@ export class CardKanbanService {
     }
 
     async findByIdActive(cardKanbanId: Types.ObjectId, tenantId: Types.ObjectId): Promise<CardKanbanDocument> {
-        const card = await this.model.findOne({ id: cardKanbanId, tenantId, active: true });
+        const card = await this.model.findOne({ _id: cardKanbanId, tenantId, active: true });
+        if (!card) {
+            throw new NotFoundException(MENSAGENS.CARD_KANBAN_NOTFOUND);
+        }
+        return card;
+    }
+
+    async findPopulateByIdActive(cardKanbanId: Types.ObjectId, tenantId?: Types.ObjectId): Promise<CardKanbanDocument> {
+
+        const filter: any = { _id: cardKanbanId, active: true };
+
+        if (tenantId) filter.tenantId = tenantId
+
+        const card = await this.model
+            .findOne()
+            .populate('tags')
+            .populate('historyActivities.createdBy', 'nome');
+
         if (!card) {
             throw new NotFoundException(MENSAGENS.CARD_KANBAN_NOTFOUND);
         }
@@ -137,27 +154,36 @@ export class CardKanbanService {
         checklistItemId: Types.ObjectId,
         check: boolean
     ) {
-        const resultado = await this.model.findOneAndUpdate(
-            {
-                _id: cardKanbanId,
-                tenantId: tenantId,
-                'checklist.checklistItemId': checklistItemId
-            },
-            {
-                $set: {
-                    'checklist.$.check': check,
-                    'checklist.$.baixaAt': new Date(),
-                    'checklist.$.checkedBy': userId
-                }
-            },
-            { new: true } // Retorna o documento atualizado
-        );
+        const card = await this.model.findOne({
+            _id: cardKanbanId,
+            tenantId: tenantId
+        });
 
-        if (!resultado) {
+        if (!card) {
             throw new NotFoundException(MENSAGENS.CARD_KANBAN_NOTFOUND);
         }
 
-        return resultado;
+        // 2. Encontra o índice do item no checklist
+        const itemIndex = card.checklist.findIndex(
+            (item: any) => new Types.ObjectId((item.checklistItemId as string)).equals(checklistItemId)
+        );
+
+        if (itemIndex === -1) {
+            throw new NotFoundException('Item do checklist não encontrado');
+        }
+
+        // 3. Atualiza o item específico
+        card.checklist[itemIndex].check = check;
+        card.checklist[itemIndex].baixaAt = new Date();
+        card.checklist[itemIndex].checkedBy = userId;
+
+        const description = check 
+            ? `O item "${card.checklist[itemIndex].task}" do checklist foi finalizado na data ${new Date().toLocaleString()}`
+            : `O item "${card.checklist[itemIndex].task}" do checklist voltou para fila de execução na data ${new Date().toLocaleString()}`; 
+
+        this.registrarHistorico(card, userId, description)
+
+        await card.save();
     }
 
     async checkedWorkflow(
@@ -167,27 +193,36 @@ export class CardKanbanService {
         checklistItemId: Types.ObjectId,
         check: boolean
     ) {
-        const resultado = await this.model.findOneAndUpdate(
-            {
-                _id: cardKanbanId,
-                tenantId: tenantId,
-                'workflow.checklistItemId': checklistItemId
-            },
-            {
-                $set: {
-                    'workflow.$.check': check,
-                    'workflow.$.baixaAt': new Date(),
-                    'workflow.$.checkedBy': userId
-                }
-            },
-            { new: true } // Retorna o documento atualizado
-        );
+        const card = await this.model.findOne({
+            _id: cardKanbanId,
+            tenantId: tenantId
+        });
 
-        if (!resultado) {
+        if (!card) {
             throw new NotFoundException(MENSAGENS.CARD_KANBAN_NOTFOUND);
         }
 
-        return resultado;
+        // 2. Encontra o índice do item no checklist
+        const itemIndex = card.workflow.findIndex(
+            (item: any) => new Types.ObjectId((item.checklistItemId as string)).equals(checklistItemId)
+        );
+
+        if (itemIndex === -1) {
+            throw new NotFoundException('Item do checklist não encontrado');
+        }
+
+        // 3. Atualiza o item específico
+        card.workflow[itemIndex].check = check;
+        card.workflow[itemIndex].baixaAt = new Date();
+        card.workflow[itemIndex].checkedBy = userId;
+
+        const description = check 
+            ? `O item "${card.workflow[itemIndex].task}" do workflow voltou para fila de execução na data ${new Date().toLocaleString()}`
+            : ``; 
+
+        this.registrarHistorico(card, userId, description)
+
+        await card.save();
     }
 
     async mudarRaia(
@@ -210,13 +245,8 @@ export class CardKanbanService {
                 workflow_snapshot: card.workflow,
                 createdBy: userId
             });
-            card.historyActivities.push({
-                kanbanId: card.kanbanId as Types.ObjectId,
-                raiaId: card.atualRaia.id as Types.ObjectId,
-                createdAt: new Date(Date.now()),
-                createdBy: userId,
-                description: `Card movido para raia ${novaRaia.name}`
-            })
+
+            this.registrarHistorico(card, userId, `Card movido para raia ${novaRaia.name}`)
 
             card.updatedBy = userId;
             card.atualRaia = novaRaia;
@@ -252,13 +282,7 @@ export class CardKanbanService {
         //     workflow_snapshot: card.workflow,
         //     createdBy: userId
         // });
-        card.historyActivities.push({
-            kanbanId: card.kanbanId as Types.ObjectId,
-            raiaId: card.atualRaia.id as Types.ObjectId,
-            createdAt: new Date(Date.now()),
-            createdBy: userId,
-            description: `Card finalizado`
-        })
+        this.registrarHistorico(card, userId, `Card finalizado`)
 
         await card.save();
     }
@@ -267,6 +291,7 @@ export class CardKanbanService {
         const cards = await this.model
             .find({ tenantId, active: true })
             .populate('tags')
+            .populate('historyActivities.createdBy', 'nome')
             .lean();
 
         if (!cards) {
@@ -278,15 +303,19 @@ export class CardKanbanService {
     async addTag(
         cardKanbanId: Types.ObjectId,
         tenantId: Types.ObjectId,
+        userId: Types.ObjectId,
+        tagName: string,
         tagId: Types.ObjectId,
     ) {
-       const card = await this.model.findOne({ _id: cardKanbanId, tenantId });
+        const card = await this.model.findOne({ _id: cardKanbanId, tenantId });
 
         if (!card) {
             throw new NotFoundException(MENSAGENS.CARD_KANBAN_NOTFOUND);
         }
 
         card.tags.push(tagId);
+        
+        this.registrarHistorico(card, userId, `Label ${tagName} adicionada com sucesso`)
 
         await card.save();
     }
@@ -294,9 +323,11 @@ export class CardKanbanService {
     async removerTag(
         cardKanbanId: Types.ObjectId,
         tenantId: Types.ObjectId,
+        userId: Types.ObjectId,
+        tagName: string,
         tagId: Types.ObjectId,
     ) {
-       const card = await this.model.findOne({ _id: cardKanbanId, tenantId });
+        const card = await this.model.findOne({ _id: cardKanbanId, tenantId });
 
         if (!card) {
             throw new NotFoundException(MENSAGENS.CARD_KANBAN_NOTFOUND);
@@ -304,6 +335,39 @@ export class CardKanbanService {
 
         card.tags.remove(tagId);
 
+        this.registrarHistorico(card, userId, `Label ${tagName} removida com sucesso`)
+
         await card.save();
     }
+
+    private registrarHistorico(card: CardKanbanDocument, userId: Types.ObjectId, description: string) {
+        card.historyActivities.push({
+            kanbanId: card.kanbanId as Types.ObjectId,
+            raiaId: card.atualRaia.id as Types.ObjectId,
+            createdAt: new Date(Date.now()),
+            createdBy: userId,
+            description: description
+        })
+    }
+
+    //consumer
+
+    async findAllToConsumer(params: {
+        order?: number,
+        tenantId?: string
+    }): Promise<CardKanban[]> {
+    
+        const { order, tenantId } = params;
+      
+        const filter: any = { active: true };
+        
+        if (tenantId) filter.tenantId = tenantId;
+        if (order) filter.atualRaia.order = order;
+    
+        return this.model
+            .find(filter)
+            .populate('tags')
+            .populate('historyActivities.createdBy', 'nome')
+            .lean();
+      }
 }
