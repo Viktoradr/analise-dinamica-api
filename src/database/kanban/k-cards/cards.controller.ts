@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags, ApiParam } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CardKanbanService } from './cards.service';
 import { JwtAuthGuard } from 'src/database/auth/guards/jwt-auth.guard';
 import { Types } from 'mongoose';
@@ -14,6 +14,7 @@ import { KanbanService } from '../kanban.service';
 import { UpdateCardCheckDto } from './dto/card-check-update.dto';
 import { TagKanbanService } from '../k-tags/tags.service';
 import { CardResponse } from './dto/card-response.dto';
+import { UpdateCardDto } from './dto/card-update.dto';
 
 @ApiTags('cards')
 @ApiBearerAuth('JWT-auth')
@@ -37,8 +38,51 @@ export class CardKanbanController {
     async comboTipoCard(
         @TenantId() tenantId: Types.ObjectId
     ) {
-        const combo = await this.service.getTipoCardInUse(tenantId);
-        return combo;
+        return await this.service.getTipoCardInUse(tenantId);
+    }
+
+    @Get()
+    @ApiOperation({
+        summary: 'Listar os cards para consumo',
+        description: 'Endpoint responsável por listar os cards.'
+    })
+    @ApiQuery({
+        name: 'order',
+        required: false,
+        type: Number,
+        minimum: 1,
+        description: 'Número de ordem da raia',
+    })
+    @ApiQuery({
+        name: 'tenantId',
+        required: false,
+        type: String,
+        format: 'ObjectId',
+        description: 'Id de um tenant',
+    })
+    async listar(
+        @Query() query: {
+            order?: number,
+            tenantId?: string
+        }
+    ) {
+        return await this.service.findAllToConsumer(query);
+    }
+
+    @Get('consumer/:id')
+    @ApiOperation({
+        summary: 'Listar um card para consumo',
+        description: 'Endpoint responsável por retornar a informação do card'
+    })
+    @ApiParam({
+        name: 'id',
+        type: String,
+        format: 'ObjectId',
+    })
+    async get(
+        @Param('id') cardKanbanId: Types.ObjectId,
+    ) {
+        return await this.service.findPopulateByIdActive(cardKanbanId);
     }
 
     @Post()
@@ -65,8 +109,8 @@ export class CardKanbanController {
 
     @Get(':id')
     @ApiOperation({
-        summary: 'Retorna o card pelo id',
-        description: 'Endpoint responsável por retornar o card'
+        summary: 'Retorna o card pelo id para o sistema',
+        description: 'Endpoint responsável por retornar o card para utilização dentro do sistema'
     })
     @ApiParam({
         name: 'id',
@@ -200,4 +244,26 @@ export class CardKanbanController {
         return { message: MENSAGENS.CARD_KANBAN_UPDATED }
     }
 
+    @Put(':id/campos')
+    @ApiOperation({
+        summary: 'Atualizar campos de um card para consumo',
+        description: 'Endpoint responsável por atualizar os parametro de campos do card'
+    })
+    @ApiParam({
+        name: 'id',
+        type: String,
+        format: 'ObjectId'
+    })
+    async atualizarCampos(
+        @Param('id') cardKanbanId: Types.ObjectId,
+        @Body() body: UpdateCardDto,
+        @UserId() userId: Types.ObjectId,
+        @TenantId() tenantId: Types.ObjectId,
+    ) {
+        const array = new Types.Array<string>()
+        array.push(body.camposPersonagem)
+        
+        const cards = await this.service.atualizarCampos(cardKanbanId, userId, tenantId, body.campos, array);
+        return cards;
+    }
 }

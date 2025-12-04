@@ -114,6 +114,23 @@ export class CardKanbanService {
         return card.save();
     }
 
+    async atualizarCampos(
+        cardKanbanId: Types.ObjectId, 
+        userId: Types.ObjectId, 
+        tenantId: Types.ObjectId, 
+        campos?: object[], 
+        camposPersonagem?: Types.Array<string>
+    ) {
+        const card = await this.findByIdActive(cardKanbanId, tenantId)
+
+        if (campos && campos.length > 0) card.cardTemplate.campos = campos;
+        if (camposPersonagem && camposPersonagem.length > 0) card.cardTemplate.camposPersonagem = camposPersonagem;
+
+        card.updatedBy = userId;
+
+        await card.save();
+    }
+
     async criarCodigoInterno(tenantId: Types.ObjectId, tenantPrefixo: string, codigoTipoCard: string) {
         const total = await this.model.countDocuments({ tenantId });
         const sequencial = (total + 1).toString().padStart(6, '0');
