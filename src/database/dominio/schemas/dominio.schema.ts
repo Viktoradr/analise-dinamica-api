@@ -5,12 +5,6 @@ export type DominioDocument = HydratedDocument<Dominio> & { _id: Types.ObjectId 
 
 @Schema({ timestamps: true })
 export class Dominio {
-  @Prop({ 
-    required: true, 
-    lowercase: true,
-    trim: true
-  })
-  id_dominio: string;
 
   @Prop({ 
     required: true, 
@@ -35,6 +29,11 @@ export class Dominio {
 
   @Prop({ type: Boolean, default: true })
   ativo: boolean;
+
+  @Prop({ type: Types.ObjectId, ref: 'Usuario', required: true })
+  createdBy: Types.ObjectId;
 }
 
 export const DominioSchema = SchemaFactory.createForClass(Dominio);
+
+DominioSchema.index({ nm_propriedade: 1, ativo: 1 });
