@@ -19,8 +19,8 @@ export class Tenant extends Document {
   @Prop({ type: String, required: true, lowercase: true, unique: true })
   codPrefixoInterno: string;
 
-  @Prop({ type: Object, default: true })
-  preSet: object; //(tipos, regras, templates)
+  @Prop({ type: Object})
+  preSet: object; 
 }
 
 export const TenantSchema = SchemaFactory.createForClass(Tenant);

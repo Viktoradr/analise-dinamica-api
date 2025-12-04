@@ -48,7 +48,7 @@ export class TenantService {
       filter.createdAt = dateFilter;
     }
 
-    return await this.model.find(filter).exec();
+    return await this.model.find(filter)
   }
 
   async findById(id: Types.ObjectId): Promise<Tenant> {

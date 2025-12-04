@@ -14,7 +14,6 @@ import { LogsObrigatorioEnum } from 'src/enum/logs-obrigatorio.enum';
 import { EventEnum } from 'src/enum/event.enum';
 import { MENSAGENS } from 'src/constants/mensagens';
 import { ClassMethodName } from 'src/decorators/method-logger.decorator';
-import { KanbanService } from '../kanban/kanban.service';
 
 @ApiTags('tenant')
 @Controller('tenant')
@@ -25,7 +24,6 @@ export class TenantController {
     private service: TenantService,
     private tagService: TagKanbanService,
     private userService: UsuarioService,
-    private kanbanService: KanbanService,
     private logService: LogsService) {}
 
   @Get()
@@ -38,11 +36,7 @@ export class TenantController {
     dtFim?: Date | string;
   }
   ) {
-    return (await this.service.findAll(params)).map(tenant => {
-      const t = tenant.toObject();
-      delete t.__v;
-      return t;
-    });
+    return await this.service.findAll(params)
   }
 
   @Post()
