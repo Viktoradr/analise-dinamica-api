@@ -19,8 +19,8 @@ export class CardTemplateKanban {
     @Prop({ type: Object })
     campos: object; 
 
-    @Prop({ type: [String] })
-    camposPersonagem: Types.Array<string>; 
+    @Prop({ type: [Object] })
+    camposPersonagem: object[]; 
 }
 
 export const CardTemplateKanbanSchema = SchemaFactory.createForClass(CardTemplateKanban);

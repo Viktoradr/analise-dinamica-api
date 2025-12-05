@@ -5,5 +5,5 @@ export class UpdateCardDto {
     campos?: object[];
 
     @ApiProperty()
-    camposPersonagem?: string[];
+    camposPersonagem?: object[];
 }

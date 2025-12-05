@@ -260,10 +260,7 @@ export class CardKanbanController {
         @UserId() userId: Types.ObjectId,
         @TenantId() tenantId: Types.ObjectId,
     ) {
-        const array = new Types.Array<string>()
-        array.push(body.camposPersonagem)
-        
-        const cards = await this.service.atualizarCampos(cardKanbanId, userId, tenantId, body.campos, array);
+        const cards = await this.service.atualizarCampos(cardKanbanId, userId, tenantId, body.campos, body.camposPersonagem);
         return cards;
     }
 }

@@ -119,7 +119,7 @@ export class CardKanbanService {
         userId: Types.ObjectId, 
         tenantId: Types.ObjectId, 
         campos?: object[], 
-        camposPersonagem?: Types.Array<string>
+        camposPersonagem?: object[]
     ) {
         const card = await this.findByIdActive(cardKanbanId, tenantId)
 
