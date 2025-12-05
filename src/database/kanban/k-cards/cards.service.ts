@@ -10,6 +10,7 @@ import { CardTemplateDocument } from '../schemas/template-card.schema';
 import { KanbanDocument } from '../schemas/kanban.schema';
 import { CreateCardDto } from './dto/card-create.dto';
 import { StatusCardEnum } from 'src/enum/status-card.enum';
+import { CamposPersonagemCardKanban } from '../schemas/card-campos-personagem.schema';
 
 @Injectable()
 export class CardKanbanService {
@@ -119,7 +120,7 @@ export class CardKanbanService {
         userId: Types.ObjectId, 
         tenantId: Types.ObjectId, 
         campos?: object, 
-        camposPersonagem?: object[]
+        camposPersonagem?: CamposPersonagemCardKanban[]
     ) {
         const card = await this.findByIdActive(cardKanbanId, tenantId)
 

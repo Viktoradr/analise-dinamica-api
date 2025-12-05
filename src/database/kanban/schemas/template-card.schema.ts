@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { TemplateRaiaSchema, TemplateRaia } from './template-raia.schema';
+import { CamposPersonagemCardKanbanSchema, CamposPersonagemCardKanban } from './card-campos-personagem.schema';
 
 export type CardTemplateDocument = HydratedDocument<CardTemplate> & { _id: Types.ObjectId };
 
@@ -19,8 +20,8 @@ export class CardTemplate {
     @Prop({ type: Object })
     campos: object; 
 
-    @Prop({ type: [String] })
-    camposPersonagem: Types.Array<string>; 
+    @Prop({ type: [CamposPersonagemCardKanbanSchema] })
+    camposPersonagem: Types.Array<CamposPersonagemCardKanban>; 
 
     @Prop({ type: [TemplateRaiaSchema] })
     etapas: Types.Array<TemplateRaia>;

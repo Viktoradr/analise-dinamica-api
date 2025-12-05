@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { CamposPersonagemCardKanban, CamposPersonagemCardKanbanSchema } from './card-campos-personagem.schema';
 
 @Schema({ _id: false, timestamps: false })
 export class CardTemplateKanban {
@@ -19,8 +20,8 @@ export class CardTemplateKanban {
     @Prop({ type: Object })
     campos: object; 
 
-    @Prop({ type: [Object] })
-    camposPersonagem: object[]; 
+    @Prop({ type: [CamposPersonagemCardKanbanSchema] })
+    camposPersonagem: CamposPersonagemCardKanban[]; 
 }
 
 export const CardTemplateKanbanSchema = SchemaFactory.createForClass(CardTemplateKanban);

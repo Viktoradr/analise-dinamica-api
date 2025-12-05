@@ -31,6 +31,15 @@ export class TemplateFlowRaiaDto {
   workflow: TemplateFlowDto[];
 }
 
+export class TemplateCamposPersonagemDto {
+  @ApiProperty({ required: true })
+  grupo: string;
+
+  @ApiProperty({ type: [String] })
+  @IsArray()
+  values: string[];
+}
+
 export class CreateTemplateCardDto {
   @ApiProperty({ example: "690a826a0494d00123784a49", required: true })
   @IsString()
@@ -54,7 +63,7 @@ export class CreateTemplateCardDto {
   @IsObject()
   campos: object;
 
-  @ApiProperty({ type: [Object] })
+  @ApiProperty({ type: [TemplateCamposPersonagemDto] })
   @IsArray()
-  camposPersonagem: object[]; 
+  camposPersonagem: TemplateCamposPersonagemDto[]; 
 }
