@@ -118,12 +118,12 @@ export class CardKanbanService {
         cardKanbanId: Types.ObjectId, 
         userId: Types.ObjectId, 
         tenantId: Types.ObjectId, 
-        campos?: object[], 
+        campos?: object, 
         camposPersonagem?: object[]
     ) {
         const card = await this.findByIdActive(cardKanbanId, tenantId)
 
-        if (campos && campos.length > 0) card.cardTemplate.campos = campos;
+        if (campos) card.cardTemplate.campos = campos;
         if (camposPersonagem && camposPersonagem.length > 0) card.cardTemplate.camposPersonagem = camposPersonagem;
 
         card.updatedBy = userId;

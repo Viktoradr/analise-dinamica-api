@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCardDto {
-    @ApiProperty()
-    campos?: object[];
+    @ApiProperty({ type: Object })
+    campos?: object;
 
-    @ApiProperty()
+    @ApiProperty({ type: [Object] })
     camposPersonagem?: object[];
 }

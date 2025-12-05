@@ -54,7 +54,7 @@ export class CreateTemplateCardDto {
   @IsObject()
   campos: object;
 
-  @ApiProperty({ type: [String] })
+  @ApiProperty({ type: [Object] })
   @IsArray()
-  camposPersonagem: string[]; 
+  camposPersonagem: object[]; 
 }
